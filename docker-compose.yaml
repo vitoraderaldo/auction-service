@@ -1,0 +1,11 @@
+version: '3'
+services:
+  mongo:
+    image: mongo:7.0.3
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: password
+    ports:
+      - 5550:27017
+    volumes:
+      - ./.docker-data/mongo:/data/db
