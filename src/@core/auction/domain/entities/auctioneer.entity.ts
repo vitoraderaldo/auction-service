@@ -3,6 +3,12 @@ import { Email } from '../../../common/domain/value-objects/email.vo';
 import { PersonName } from '../../../common/domain/value-objects/person-name.vo';
 import { Uuid } from '../../../common/domain/value-objects/uuid.vo';
 import { AuctioneerRegistration } from '../value-objects/auctioneer-registration.vo';
+import { Auction, AuctionCreateProps } from './auction.entity';
+
+export type AuctionCreationByAuctioneer = Omit<
+  AuctionCreateProps,
+  'auctioneerId'
+>;
 
 export class AuctioneerId extends Uuid {}
 
@@ -38,7 +44,12 @@ export class Auctioneer extends Entity {
     return new Auctioneer(params);
   }
 
-  createAuction() {}
+  createAuction(params: AuctionCreationByAuctioneer): Auction {
+    return Auction.create({
+      ...params,
+      auctioneerId: this.id.value,
+    });
+  }
 
   toJSON() {
     return {
