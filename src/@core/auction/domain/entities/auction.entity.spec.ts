@@ -101,9 +101,9 @@ describe('Auction', () => {
         title: 'New Auction',
         description: 'New auction description',
         photos: [],
-        startDate: new IsoStringDate(startDate.toISOString()),
-        endDate: new IsoStringDate(endDate.toISOString()),
-        startPrice: new Price(50),
+        startDate: startDate.toISOString(),
+        endDate: endDate.toISOString(),
+        startPrice: 50,
         auctioneerId: 'auctioneer-id',
       };
 
@@ -121,9 +121,9 @@ describe('Auction', () => {
         title: 'New Auction',
         description: 'New auction description',
         photos: [],
-        startDate: new IsoStringDate('2023-01-01T00:00:00.000Z'),
-        endDate: new IsoStringDate('2023-01-01T00:00:00.000Z'),
-        startPrice: new Price(50),
+        startDate: '2023-01-01T00:00:00.000Z',
+        endDate: '2023-01-01T00:00:00.000Z',
+        startPrice: 50,
         auctioneerId: 'auctioneer-id',
       };
 

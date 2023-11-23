@@ -6,8 +6,6 @@ import {
   Auction,
   AuctionCreateProps,
 } from '../../../domain/entities/auction.entity';
-import { IsoStringDate } from '../../../../common/domain/value-objects/iso-string-data.vo';
-import { Price } from '../../../../common/domain/value-objects/price.vo';
 
 describe('AuctionMongoRepository', () => {
   let mongoServer: MongoMemoryServer;
@@ -42,9 +40,9 @@ describe('AuctionMongoRepository', () => {
       title: 'New Auction',
       description: 'New auction description',
       photos: [],
-      startDate: new IsoStringDate(startDate.toISOString()),
-      endDate: new IsoStringDate(endDate.toISOString()),
-      startPrice: new Price(50.8),
+      startDate: startDate.toISOString(),
+      endDate: endDate.toISOString(),
+      startPrice: 50.8,
       auctioneerId: 'auctioneer-id',
     };
 

@@ -23,10 +23,17 @@ export interface AuctionConstructorProps {
   updatedAt?: IsoStringDate;
 }
 
-export type AuctionCreateProps = Omit<
-  AuctionConstructorProps,
-  'id' | 'createdAt' | 'updatedAt' | 'status' | 'currentPrice'
->;
+export interface AuctionCreateProps {
+  title: string;
+  description: string;
+  photos: {
+    link: string;
+  }[];
+  startDate: string;
+  endDate: string;
+  startPrice: number;
+  auctioneerId: string;
+}
 
 export class AuctionId extends Uuid {}
 
@@ -65,15 +72,27 @@ export class Auction extends Entity {
   static create(props: AuctionCreateProps): Auction {
     const now = new IsoStringDate(new Date().toISOString());
 
-    if (props.startDate.isBefore(now)) {
+    const startDate = new IsoStringDate(props.startDate);
+
+    if (startDate.isBefore(now)) {
       throw new Error('Start date must not be in the past');
     }
 
     return new Auction({
-      ...props,
+      title: props.title,
+      description: props.description,
+      photos: props.photos.map(
+        (photo) => new AuctionPhoto({ link: photo.link }),
+      ),
+      startDate: startDate,
+      endDate: new IsoStringDate(props.endDate),
+      startPrice: new Price(props.startPrice),
+      auctioneerId: props.auctioneerId,
       id: new AuctionId(),
       status: new AuctionStatus(AuctionStatusEnum.CREATED),
       currentPrice: null,
+      createdAt: now,
+      updatedAt: now,
     });
   }
 

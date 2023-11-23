@@ -3,8 +3,6 @@ import { PersonName } from '../../../common/domain/value-objects/person-name.vo'
 import { AuctioneerRegistration } from '../value-objects/auctioneer-registration.vo';
 import { Auctioneer } from './auctioneer.entity';
 import { Email } from '../../../common/domain/value-objects/email.vo';
-import { AuctionPhoto } from '../value-objects/auction-photo.vo';
-import { IsoStringDate } from '../../../common/domain/value-objects/iso-string-data.vo';
 import { Price } from '../../../common/domain/value-objects/price.vo';
 
 describe('Auctioneer', () => {
@@ -77,10 +75,10 @@ describe('Auctioneer', () => {
       const auction = auctioneer.createAuction({
         title: 'Some auction tile',
         description: 'Some auction description',
-        photos: [new AuctionPhoto({ link: 'https://some-photo-link.com' })],
-        startDate: new IsoStringDate(startDate.toISOString()),
-        endDate: new IsoStringDate(endDate.toISOString()),
-        startPrice: new Price(100),
+        photos: [{ link: 'https://some-photo-link.com' }],
+        startDate: startDate.toISOString(),
+        endDate: endDate.toISOString(),
+        startPrice: 100,
       });
 
       expect(auction).toBeDefined();

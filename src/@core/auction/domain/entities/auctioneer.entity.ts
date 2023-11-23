@@ -3,16 +3,22 @@ import { Email } from '../../../common/domain/value-objects/email.vo';
 import { PersonName } from '../../../common/domain/value-objects/person-name.vo';
 import { Uuid } from '../../../common/domain/value-objects/uuid.vo';
 import { AuctioneerRegistration } from '../value-objects/auctioneer-registration.vo';
-import { Auction, AuctionCreateProps } from './auction.entity';
+import { Auction } from './auction.entity';
 
-export type AuctionCreationByAuctioneer = Omit<
-  AuctionCreateProps,
-  'auctioneerId'
->;
+export interface AuctionCreationByAuctioneer {
+  title: string;
+  description: string;
+  photos: {
+    link: string;
+  }[];
+  startDate: string;
+  endDate: string;
+  startPrice: number;
+}
 
 export class AuctioneerId extends Uuid {}
 
-type AuctioneerConstructorProps = {
+export type AuctioneerConstructorProps = {
   id?: AuctioneerId | string;
   name: PersonName;
   email: Email;

@@ -11,9 +11,10 @@ import {
 export class AuctioneerMongoRepository implements AuctioneerRepository {
   constructor(private readonly model: AuctioneerModel) {}
 
-  async getById(id: AuctioneerId): Promise<Auctioneer> {
+  async findById(id: AuctioneerId | string): Promise<Auctioneer> {
+    const value = typeof id === 'string' ? new AuctioneerId(id) : id;
     const document = await this.model.findOne({
-      id: id.value,
+      id: value.value,
     });
 
     return AuctioneerSchema.toDomain(document);

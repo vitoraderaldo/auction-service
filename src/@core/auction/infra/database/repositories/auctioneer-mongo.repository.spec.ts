@@ -53,7 +53,7 @@ describe('AuctioneerMongoRepository', () => {
     );
   });
 
-  it('should find an auctioneer by id', async () => {
+  it('should find an auctioneer by id as AuctioneerId', async () => {
     const auctioneer = Auctioneer.create({
       email: new Email('john.doe@email.com'),
       name: new PersonName({ firstName: 'John', lastName: 'Doe' }),
@@ -61,7 +61,21 @@ describe('AuctioneerMongoRepository', () => {
     });
     await repository.save(auctioneer);
 
-    const foundAuctioneer = await repository.getById(auctioneer.id);
+    const foundAuctioneer = await repository.findById(auctioneer.id);
+
+    expect(foundAuctioneer).toBeInstanceOf(Auctioneer);
+    expect(foundAuctioneer).toStrictEqual(auctioneer);
+  });
+
+  it('should find an auctioneer by id as string', async () => {
+    const auctioneer = Auctioneer.create({
+      email: new Email('john.doe@email.com'),
+      name: new PersonName({ firstName: 'John', lastName: 'Doe' }),
+      registration: new AuctioneerRegistration('12/345-A'),
+    });
+    await repository.save(auctioneer);
+
+    const foundAuctioneer = await repository.findById(auctioneer.id.value);
 
     expect(foundAuctioneer).toBeInstanceOf(Auctioneer);
     expect(foundAuctioneer).toStrictEqual(auctioneer);

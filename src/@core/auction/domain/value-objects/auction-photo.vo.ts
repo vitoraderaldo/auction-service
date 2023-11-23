@@ -22,4 +22,8 @@ export class AuctionPhoto extends ValueObject<AuctionPhotoProps> {
   isEqualTo(other: AuctionPhoto): boolean {
     return this.value.link === other.value.link;
   }
+
+  toJSON(): AuctionPhotoProps {
+    return this.value;
+  }
 }
