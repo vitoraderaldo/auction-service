@@ -1,6 +1,6 @@
 import { ValueObject } from '../../../common/domain/value-objects/value-object';
 
-interface AuctionPhotoProps {
+export interface AuctionPhotoProps {
   link: string;
 }
 

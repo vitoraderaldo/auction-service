@@ -1,6 +1,3 @@
-import { IsoStringDate } from '../../../common/domain/value-objects/iso-string-data.vo';
-import { Price } from '../../../common/domain/value-objects/price.vo';
-import { AuctionPhoto } from '../value-objects/auction-photo.vo';
 import {
   AuctionStatus,
   AuctionStatusEnum,
@@ -21,15 +18,15 @@ describe('Auction', () => {
       id: new AuctionId(),
       title: 'Test Auction',
       description: 'Auction description',
-      photos: [new AuctionPhoto({ link: 'https://example.com/photo.jpg' })],
-      startDate: new IsoStringDate('2023-01-01T00:00:00.000Z'),
-      endDate: new IsoStringDate('2023-01-02T00:00:00.000Z'),
-      startPrice: new Price(100),
+      photos: [{ link: 'https://example.com/photo.jpg' }],
+      startDate: '2023-01-01T00:00:00.000Z',
+      endDate: '2023-01-02T00:00:00.000Z',
+      startPrice: 100,
       currentPrice: null,
-      status: new AuctionStatus(AuctionStatusEnum.CREATED),
+      status: AuctionStatusEnum.CREATED,
       auctioneerId: 'auctioneer-id',
-      createdAt: new IsoStringDate('2023-01-01T00:00:00.000Z'),
-      updatedAt: new IsoStringDate('2023-01-01T00:00:00.000Z'),
+      createdAt: '2023-01-01T00:00:00.000Z',
+      updatedAt: '2023-01-01T00:00:00.000Z',
     };
 
     auction = new Auction(validAuctionProps);
@@ -80,8 +77,8 @@ describe('Auction', () => {
     it('should throw an error if start date is after end date', () => {
       const invalidProps = {
         ...validAuctionProps,
-        endDate: new IsoStringDate('2023-01-01T00:00:00.000Z'),
-        startDate: new IsoStringDate('2023-01-02T00:00:00.000Z'),
+        endDate: '2023-01-01T00:00:00.000Z',
+        startDate: '2023-01-02T00:00:00.000Z',
       };
       expect(() => new Auction(invalidProps)).toThrow(
         'End date must be after start date',
@@ -149,7 +146,7 @@ describe('Auction', () => {
       ({ status }: { status: AuctionStatusEnum }) => {
         auction = new Auction({
           ...validAuctionProps,
-          status: new AuctionStatus(status),
+          status,
         });
 
         expect(() => auction.publish()).toThrow(

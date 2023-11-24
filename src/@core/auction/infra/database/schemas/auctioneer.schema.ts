@@ -3,9 +3,6 @@ import {
   Auctioneer,
   AuctioneerId,
 } from '../../../domain/entities/auctioneer.entity';
-import { Email } from '../../../../common/domain/value-objects/email.vo';
-import { PersonName } from '../../../../common/domain/value-objects/person-name.vo';
-import { AuctioneerRegistration } from '../../../domain/value-objects/auctioneer-registration.vo';
 
 export interface AuctioneerMongoInterface {
   id: string;
@@ -39,12 +36,12 @@ export class AuctioneerSchema {
 
     return new Auctioneer({
       id: new AuctioneerId(document.id),
-      email: new Email(document.email),
-      name: new PersonName({
+      email: document.email,
+      name: {
         firstName: document.firstName,
         lastName: document.lastName,
-      }),
-      registration: new AuctioneerRegistration(document.registration),
+      },
+      registration: document.registration,
     });
   }
 

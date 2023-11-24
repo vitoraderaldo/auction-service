@@ -1,60 +1,42 @@
 import { randomUUID } from 'crypto';
-import { PersonName } from '../../../common/domain/value-objects/person-name.vo';
-import { AuctioneerRegistration } from '../value-objects/auctioneer-registration.vo';
-import { Auctioneer } from './auctioneer.entity';
-import { Email } from '../../../common/domain/value-objects/email.vo';
+import { Auctioneer, AuctioneerId } from './auctioneer.entity';
 import { Price } from '../../../common/domain/value-objects/price.vo';
+import { buildAuctioneer } from '../../../../../test/unit/util/auctioneer.mock';
 
 describe('Auctioneer', () => {
   describe('Creation', () => {
-    it('should create a valid Auctioneer instance without id', () => {
-      const params = {
-        name: new PersonName({ firstName: 'John', lastName: 'Doe' }),
-        email: new Email('john@gmmail.com'),
-        registration: new AuctioneerRegistration('12/345-A'),
-      };
-
-      const auctioneer = new Auctioneer(params);
-
-      expect(auctioneer).toBeInstanceOf(Auctioneer);
-      expect(auctioneer.id.value).toBeDefined();
-      expect(auctioneer.name.isEqualTo(params.name)).toBe(true);
-      expect(auctioneer.email.isEqualTo(params.email)).toBe(true);
-      expect(auctioneer.registration.isEqualTo(params.registration)).toBe(true);
-    });
-
-    it('should create a valid Auctioneer instance passing the id', () => {
+    it('should create a valid Auctioneer instance', () => {
       const id = randomUUID();
       const params = {
-        id: id,
-        name: new PersonName({ firstName: 'John', lastName: 'Doe' }),
-        email: new Email('john@gmmail.com'),
-        registration: new AuctioneerRegistration('12/345-A'),
+        id: new AuctioneerId(id),
+        name: { firstName: 'John', lastName: 'Doe' },
+        email: 'john@gmmail.com',
+        registration: '12/345-A',
       };
 
       const auctioneer = new Auctioneer(params);
 
       expect(auctioneer).toBeInstanceOf(Auctioneer);
       expect(auctioneer.id.value).toEqual(id);
-      expect(auctioneer.name.isEqualTo(params.name)).toBe(true);
-      expect(auctioneer.email.isEqualTo(params.email)).toBe(true);
-      expect(auctioneer.registration.isEqualTo(params.registration)).toBe(true);
+      expect(auctioneer.name.value).toEqual(params.name);
+      expect(auctioneer.email.value).toEqual(params.email);
+      expect(auctioneer.registration.value).toEqual(params.registration);
     });
 
     it('should create an Auctioneer instance using the create method', () => {
       const params = {
-        name: new PersonName({ firstName: 'John', lastName: 'Doe' }),
-        email: new Email('john@gmmail.com'),
-        registration: new AuctioneerRegistration('12/345-A'),
+        name: { firstName: 'John', lastName: 'Doe' },
+        email: 'john@gmmail.com',
+        registration: '12/345-A',
       };
 
       const auctioneer = Auctioneer.create(params);
 
       expect(auctioneer).toBeInstanceOf(Auctioneer);
       expect(auctioneer.id.value).toBeDefined();
-      expect(auctioneer.name.isEqualTo(params.name)).toBe(true);
-      expect(auctioneer.email.isEqualTo(params.email)).toBe(true);
-      expect(auctioneer.registration.isEqualTo(params.registration)).toBe(true);
+      expect(auctioneer.name.value).toEqual(params.name);
+      expect(auctioneer.email.value).toEqual(params.email);
+      expect(auctioneer.registration.value).toEqual(params.registration);
     });
   });
 
@@ -66,11 +48,7 @@ describe('Auctioneer', () => {
       const endDate = new Date();
       endDate.setUTCDate(endDate.getUTCDate() + 15);
 
-      const auctioneer = new Auctioneer({
-        name: new PersonName({ firstName: 'John', lastName: 'Doe' }),
-        email: new Email('john@gmmail.com'),
-        registration: new AuctioneerRegistration('12/345-A'),
-      });
+      const auctioneer = buildAuctioneer();
 
       const auction = auctioneer.createAuction({
         title: 'Some auction tile',

@@ -4,18 +4,15 @@ import {
   AuctioneerConstructorProps,
   AuctioneerId,
 } from '../../../src/@core/auction/domain/entities/auctioneer.entity';
-import { PersonName } from '../../../src/@core/common/domain/value-objects/person-name.vo';
-import { Email } from '../../../src/@core/common/domain/value-objects/email.vo';
-import { AuctioneerRegistration } from '../../../src/@core/auction/domain/value-objects/auctioneer-registration.vo';
 
-export const getMockedAuctioneer = (
+export const buildAuctioneer = (
   props?: Partial<AuctioneerConstructorProps>,
 ): Auctioneer => {
   const auctioneer: AuctioneerConstructorProps = {
     id: new AuctioneerId(randomUUID()),
-    name: new PersonName({ firstName: 'John', lastName: 'Doe' }),
-    email: new Email('john.doe@email.com'),
-    registration: new AuctioneerRegistration('12/345-A'),
+    name: { firstName: 'John', lastName: 'Doe' },
+    email: 'john.doe@email.com',
+    registration: '12/345-A',
     ...props,
   };
 

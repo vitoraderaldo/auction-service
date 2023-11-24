@@ -12,15 +12,15 @@ export interface AuctionConstructorProps {
   id: AuctionId;
   title: string;
   description: string;
-  photos: AuctionPhoto[];
-  startDate: IsoStringDate;
-  endDate: IsoStringDate;
-  startPrice: Price;
-  currentPrice: Price | null;
-  status: AuctionStatus;
+  photos: { link: string }[];
+  startDate: string;
+  endDate: string;
+  startPrice: number;
+  currentPrice: number | null;
+  status: AuctionStatusEnum;
   auctioneerId: string;
-  createdAt?: IsoStringDate;
-  updatedAt?: IsoStringDate;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface AuctionCreateProps {
@@ -56,43 +56,44 @@ export class Auction extends Entity {
     this._id = props.id;
     this._title = props.title;
     this._description = props.description;
-    this._photos = props.photos;
-    this._startDate = props.startDate;
-    this._endDate = props.endDate;
-    this._startPrice = props.startPrice;
-    this._currentPrice = props.currentPrice;
-    this._status = props.status;
+    this._photos = props.photos.map(
+      (photo) => new AuctionPhoto({ link: photo.link }),
+    );
+    this._startDate = new IsoStringDate(props.startDate);
+    this._endDate = new IsoStringDate(props.endDate);
+    this._startPrice = new Price(props.startPrice);
+    this._currentPrice = props.currentPrice
+      ? new Price(props.currentPrice)
+      : null;
+    this._status = new AuctionStatus(props.status);
     this._auctioneerId = props.auctioneerId;
-    this._createdAt = props.createdAt;
-    this._updatedAt = props.updatedAt;
+    this._createdAt = new IsoStringDate(props.createdAt);
+    this._updatedAt = new IsoStringDate(props.updatedAt);
 
     this.validate();
   }
 
   static create(props: AuctionCreateProps): Auction {
-    const now = new IsoStringDate(new Date().toISOString());
+    const now = new Date();
+    const startDate = new Date(props.startDate);
 
-    const startDate = new IsoStringDate(props.startDate);
-
-    if (startDate.isBefore(now)) {
+    if (startDate.getTime() < now.getTime()) {
       throw new Error('Start date must not be in the past');
     }
 
     return new Auction({
       title: props.title,
       description: props.description,
-      photos: props.photos.map(
-        (photo) => new AuctionPhoto({ link: photo.link }),
-      ),
-      startDate: startDate,
-      endDate: new IsoStringDate(props.endDate),
-      startPrice: new Price(props.startPrice),
+      photos: props.photos,
+      startDate: props.startDate,
+      endDate: props.endDate,
+      startPrice: props.startPrice,
       auctioneerId: props.auctioneerId,
       id: new AuctionId(),
-      status: new AuctionStatus(AuctionStatusEnum.CREATED),
+      status: AuctionStatusEnum.CREATED,
       currentPrice: null,
-      createdAt: now,
-      updatedAt: now,
+      createdAt: now.toISOString(),
+      updatedAt: now.toISOString(),
     });
   }
 
@@ -185,15 +186,15 @@ export class Auction extends Entity {
       id: this._id,
       title: this._title,
       description: this._description,
-      photos: this._photos,
-      startDate: this._startDate,
-      endDate: this._endDate,
-      startPrice: this._startPrice,
-      currentPrice: this._currentPrice,
-      status: this._status,
+      photos: this._photos.map((photo) => photo.toJSON()),
+      startDate: this._startDate.value,
+      endDate: this._endDate.value,
+      startPrice: this._startPrice.value,
+      currentPrice: this._currentPrice?.value ?? null,
+      status: this._status.value,
       auctioneerId: this._auctioneerId,
-      createdAt: this._createdAt,
-      updatedAt: this._updatedAt,
+      createdAt: this._createdAt.value,
+      updatedAt: this._updatedAt.value,
     };
   }
 }

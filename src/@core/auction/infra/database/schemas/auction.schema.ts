@@ -1,12 +1,6 @@
 import { Schema, Model, Mongoose } from 'mongoose';
 import { Auction, AuctionId } from '../../../domain/entities/auction.entity';
-import { AuctionPhoto } from '../../../domain/value-objects/auction-photo.vo';
-import { IsoStringDate } from '../../../../common/domain/value-objects/iso-string-data.vo';
-import { Price } from '../../../../common/domain/value-objects/price.vo';
-import {
-  AuctionStatus,
-  AuctionStatusEnum,
-} from '../../../domain/value-objects/auction-status.vo';
+import { AuctionStatusEnum } from '../../../domain/value-objects/auction-status.vo';
 
 export interface AuctionMongoInterface {
   id: string;
@@ -62,15 +56,15 @@ export class AuctionSchema {
       id: new AuctionId(document.id),
       title: document.title,
       description: document.description,
-      photos: document.photos.map((photo) => new AuctionPhoto(photo)),
-      startDate: new IsoStringDate(document.startDate),
-      endDate: new IsoStringDate(document.endDate),
-      startPrice: new Price(document.startPrice),
-      currentPrice: new Price(document.currentPrice),
-      status: new AuctionStatus(document.status as AuctionStatusEnum),
+      photos: document.photos,
+      startDate: document.startDate,
+      endDate: document.endDate,
+      startPrice: document.startPrice,
+      currentPrice: document.currentPrice,
+      status: document.status as AuctionStatusEnum,
       auctioneerId: document.auctioneerId,
-      createdAt: new IsoStringDate(document.createdAt.toISOString()),
-      updatedAt: new IsoStringDate(document.updatedAt.toISOString()),
+      createdAt: document.createdAt.toISOString(),
+      updatedAt: document.updatedAt.toISOString(),
     });
   }
 

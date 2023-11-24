@@ -19,10 +19,10 @@ export interface AuctionCreationByAuctioneer {
 export class AuctioneerId extends Uuid {}
 
 export type AuctioneerConstructorProps = {
-  id?: AuctioneerId | string;
-  name: PersonName;
-  email: Email;
-  registration: AuctioneerRegistration;
+  id: AuctioneerId;
+  name: { firstName: string; lastName: string };
+  email: string;
+  registration: string;
 };
 
 export class Auctioneer extends Entity {
@@ -33,21 +33,25 @@ export class Auctioneer extends Entity {
 
   constructor(params: AuctioneerConstructorProps) {
     super();
-    this._id =
-      typeof params.id === 'string'
-        ? new AuctioneerId(params.id)
-        : params.id || new AuctioneerId();
-    this._name = params.name;
-    this._email = params.email;
-    this._registration = params.registration;
+    this._id = params.id;
+    this._name = new PersonName(params.name);
+    this._email = new Email(params.email);
+    this._registration = new AuctioneerRegistration(params.registration);
   }
 
   static create(params: {
-    name: PersonName;
-    email: Email;
-    registration: AuctioneerRegistration;
+    name: { firstName: string; lastName: string };
+    email: string;
+    registration: string;
   }): Auctioneer {
-    return new Auctioneer(params);
+    const { name, email, registration } = params;
+
+    return new Auctioneer({
+      id: new AuctioneerId(),
+      name,
+      email,
+      registration,
+    });
   }
 
   createAuction(params: AuctionCreationByAuctioneer): Auction {
@@ -59,10 +63,11 @@ export class Auctioneer extends Entity {
 
   toJSON() {
     return {
-      id: this.id,
-      name: this.name,
-      email: this.email,
-      registration: this.registration,
+      id: this.id.value,
+      fistName: this.name.value.firstName,
+      lastName: this.name.value.lastName,
+      email: this.email.value,
+      registration: this.registration.value,
     };
   }
 

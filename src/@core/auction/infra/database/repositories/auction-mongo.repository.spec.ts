@@ -50,6 +50,7 @@ describe('AuctionMongoRepository', () => {
     await repository.save(auction);
 
     const savedAuction = await model.findOne({ id: auction.id.value });
+
     expect(savedAuction.id).toBe(auction.id.value);
     expect(savedAuction.title).toBe(auction.title);
     expect(savedAuction.description).toBe(auction.description);
