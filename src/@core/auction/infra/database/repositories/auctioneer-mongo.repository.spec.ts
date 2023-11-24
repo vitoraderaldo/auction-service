@@ -1,11 +1,10 @@
 import { connect, Mongoose } from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
-import {
+import AuctioneerSchema, {
   AuctioneerModel,
-  AuctioneerSchema,
 } from '../schemas/auctioneer.schema';
-import { AuctioneerMongoRepository } from './auctioneer-mongo.repository';
-import { Auctioneer } from '../../../domain/entities/auctioneer.entity';
+import AuctioneerMongoRepository from './auctioneer-mongo.repository';
+import Auctioneer from '../../../domain/entities/auctioneer.entity';
 
 describe('AuctioneerMongoRepository', () => {
   let mongoServer: MongoMemoryServer;
@@ -38,14 +37,14 @@ describe('AuctioneerMongoRepository', () => {
 
     await repository.save(auctioneer);
 
-    const savedAuctioneer = await model.findOne({ id: auctioneer.id.value });
-    expect(savedAuctioneer).toEqual(
+    const savedAuctioneer = await model.findOne<Auctioneer>({ id: auctioneer.getId() });
+
+    expect(savedAuctioneer.toJSON()).toEqual(
       expect.objectContaining({
-        id: auctioneer.id.value,
-        email: auctioneer.email.value,
-        firstName: auctioneer.name.value.firstName,
-        lastName: auctioneer.name.value.lastName,
-        registration: auctioneer.registration.value,
+        email: 'john.doe@email.com',
+        firstName: 'John',
+        lastName: 'Doe',
+        registration: '12/345-A',
       }),
     );
   });
@@ -58,7 +57,7 @@ describe('AuctioneerMongoRepository', () => {
     });
     await repository.save(auctioneer);
 
-    const foundAuctioneer = await repository.findById(auctioneer.id);
+    const foundAuctioneer = await repository.findById(auctioneer.getId());
 
     expect(foundAuctioneer).toBeInstanceOf(Auctioneer);
     expect(foundAuctioneer).toStrictEqual(auctioneer);
@@ -72,7 +71,7 @@ describe('AuctioneerMongoRepository', () => {
     });
     await repository.save(auctioneer);
 
-    const foundAuctioneer = await repository.findById(auctioneer.id.value);
+    const foundAuctioneer = await repository.findById(auctioneer.getId());
 
     expect(foundAuctioneer).toBeInstanceOf(Auctioneer);
     expect(foundAuctioneer).toStrictEqual(auctioneer);

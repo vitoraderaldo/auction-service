@@ -1,18 +1,15 @@
-import { AuctioneerRepository } from '../../../domain/repositories/auctioneer.repository';
-import {
-  Auctioneer,
-  AuctioneerId,
-} from '../../../domain/entities/auctioneer.entity';
-import {
+import AuctioneerRepository from '../../../domain/repositories/auctioneer.repository';
+import Auctioneer from '../../../domain/entities/auctioneer.entity';
+import AuctioneerSchema, {
   AuctioneerModel,
-  AuctioneerSchema,
 } from '../schemas/auctioneer.schema';
+import Uuid from '../../../../common/domain/value-objects/uuid.vo';
 
-export class AuctioneerMongoRepository implements AuctioneerRepository {
+export default class AuctioneerMongoRepository implements AuctioneerRepository {
   constructor(private readonly model: AuctioneerModel) {}
 
-  async findById(id: AuctioneerId | string): Promise<Auctioneer> {
-    const value = typeof id === 'string' ? new AuctioneerId(id) : id;
+  async findById(id: Uuid | string): Promise<Auctioneer> {
+    const value = typeof id === 'string' ? new Uuid(id) : id;
     const document = await this.model.findOne({
       id: value.value,
     });

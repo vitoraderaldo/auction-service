@@ -1,6 +1,6 @@
-import { ValueObject } from '../../../common/domain/value-objects/value-object';
+import ValueObject from './value-object';
 
-export class Price extends ValueObject<number> {
+export default class Price extends ValueObject<number> {
   constructor(price: number) {
     super(price);
     this.validate();

@@ -1,6 +1,7 @@
 import { Schema, Model, Mongoose } from 'mongoose';
-import { Auction, AuctionId } from '../../../domain/entities/auction.entity';
+import Auction from '../../../domain/entities/auction.entity';
 import { AuctionStatusEnum } from '../../../domain/value-objects/auction-status.vo';
+import Uuid from '../../../../common/domain/value-objects/uuid.vo';
 
 export interface AuctionMongoInterface {
   id: string;
@@ -44,7 +45,7 @@ const auctionSchema = new Schema(
 interface AuctionMongoDocument extends AuctionMongoInterface, Document {}
 export type AuctionModel = Model<AuctionMongoDocument>;
 
-export class AuctionSchema {
+export default class AuctionSchema {
   static getModel(connection: Mongoose): AuctionModel {
     return connection.model<AuctionMongoDocument>('Auction', auctionSchema);
   }
@@ -53,7 +54,7 @@ export class AuctionSchema {
     if (!document) return null;
 
     return new Auction({
-      id: new AuctionId(document.id),
+      id: new Uuid(document.id),
       title: document.title,
       description: document.description,
       photos: document.photos,
@@ -71,19 +72,21 @@ export class AuctionSchema {
   static toDatabase(domain: Auction) {
     if (!domain) return null;
 
-    const data: AuctionMongoInterface = {
-      id: domain.id.value,
-      title: domain.title,
-      description: domain.description,
-      photos: domain.photos.map((photo) => ({ link: photo.value.link })),
-      startDate: domain.startDate.value,
-      endDate: domain.endDate.value,
-      startPrice: domain.startPrice.value,
-      currentPrice: domain.currentPrice?.value ?? null,
-      status: domain.status.value,
-      auctioneerId: domain.auctioneerId,
+    const data = domain.toJSON();
+
+    const mongoData: AuctionMongoInterface = {
+      id: data.id,
+      title: data.title,
+      description: data.description,
+      photos: data.photos,
+      startDate: data.startDate,
+      endDate: data.endDate,
+      startPrice: data.startPrice,
+      currentPrice: data.currentPrice ?? null,
+      status: data.status,
+      auctioneerId: data.auctioneerId,
     };
 
-    return data;
+    return mongoData;
   }
 }

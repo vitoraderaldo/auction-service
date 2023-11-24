@@ -1,4 +1,4 @@
-import { PersonName } from './person-name.vo';
+import PersonName from './person-name.vo';
 
 describe('Person Name - Value Object', () => {
   it('should create a valid PersonName instance', () => {

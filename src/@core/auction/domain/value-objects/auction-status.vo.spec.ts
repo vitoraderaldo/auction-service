@@ -1,4 +1,4 @@
-import { AuctionStatus, AuctionStatusEnum } from './auction-status.vo';
+import AuctionStatus, { AuctionStatusEnum } from './auction-status.vo';
 
 describe('AuctionStatus', () => {
   describe('Create', () => {

@@ -1,6 +1,7 @@
-import { Auctioneer, AuctioneerId } from '../entities/auctioneer.entity';
+import Uuid from '../../../common/domain/value-objects/uuid.vo';
+import Auctioneer from '../entities/auctioneer.entity';
 
-export interface AuctioneerRepository {
+export default interface AuctioneerRepository {
   save(auctioneer: Auctioneer): Promise<void>;
-  findById(id: AuctioneerId | string): Promise<Auctioneer>;
+  findById(id: Uuid | string): Promise<Auctioneer>;
 }

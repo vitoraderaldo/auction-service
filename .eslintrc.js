@@ -8,7 +8,10 @@ module.exports = {
   plugins: ['@typescript-eslint/eslint-plugin'],
   extends: [
     'plugin:@typescript-eslint/recommended',
-    'plugin:prettier/recommended',
+    //'plugin:prettier/recommended',
+    'airbnb-base',
+    'airbnb-typescript/base',
+    'plugin:import/typescript',
   ],
   root: true,
   env: {
@@ -22,4 +25,15 @@ module.exports = {
     '@typescript-eslint/explicit-module-boundary-types': 'off',
     '@typescript-eslint/no-explicit-any': 'off',
   },
+  overrides: [
+    {
+      files: ['**/*.spec.ts'],
+      rules: {
+        'import/no-extraneous-dependencies': [
+          'error',
+          { devDependencies: true},
+        ],
+      },
+    },
+  ]
 };

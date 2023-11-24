@@ -1,4 +1,4 @@
-import { AuctioneerRegistration } from './auctioneer-registration.vo';
+import AuctioneerRegistration from './auctioneer-registration.vo';
 
 describe('Auctioneer Registration - Object Value', () => {
   it('should create a valid 3-character AuctioneerRegistration instance', () => {

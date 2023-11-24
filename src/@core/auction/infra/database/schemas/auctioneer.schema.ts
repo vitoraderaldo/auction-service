@@ -1,8 +1,6 @@
 import { Schema, Model, Mongoose } from 'mongoose';
-import {
-  Auctioneer,
-  AuctioneerId,
-} from '../../../domain/entities/auctioneer.entity';
+import Auctioneer from '../../../domain/entities/auctioneer.entity';
+import Uuid from '../../../../common/domain/value-objects/uuid.vo';
 
 export interface AuctioneerMongoInterface {
   id: string;
@@ -23,7 +21,7 @@ const auctioneerSchema = new Schema({
 interface AuctioneerMongoDocument extends AuctioneerMongoInterface, Document {}
 export type AuctioneerModel = Model<AuctioneerMongoDocument>;
 
-export class AuctioneerSchema {
+export default class AuctioneerSchema {
   static getModel(connection: Mongoose): AuctioneerModel {
     return connection.model<AuctioneerMongoDocument>(
       'Auctioneer',
@@ -35,7 +33,7 @@ export class AuctioneerSchema {
     if (!document) return null;
 
     return new Auctioneer({
-      id: new AuctioneerId(document.id),
+      id: new Uuid(document.id),
       email: document.email,
       name: {
         firstName: document.firstName,
@@ -48,14 +46,16 @@ export class AuctioneerSchema {
   static toDatabase(domain: Auctioneer) {
     if (!domain) return null;
 
-    const data: AuctioneerMongoInterface = {
-      id: domain.id.value,
-      email: domain.email.value,
-      firstName: domain.name.value.firstName,
-      lastName: domain.name.value.lastName,
-      registration: domain.registration.value,
+    const data = domain.toJSON();
+
+    const mongoData: AuctioneerMongoInterface = {
+      id: data.id,
+      email: data.email,
+      firstName: data.fistName,
+      lastName: data.lastName,
+      registration: data.registration,
     };
 
-    return data;
+    return mongoData;
   }
 }

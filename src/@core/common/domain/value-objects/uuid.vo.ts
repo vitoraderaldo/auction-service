@@ -1,7 +1,7 @@
 import { randomUUID } from 'crypto';
-import { ValueObject } from './value-object';
+import ValueObject from './value-object';
 
-export class Uuid extends ValueObject<string> {
+export default class Uuid extends ValueObject<string> {
   constructor(value?: string) {
     const uuid = value || randomUUID();
     super(uuid);
@@ -13,8 +13,7 @@ export class Uuid extends ValueObject<string> {
   }
 
   private validate() {
-    const uuidRegex =
-      /^([a-f\d]{8}(-[a-f\d]{4}){3}-[a-f\d]{12})|([a-f\d]{32})$/i;
+    const uuidRegex = /^([a-f\d]{8}(-[a-f\d]{4}){3}-[a-f\d]{12})|([a-f\d]{32})$/i;
     if (!uuidRegex.test(this.value)) {
       throw new Error('Invalid UUID');
     }

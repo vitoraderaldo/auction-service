@@ -1,6 +1,6 @@
-import { ValueObject } from '../../../common/domain/value-objects/value-object';
+import ValueObject from '../../../common/domain/value-objects/value-object';
 
-export class AuctioneerRegistration extends ValueObject<string> {
+export default class AuctioneerRegistration extends ValueObject<string> {
   constructor(registration: string) {
     super(registration);
     this.validate();
@@ -15,10 +15,8 @@ export class AuctioneerRegistration extends ValueObject<string> {
       if (!this.value.match(/^[0-9]{3}$/)) {
         throw new Error('Registration must be a number');
       }
-    } else {
-      if (!this.value.match(/^[0-9]{2}\/[0-9]{3}-[A-Z]$/)) {
-        throw new Error('Registration is not in a valid format');
-      }
+    } else if (!this.value.match(/^[0-9]{2}\/[0-9]{3}-[A-Z]$/)) {
+      throw new Error('Registration is not in a valid format');
     }
   }
 

@@ -1,3 +1,3 @@
-export abstract class Entity {
+export default abstract class Entity {
   abstract toJSON(): any;
 }

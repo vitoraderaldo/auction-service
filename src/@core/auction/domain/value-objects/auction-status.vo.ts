@@ -1,4 +1,4 @@
-import { ValueObject } from '../../../common/domain/value-objects/value-object';
+import ValueObject from '../../../common/domain/value-objects/value-object';
 
 export enum AuctionStatusEnum {
   CREATED = 'CREATED',
@@ -6,7 +6,7 @@ export enum AuctionStatusEnum {
   BID_PERIOD_FINISHED = 'BID_PERIOD_FINISHED',
 }
 
-export class AuctionStatus extends ValueObject<AuctionStatusEnum> {
+export default class AuctionStatus extends ValueObject<AuctionStatusEnum> {
   constructor(value: AuctionStatusEnum) {
     super(value);
     this.validate();

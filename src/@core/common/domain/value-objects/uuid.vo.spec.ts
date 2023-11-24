@@ -1,4 +1,4 @@
-import { Uuid } from './uuid.vo';
+import Uuid from './uuid.vo';
 
 describe('Uuid - Value Object', () => {
   it.each`

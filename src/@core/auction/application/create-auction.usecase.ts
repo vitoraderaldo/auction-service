@@ -1,5 +1,5 @@
 import { AuctionRepository } from '../domain/repositories/auction.repository';
-import { AuctioneerRepository } from '../domain/repositories/auctioneer.repository';
+import AuctioneerRepository from '../domain/repositories/auctioneer.repository';
 
 interface InputDTO {
   auctioneerId: string;
@@ -30,7 +30,7 @@ interface OutputDTO {
   updatedAt: string;
 }
 
-export class CreateAuctionUseCase {
+export default class CreateAuctionUseCase {
   constructor(
     private readonly auctioneerRepository: AuctioneerRepository,
     private readonly auctionRepository: AuctionRepository,
@@ -56,19 +56,21 @@ export class CreateAuctionUseCase {
 
     await this.auctionRepository.save(auction);
 
+    const auctionData = auction.toJSON();
+
     return {
-      id: auction.id.value,
-      title: auction.title,
-      description: auction.description,
-      photos: auction.photos.map((photo) => photo.toJSON()),
-      startDate: auction.startDate.value,
-      endDate: auction.endDate.value,
-      startPrice: auction.startPrice.value,
-      currentPrice: auction.currentPrice?.value,
-      status: auction.status.value,
-      auctioneerId: auction.auctioneerId,
-      createdAt: auction.createdAt.value,
-      updatedAt: auction.updatedAt.value,
+      id: auctionData.id,
+      title: auctionData.title,
+      description: auctionData.description,
+      photos: auctionData.photos,
+      startDate: auctionData.startDate,
+      endDate: auctionData.endDate,
+      startPrice: auctionData.startPrice,
+      currentPrice: auctionData.currentPrice,
+      status: auctionData.status,
+      auctioneerId: auctionData.auctioneerId,
+      createdAt: auctionData.createdAt,
+      updatedAt: auctionData.updatedAt,
     };
   }
 }

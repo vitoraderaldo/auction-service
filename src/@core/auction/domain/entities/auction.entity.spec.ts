@@ -1,21 +1,18 @@
+import Uuid from '../../../common/domain/value-objects/uuid.vo';
 import {
-  AuctionStatus,
   AuctionStatusEnum,
 } from '../value-objects/auction-status.vo';
-import {
-  Auction,
+import Auction, {
   AuctionConstructorProps,
   AuctionCreateProps,
-  AuctionId,
 } from './auction.entity';
 
 describe('Auction', () => {
-  let auction: Auction;
   let validAuctionProps: AuctionConstructorProps;
 
   beforeEach(() => {
     validAuctionProps = {
-      id: new AuctionId(),
+      id: new Uuid(),
       title: 'Test Auction',
       description: 'Auction description',
       photos: [{ link: 'https://example.com/photo.jpg' }],
@@ -28,14 +25,16 @@ describe('Auction', () => {
       createdAt: '2023-01-01T00:00:00.000Z',
       updatedAt: '2023-01-01T00:00:00.000Z',
     };
-
-    auction = new Auction(validAuctionProps);
   });
 
   describe('constructor', () => {
     it('should create an Auction instance with valid properties', () => {
+      const auction = new Auction(validAuctionProps);
       expect(auction).toBeInstanceOf(Auction);
-      expect(auction.toJSON()).toEqual(validAuctionProps);
+      expect(auction.toJSON()).toEqual({
+        ...validAuctionProps,
+        id: validAuctionProps.id.value.toString(),
+      });
     });
 
     it('should throw an errors without auctioneer', () => {
@@ -105,12 +104,12 @@ describe('Auction', () => {
       };
 
       const auction = Auction.create(createProps);
+      const data = auction.toJSON();
+
       expect(auction).toBeInstanceOf(Auction);
-      expect(auction.id).toBeInstanceOf(AuctionId);
-      expect(
-        auction.status.isEqualTo(new AuctionStatus(AuctionStatusEnum.CREATED)),
-      ).toBe(true);
-      expect(auction.currentPrice).toBeNull();
+      expect(data.id).toBeTruthy();
+      expect(data.status).toEqual(AuctionStatusEnum.CREATED);
+      expect(data.currentPrice).toBeNull();
     });
 
     it('should throw an error if the start date is in the past', () => {
@@ -132,9 +131,11 @@ describe('Auction', () => {
 
   describe('publish', () => {
     it('should publish an auction', () => {
-      const expectedStatus = new AuctionStatus(AuctionStatusEnum.PUBLISHED);
+      const auction = new Auction(validAuctionProps);
+      const expectedStatus = AuctionStatusEnum.PUBLISHED;
       auction.publish();
-      expect(auction.status.isEqualTo(expectedStatus)).toBe(true);
+      const auctionData = auction.toJSON();
+      expect(auctionData.status).toEqual(expectedStatus);
     });
 
     it.each`
@@ -144,13 +145,14 @@ describe('Auction', () => {
     `(
       'should not publish when status is $status',
       ({ status }: { status: AuctionStatusEnum }) => {
-        auction = new Auction({
+        const auction = new Auction({
           ...validAuctionProps,
           status,
         });
+        const data = auction.toJSON();
 
         expect(() => auction.publish()).toThrow(
-          `Auction can not be published with status ${auction.status.toString()}`,
+          `Auction can not be published with status ${data.status}`,
         );
       },
     );

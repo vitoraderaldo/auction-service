@@ -1,6 +1,6 @@
-import { ValueObject } from '../../../common/domain/value-objects/value-object';
+import ValueObject from './value-object';
 
-export class Email extends ValueObject<string> {
+export default class Email extends ValueObject<string> {
   constructor(registration: string) {
     super(registration);
     this.validate();

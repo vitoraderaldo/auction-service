@@ -1,12 +1,12 @@
-export abstract class ValueObject<T> {
-  protected _value: T;
+export default abstract class ValueObject<T> {
+  protected data: T;
 
   constructor(value: T) {
-    this._value = value;
+    this.data = value;
   }
 
   get value(): T {
-    return this._value;
+    return this.data;
   }
 
   abstract isEqualTo(other: ValueObject<T>): boolean;

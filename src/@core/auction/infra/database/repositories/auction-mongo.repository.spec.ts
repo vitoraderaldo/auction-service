@@ -1,9 +1,8 @@
 import { connect, Mongoose } from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
-import { AuctionModel, AuctionSchema } from '../schemas/auction.schema';
-import { AuctionMongoRepository } from './auction-mongo.repository';
-import {
-  Auction,
+import AuctionSchema, { AuctionModel } from '../schemas/auction.schema';
+import AuctionMongoRepository from './auction-mongo.repository';
+import Auction, {
   AuctionCreateProps,
 } from '../../../domain/entities/auction.entity';
 
@@ -47,20 +46,21 @@ describe('AuctionMongoRepository', () => {
     };
 
     const auction = Auction.create(createProps);
+    const auctionData = auction.toJSON();
     await repository.save(auction);
 
-    const savedAuction = await model.findOne({ id: auction.id.value });
+    const savedAuction = await model.findOne({ id: auction.getId() });
 
-    expect(savedAuction.id).toBe(auction.id.value);
-    expect(savedAuction.title).toBe(auction.title);
-    expect(savedAuction.description).toBe(auction.description);
+    expect(savedAuction.id).toBe(auctionData.id);
+    expect(savedAuction.title).toBe(auctionData.title);
+    expect(savedAuction.description).toBe(auctionData.description);
     expect(savedAuction.photos).toEqual([]);
-    expect(savedAuction.startDate).toBe(auction.startDate.value);
-    expect(savedAuction.endDate).toBe(auction.endDate.value);
-    expect(savedAuction.startPrice).toBe(auction.startPrice.value);
+    expect(savedAuction.startDate).toBe(auctionData.startDate);
+    expect(savedAuction.endDate).toBe(auctionData.endDate);
+    expect(savedAuction.startPrice).toBe(auctionData.startPrice);
     expect(savedAuction.currentPrice).toBe(null);
-    expect(savedAuction.status).toBe(auction.status.value);
-    expect(savedAuction.auctioneerId).toBe(auction.auctioneerId);
+    expect(savedAuction.status).toBe(auctionData.status);
+    expect(savedAuction.auctioneerId).toBe(auctionData.auctioneerId);
     expect(savedAuction.createdAt).toBeInstanceOf(Date);
     expect(savedAuction.updatedAt).toBeInstanceOf(Date);
   });

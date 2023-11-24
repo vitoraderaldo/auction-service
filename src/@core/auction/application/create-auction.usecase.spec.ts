@@ -1,8 +1,8 @@
 import { createMock } from '@golevelup/ts-jest';
 import { AuctionRepository } from '../domain/repositories/auction.repository';
-import { AuctioneerRepository } from '../domain/repositories/auctioneer.repository';
-import { CreateAuctionUseCase } from './create-auction.usecase';
-import { buildAuctioneer } from '../../../../test/unit/util/auctioneer.mock';
+import AuctioneerRepository from '../domain/repositories/auctioneer.repository';
+import CreateAuctionUseCase from './create-auction.usecase';
+import buildAuctioneer from '../../../../test/unit/util/auctioneer.mock';
 
 describe('CreateAuctionUseCase', () => {
   let auctioneerRepository: AuctioneerRepository;
@@ -49,7 +49,7 @@ describe('CreateAuctionUseCase', () => {
     const saveSpy = jest.spyOn(auctionRepository, 'save');
 
     const input = {
-      auctioneerId: auctioneer.id.value,
+      auctioneerId: auctioneer.getId(),
       title: 'New Auction',
       description: 'New auction description',
       startPrice: 50.8,
@@ -68,7 +68,7 @@ describe('CreateAuctionUseCase', () => {
     expect(response.startDate).toEqual(input.startDate);
     expect(response.endDate).toEqual(input.endDate);
     expect(response.startPrice).toEqual(input.startPrice);
-    expect(response.currentPrice).toEqual(undefined);
+    expect(response.currentPrice).toEqual(null);
     expect(response.status).toEqual('CREATED');
     expect(response.auctioneerId).toEqual(input.auctioneerId);
     expect(response.createdAt).toBeDefined();

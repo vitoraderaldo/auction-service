@@ -1,4 +1,4 @@
-import { AuctionPhoto } from './auction-photo.vo';
+import AuctionPhoto from './auction-photo.vo';
 
 describe('AuctionPhoto', () => {
   describe('constructor', () => {

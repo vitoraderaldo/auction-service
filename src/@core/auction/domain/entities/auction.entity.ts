@@ -1,15 +1,14 @@
-import { Entity } from '../../../common/domain/entity';
-import { IsoStringDate } from '../../../common/domain/value-objects/iso-string-data.vo';
-import { Price } from '../../../common/domain/value-objects/price.vo';
-import { Uuid } from '../../../common/domain/value-objects/uuid.vo';
-import { AuctionPhoto } from '../value-objects/auction-photo.vo';
-import {
-  AuctionStatus,
+import Entity from '../../../common/domain/entity';
+import IsoStringDate from '../../../common/domain/value-objects/iso-string-data.vo';
+import Price from '../../../common/domain/value-objects/price.vo';
+import Uuid from '../../../common/domain/value-objects/uuid.vo';
+import AuctionPhoto from '../value-objects/auction-photo.vo';
+import AuctionStatus, {
   AuctionStatusEnum,
 } from '../value-objects/auction-status.vo';
 
 export interface AuctionConstructorProps {
-  id: AuctionId;
+  id: Uuid;
   title: string;
   description: string;
   photos: { link: string }[];
@@ -35,40 +34,49 @@ export interface AuctionCreateProps {
   auctioneerId: string;
 }
 
-export class AuctionId extends Uuid {}
+export default class Auction extends Entity {
+  private id: Uuid;
 
-export class Auction extends Entity {
-  private _id: AuctionId;
-  private _title: string;
-  private _description: string;
-  private _photos: AuctionPhoto[];
-  private _startDate: IsoStringDate;
-  private _endDate: IsoStringDate;
-  private _startPrice: Price;
-  private _currentPrice: Price | null;
-  private _status: AuctionStatus;
-  private _auctioneerId: string;
-  private _createdAt: IsoStringDate;
-  private _updatedAt: IsoStringDate;
+  private title: string;
+
+  private description: string;
+
+  private photos: AuctionPhoto[];
+
+  private startDate: IsoStringDate;
+
+  private endDate: IsoStringDate;
+
+  private startPrice: Price;
+
+  private currentPrice: Price | null;
+
+  private status: AuctionStatus;
+
+  private auctioneerId: string;
+
+  private createdAt: IsoStringDate;
+
+  private updatedAt: IsoStringDate;
 
   constructor(props: AuctionConstructorProps) {
     super();
-    this._id = props.id;
-    this._title = props.title;
-    this._description = props.description;
-    this._photos = props.photos.map(
+    this.id = props.id;
+    this.title = props.title;
+    this.description = props.description;
+    this.photos = props.photos.map(
       (photo) => new AuctionPhoto({ link: photo.link }),
     );
-    this._startDate = new IsoStringDate(props.startDate);
-    this._endDate = new IsoStringDate(props.endDate);
-    this._startPrice = new Price(props.startPrice);
-    this._currentPrice = props.currentPrice
+    this.startDate = new IsoStringDate(props.startDate);
+    this.endDate = new IsoStringDate(props.endDate);
+    this.startPrice = new Price(props.startPrice);
+    this.currentPrice = props.currentPrice
       ? new Price(props.currentPrice)
       : null;
-    this._status = new AuctionStatus(props.status);
-    this._auctioneerId = props.auctioneerId;
-    this._createdAt = new IsoStringDate(props.createdAt);
-    this._updatedAt = new IsoStringDate(props.updatedAt);
+    this.status = new AuctionStatus(props.status);
+    this.auctioneerId = props.auctioneerId;
+    this.createdAt = new IsoStringDate(props.createdAt);
+    this.updatedAt = new IsoStringDate(props.updatedAt);
 
     this.validate();
   }
@@ -89,7 +97,7 @@ export class Auction extends Entity {
       endDate: props.endDate,
       startPrice: props.startPrice,
       auctioneerId: props.auctioneerId,
-      id: new AuctionId(),
+      id: new Uuid(),
       status: AuctionStatusEnum.CREATED,
       currentPrice: null,
       createdAt: now.toISOString(),
@@ -99,102 +107,58 @@ export class Auction extends Entity {
 
   publish(): void {
     const createdStatus = new AuctionStatus(AuctionStatusEnum.CREATED);
-    if (!this._status.isEqualTo(createdStatus)) {
+    if (!this.status.isEqualTo(createdStatus)) {
       throw new Error(
-        `Auction can not be published with status ${this._status.toString()}`,
+        `Auction can not be published with status ${this.status.toString()}`,
       );
     }
-    this._status = new AuctionStatus(AuctionStatusEnum.PUBLISHED);
+    this.status = new AuctionStatus(AuctionStatusEnum.PUBLISHED);
   }
 
   private validate() {
-    if (!this._auctioneerId) {
+    if (!this.auctioneerId) {
       throw new Error('Invalid auctioneer');
     }
 
-    if (!this._title || this._title?.length < 5) {
+    if (!this.title || this.title?.length < 5) {
       throw new Error('Title must be at least 5 characters long');
     }
 
-    if (this._title.length > 100) {
+    if (this.title.length > 100) {
       throw new Error('Title must be less than 100 characters long');
     }
 
-    if (!this._description || this._description?.length < 10) {
+    if (!this.description || this.description?.length < 10) {
       throw new Error('Description must be at least 10 characters long');
     }
 
-    if (this._description.length > 10000) {
+    if (this.description.length > 10000) {
       throw new Error('Description must be less than 10000 characters long');
     }
 
-    if (this._endDate.isBefore(this._startDate)) {
+    if (this.endDate.isBefore(this.startDate)) {
       throw new Error('End date must be after start date');
     }
   }
 
-  get id(): AuctionId {
-    return this._id;
-  }
-
-  get title(): string {
-    return this._title;
-  }
-
-  get description(): string {
-    return this._description;
-  }
-
-  get photos(): AuctionPhoto[] {
-    return this._photos;
-  }
-
-  get startDate(): IsoStringDate {
-    return this._startDate;
-  }
-
-  get endDate(): IsoStringDate {
-    return this._endDate;
-  }
-
-  get startPrice(): Price {
-    return this._startPrice;
-  }
-
-  get currentPrice(): Price | null {
-    return this._currentPrice;
-  }
-
-  get status(): AuctionStatus {
-    return this._status;
-  }
-
-  get auctioneerId(): string {
-    return this._auctioneerId;
-  }
-
-  get createdAt(): IsoStringDate {
-    return this._createdAt;
-  }
-
-  get updatedAt(): IsoStringDate {
-    return this._updatedAt;
+  getId(): string {
+    return this.id.value;
   }
 
   toJSON() {
     return {
-      id: this._id,
-      title: this._title,
-      description: this._description,
-      photos: this._photos.map((photo) => photo.toJSON()),
-      startDate: this._startDate.value,
-      endDate: this._endDate.value,
-      startPrice: this._startPrice.value,
-      currentPrice: this._currentPrice?.value ?? null,
-      status: this._status.value,
-      auctioneerId: this._auctioneerId,
-      createdAt: this._createdAt.value,
-      updatedAt: this._updatedAt.value,
+      id: this.id.value,
+      title: this.title,
+      description: this.description,
+      photos: this.photos.map((photo) => photo.toJSON()),
+      startDate: this.startDate.value,
+      endDate: this.endDate.value,
+      startPrice: this.startPrice.value,
+      currentPrice: this.currentPrice?.value ?? null,
+      status: this.status.value,
+      auctioneerId: this.auctioneerId,
+      createdAt: this.createdAt.value,
+      updatedAt: this.updatedAt.value,
     };
   }
 }

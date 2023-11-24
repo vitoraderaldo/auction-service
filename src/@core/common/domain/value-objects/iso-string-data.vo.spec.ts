@@ -1,4 +1,4 @@
-import { IsoStringDate } from './iso-string-data.vo';
+import IsoStringDate from './iso-string-data.vo';
 
 describe('IsoStringDate', () => {
   describe('Create', () => {

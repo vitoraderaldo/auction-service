@@ -1,26 +1,28 @@
 import { randomUUID } from 'crypto';
-import { Auctioneer, AuctioneerId } from './auctioneer.entity';
-import { Price } from '../../../common/domain/value-objects/price.vo';
-import { buildAuctioneer } from '../../../../../test/unit/util/auctioneer.mock';
+import Auctioneer from './auctioneer.entity';
+import buildAuctioneer from '../../../../../test/unit/util/auctioneer.mock';
+import Uuid from '../../../common/domain/value-objects/uuid.vo';
 
 describe('Auctioneer', () => {
   describe('Creation', () => {
     it('should create a valid Auctioneer instance', () => {
       const id = randomUUID();
       const params = {
-        id: new AuctioneerId(id),
+        id: new Uuid(id),
         name: { firstName: 'John', lastName: 'Doe' },
         email: 'john@gmmail.com',
         registration: '12/345-A',
       };
 
       const auctioneer = new Auctioneer(params);
+      const data = auctioneer.toJSON();
 
       expect(auctioneer).toBeInstanceOf(Auctioneer);
-      expect(auctioneer.id.value).toEqual(id);
-      expect(auctioneer.name.value).toEqual(params.name);
-      expect(auctioneer.email.value).toEqual(params.email);
-      expect(auctioneer.registration.value).toEqual(params.registration);
+      expect(data.id).toEqual(id);
+      expect(data.fistName).toEqual(params.name.firstName);
+      expect(data.lastName).toEqual(params.name.lastName);
+      expect(data.email).toEqual(params.email);
+      expect(data.registration).toEqual(params.registration);
     });
 
     it('should create an Auctioneer instance using the create method', () => {
@@ -31,12 +33,14 @@ describe('Auctioneer', () => {
       };
 
       const auctioneer = Auctioneer.create(params);
+      const data = auctioneer.toJSON();
 
       expect(auctioneer).toBeInstanceOf(Auctioneer);
-      expect(auctioneer.id.value).toBeDefined();
-      expect(auctioneer.name.value).toEqual(params.name);
-      expect(auctioneer.email.value).toEqual(params.email);
-      expect(auctioneer.registration.value).toEqual(params.registration);
+      expect(data.id).toBeDefined();
+      expect(data.fistName).toEqual(params.name.firstName);
+      expect(data.lastName).toEqual(params.name.lastName);
+      expect(data.email).toEqual(params.email);
+      expect(data.registration).toEqual(params.registration);
     });
   });
 
@@ -57,13 +61,13 @@ describe('Auctioneer', () => {
         startDate: startDate.toISOString(),
         endDate: endDate.toISOString(),
         startPrice: 100,
-      });
+      }).toJSON();
 
       expect(auction).toBeDefined();
-      expect(auction.auctioneerId).toEqual(auctioneer.id.value);
+      expect(auction.auctioneerId).toEqual(auctioneer.getId());
       expect(auction.title).toEqual('Some auction tile');
       expect(auction.description).toEqual('Some auction description');
-      expect(auction.startPrice.isEqualTo(new Price(100))).toBe(true);
+      expect(auction.startPrice).toEqual(100);
     });
   });
 });

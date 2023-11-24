@@ -1,4 +1,4 @@
-import { Auction } from '../entities/auction.entity';
+import Auction from '../entities/auction.entity';
 
 export interface AuctionRepository {
   save(auction: Auction): Promise<void>;

@@ -1,4 +1,4 @@
-import { Email } from './email.vo';
+import Email from './email.vo';
 
 describe('Email', () => {
   it('should create a valid Email instance', () => {

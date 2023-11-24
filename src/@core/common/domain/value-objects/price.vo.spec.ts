@@ -1,4 +1,4 @@
-import { Price } from './price.vo';
+import Price from './price.vo';
 
 describe('Price', () => {
   describe('Create', () => {

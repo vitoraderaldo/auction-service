@@ -1,11 +1,11 @@
-import { ValueObject } from './value-object';
+import ValueObject from './value-object';
 
 interface PersonNameProps {
   firstName: string;
   lastName: string;
 }
 
-export class PersonName extends ValueObject<PersonNameProps> {
+export default class PersonName extends ValueObject<PersonNameProps> {
   constructor(name: PersonNameProps) {
     super(name);
     this.validate();
@@ -22,8 +22,8 @@ export class PersonName extends ValueObject<PersonNameProps> {
 
   isEqualTo(other: PersonName): boolean {
     return (
-      this.value.firstName === other.value.firstName &&
-      this.value.lastName === other.value.lastName
+      this.value.firstName === other.value.firstName
+      && this.value.lastName === other.value.lastName
     );
   }
 }
