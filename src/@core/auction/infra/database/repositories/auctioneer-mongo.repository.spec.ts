@@ -1,7 +1,7 @@
 import { connect, Mongoose } from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import AuctioneerSchema, {
-  AuctioneerModel,
+  AuctioneerModel, AuctioneerMongoInterface,
 } from '../schemas/auctioneer.schema';
 import AuctioneerMongoRepository from './auctioneer-mongo.repository';
 import Auctioneer from '../../../domain/entities/auctioneer.entity';
@@ -71,9 +71,16 @@ describe('AuctioneerMongoRepository', () => {
     });
     await repository.save(auctioneer);
 
-    const foundAuctioneer = await repository.findById(auctioneer.getId());
+    const foundAuctioneer = await model.findOne<AuctioneerMongoInterface>({
+      id: auctioneer.getId(),
+    });
 
-    expect(foundAuctioneer).toBeInstanceOf(Auctioneer);
-    expect(foundAuctioneer).toStrictEqual(auctioneer);
+    expect(foundAuctioneer.id).toEqual(auctioneer.getId());
+    expect(foundAuctioneer.email).toEqual('john.doe@email.com');
+    expect(foundAuctioneer.firstName).toEqual('John');
+    expect(foundAuctioneer.lastName).toEqual('Doe');
+    expect(foundAuctioneer.registration).toEqual('12/345-A');
+    expect(foundAuctioneer.createdAt).toBeInstanceOf(Date);
+    expect(foundAuctioneer.updatedAt).toBeInstanceOf(Date);
   });
 });

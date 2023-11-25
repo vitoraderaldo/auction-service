@@ -16,8 +16,8 @@ export interface AuctionMongoInterface {
   currentPrice: number | null;
   status: string;
   auctioneerId: string;
-  createdAt?: Date;
-  updatedAt?: Date;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 const auctionSchema = new Schema(
@@ -74,7 +74,7 @@ export default class AuctionSchema {
 
     const data = domain.toJSON();
 
-    const mongoData: AuctionMongoInterface = {
+    const mongoData: Omit<AuctionMongoInterface, 'createdAt' | 'updatedAt'> = {
       id: data.id,
       title: data.title,
       description: data.description,

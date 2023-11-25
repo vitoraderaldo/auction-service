@@ -1,7 +1,7 @@
 import { AuctionRepository } from '../domain/repositories/auction.repository';
 import AuctioneerRepository from '../domain/repositories/auctioneer.repository';
 
-interface InputDTO {
+interface CreateAuctionInput {
   auctioneerId: string;
   title: string;
   description: string;
@@ -13,7 +13,7 @@ interface InputDTO {
   }[];
 }
 
-interface OutputDTO {
+export interface CreateAuctionOutput {
   id: string;
   title: string;
   description: string;
@@ -32,11 +32,11 @@ interface OutputDTO {
 
 export default class CreateAuctionUseCase {
   constructor(
-    private readonly auctioneerRepository: AuctioneerRepository,
     private readonly auctionRepository: AuctionRepository,
+    private readonly auctioneerRepository: AuctioneerRepository,
   ) {}
 
-  async execute(input: InputDTO): Promise<OutputDTO> {
+  async execute(input: CreateAuctionInput): Promise<CreateAuctionOutput> {
     const auctioneer = await this.auctioneerRepository.findById(
       input.auctioneerId,
     );

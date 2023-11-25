@@ -8,6 +8,8 @@ export interface AuctioneerMongoInterface {
   firstName: string;
   lastName: string;
   registration: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 const auctioneerSchema = new Schema({
@@ -16,6 +18,8 @@ const auctioneerSchema = new Schema({
   firstName: String,
   lastName: String,
   registration: String,
+}, {
+  timestamps: true,
 });
 
 interface AuctioneerMongoDocument extends AuctioneerMongoInterface, Document {}
@@ -48,7 +52,7 @@ export default class AuctioneerSchema {
 
     const data = domain.toJSON();
 
-    const mongoData: AuctioneerMongoInterface = {
+    const mongoData: Omit<AuctioneerMongoInterface, 'createdAt' | 'updatedAt'> = {
       id: data.id,
       email: data.email,
       firstName: data.fistName,

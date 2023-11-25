@@ -18,11 +18,12 @@
     "test:unit:watch": "npm run test:unit -- --watch",
     "test:unit:cov": "npm run test:unit -- --coverage",
     "test:unit:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:integration": "jest --config ./test/jest-e2e.json",
+    "test:integration": "jest --config ./test/integration/jest-e2e.json",
     "test:integration:watch": "npm run test:integration -- --watch"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
+    "@nestjs/config": "^3.1.1",
     "@nestjs/core": "^10.0.0",
     "@nestjs/platform-express": "^10.0.0",
     "mongoose": "^8.0.1",

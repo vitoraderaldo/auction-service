@@ -1,6 +1,6 @@
 import { connect, Mongoose } from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
-import AuctionSchema, { AuctionModel } from '../schemas/auction.schema';
+import AuctionSchema, { AuctionModel, AuctionMongoInterface } from '../schemas/auction.schema';
 import AuctionMongoRepository from './auction-mongo.repository';
 import Auction, {
   AuctionCreateProps,
@@ -49,7 +49,7 @@ describe('AuctionMongoRepository', () => {
     const auctionData = auction.toJSON();
     await repository.save(auction);
 
-    const savedAuction = await model.findOne({ id: auction.getId() });
+    const savedAuction = await model.findOne<AuctionMongoInterface>({ id: auction.getId() });
 
     expect(savedAuction.id).toBe(auctionData.id);
     expect(savedAuction.title).toBe(auctionData.title);
