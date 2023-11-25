@@ -1,6 +1,6 @@
 import { randomUUID } from 'crypto';
 import Auctioneer from './auctioneer.entity';
-import buildAuctioneer from '../../../../../test/unit/util/auctioneer.mock';
+import buildAuctioneer from '../../../../../test/util/auctioneer.mock';
 import Uuid from '../../../common/domain/value-objects/uuid.vo';
 
 describe('Auctioneer', () => {
@@ -54,14 +54,16 @@ describe('Auctioneer', () => {
 
       const auctioneer = buildAuctioneer();
 
-      const auction = auctioneer.createAuction({
-        title: 'Some auction tile',
-        description: 'Some auction description',
-        photos: [{ link: 'https://some-photo-link.com' }],
-        startDate: startDate.toISOString(),
-        endDate: endDate.toISOString(),
-        startPrice: 100,
-      }).toJSON();
+      const auction = auctioneer
+        .createAuction({
+          title: 'Some auction tile',
+          description: 'Some auction description',
+          photos: [{ link: 'https://some-photo-link.com' }],
+          startDate: startDate.toISOString(),
+          endDate: endDate.toISOString(),
+          startPrice: 100,
+        })
+        .toJSON();
 
       expect(auction).toBeDefined();
       expect(auction.auctioneerId).toEqual(auctioneer.getId());

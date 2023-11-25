@@ -1,8 +1,8 @@
 import { randomUUID } from 'crypto';
 import Auctioneer, {
   AuctioneerConstructorProps,
-} from '../../../src/@core/auction/domain/entities/auctioneer.entity';
-import Uuid from '../../../src/@core/common/domain/value-objects/uuid.vo';
+} from '../../src/@core/auction/domain/entities/auctioneer.entity';
+import Uuid from '../../src/@core/common/domain/value-objects/uuid.vo';
 
 export default function buildAuctioneer(
   props?: Partial<AuctioneerConstructorProps>,

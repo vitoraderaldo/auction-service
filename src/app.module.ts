@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import AuctionController from './auction.controller';
+import AuctionController from './@core/auction/infra/api/auction.controller';
 import ConfModule from './config.module';
 import MongoModule from './mongo.module';
 import AuctionMongoRepository from './@core/auction/infra/database/repositories/auction-mongo.repository';
@@ -11,10 +11,7 @@ import HealthController from './health.controller';
 
 @Module({
   imports: [ConfModule, MongoModule],
-  controllers: [
-    HealthController,
-    AuctionController,
-  ],
+  controllers: [HealthController, AuctionController],
   providers: [
     {
       provide: 'AuctionRepository',

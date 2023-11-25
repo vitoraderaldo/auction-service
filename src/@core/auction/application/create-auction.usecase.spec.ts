@@ -2,7 +2,7 @@ import { createMock } from '@golevelup/ts-jest';
 import { AuctionRepository } from '../domain/repositories/auction.repository';
 import AuctioneerRepository from '../domain/repositories/auctioneer.repository';
 import CreateAuctionUseCase from './create-auction.usecase';
-import buildAuctioneer from '../../../../test/unit/util/auctioneer.mock';
+import buildAuctioneer from '../../../../test/util/auctioneer.mock';
 
 describe('CreateAuctionUseCase', () => {
   let auctioneerRepository: AuctioneerRepository;
@@ -30,7 +30,7 @@ describe('CreateAuctionUseCase', () => {
     };
 
     const response = useCase.execute(input);
-    expect(response).rejects.toThrow('Auctioneer not found');
+    await expect(response).rejects.toThrow('Auctioneer not found');
   });
 
   it('should create an auction successfully', async () => {

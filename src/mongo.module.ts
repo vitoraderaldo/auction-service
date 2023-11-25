@@ -3,9 +3,13 @@ import { Mongoose, connect } from 'mongoose';
 import AuctionMongoRepository from './@core/auction/infra/database/repositories/auction-mongo.repository';
 import ConfModule from './config.module';
 import { EnvironmentConfigInterface } from './@core/common/domain/environment-config.interface';
-import AuctionSchema, { AuctionModel } from './@core/auction/infra/database/schemas/auction.schema';
+import AuctionSchema, {
+  AuctionModel,
+} from './@core/auction/infra/database/schemas/auction.schema';
 import AuctioneerMongoRepository from './@core/auction/infra/database/repositories/auctioneer-mongo.repository';
-import { AuctioneerModel } from './@core/auction/infra/database/schemas/auctioneer.schema';
+import AuctioneerSchema, {
+  AuctioneerModel,
+} from './@core/auction/infra/database/schemas/auctioneer.schema';
 
 const MONGOOSE_CONNECTION = 'MONGOOSE_CONNECTION';
 
@@ -29,7 +33,7 @@ const MONGOOSE_CONNECTION = 'MONGOOSE_CONNECTION';
     },
     {
       provide: 'AUCTIONEER_MODEL',
-      useFactory: (connection: Mongoose) => AuctionSchema.getModel(connection),
+      useFactory: (connection: Mongoose) => AuctioneerSchema.getModel(connection),
       inject: [MONGOOSE_CONNECTION],
     },
     {
@@ -48,6 +52,5 @@ const MONGOOSE_CONNECTION = 'MONGOOSE_CONNECTION';
     AuctioneerMongoRepository,
     MONGOOSE_CONNECTION,
   ],
-
 })
 export default class MongoModule {}

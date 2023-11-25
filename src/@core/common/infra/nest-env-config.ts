@@ -1,5 +1,8 @@
 import { ConfigService } from '@nestjs/config';
-import { EnvironmentConfigInterface, MongoConfig } from '../domain/environment-config.interface';
+import {
+  EnvironmentConfigInterface,
+  MongoConfig,
+} from '../domain/environment-config.interface';
 
 export default class NestConfigService implements EnvironmentConfigInterface {
   constructor(private readonly nestConfig: ConfigService) {}

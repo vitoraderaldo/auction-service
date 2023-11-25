@@ -1,7 +1,5 @@
 import Uuid from '../../../common/domain/value-objects/uuid.vo';
-import {
-  AuctionStatusEnum,
-} from '../value-objects/auction-status.vo';
+import { AuctionStatusEnum } from '../value-objects/auction-status.vo';
 import Auction, {
   AuctionConstructorProps,
   AuctionCreateProps,

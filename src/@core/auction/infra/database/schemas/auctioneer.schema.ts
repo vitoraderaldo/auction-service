@@ -12,15 +12,18 @@ export interface AuctioneerMongoInterface {
   updatedAt: Date;
 }
 
-const auctioneerSchema = new Schema({
-  id: String,
-  email: String,
-  firstName: String,
-  lastName: String,
-  registration: String,
-}, {
-  timestamps: true,
-});
+const auctioneerSchema = new Schema(
+  {
+    id: String,
+    email: String,
+    firstName: String,
+    lastName: String,
+    registration: String,
+  },
+  {
+    timestamps: true,
+  },
+);
 
 interface AuctioneerMongoDocument extends AuctioneerMongoInterface, Document {}
 export type AuctioneerModel = Model<AuctioneerMongoDocument>;

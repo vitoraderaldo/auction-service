@@ -72,7 +72,7 @@ export default class Auctioneer extends Entity {
     };
   }
 
-  getId() : string {
+  getId(): string {
     return this.id.value;
   }
 }

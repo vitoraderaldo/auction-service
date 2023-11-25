@@ -1,7 +1,8 @@
 import { connect, Mongoose } from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import AuctioneerSchema, {
-  AuctioneerModel, AuctioneerMongoInterface,
+  AuctioneerModel,
+  AuctioneerMongoInterface,
 } from '../schemas/auctioneer.schema';
 import AuctioneerMongoRepository from './auctioneer-mongo.repository';
 import Auctioneer from '../../../domain/entities/auctioneer.entity';
@@ -37,7 +38,9 @@ describe('AuctioneerMongoRepository', () => {
 
     await repository.save(auctioneer);
 
-    const savedAuctioneer = await model.findOne<Auctioneer>({ id: auctioneer.getId() });
+    const savedAuctioneer = await model.findOne<Auctioneer>({
+      id: auctioneer.getId(),
+    });
 
     expect(savedAuctioneer.toJSON()).toEqual(
       expect.objectContaining({
