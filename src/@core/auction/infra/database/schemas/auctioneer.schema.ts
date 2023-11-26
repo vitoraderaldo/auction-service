@@ -47,6 +47,8 @@ export default class AuctioneerSchema {
         lastName: document.lastName,
       },
       registration: document.registration,
+      createdAt: document.createdAt.toISOString(),
+      updatedAt: document.updatedAt.toISOString(),
     });
   }
 
@@ -58,7 +60,7 @@ export default class AuctioneerSchema {
     const mongoData: Omit<AuctioneerMongoInterface, 'createdAt' | 'updatedAt'> = {
       id: data.id,
       email: data.email,
-      firstName: data.fistName,
+      firstName: data.firstName,
       lastName: data.lastName,
       registration: data.registration,
     };

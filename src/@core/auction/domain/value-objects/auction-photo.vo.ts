@@ -11,11 +11,11 @@ export default class AuctionPhoto extends ValueObject<AuctionPhotoProps> {
   }
 
   private validate(): void {
-    const secureLinkPattern = 'https://(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)';
-    const secureLinkRegex = new RegExp(secureLinkPattern);
+    const linkPattern = 'http(s)?://(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)';
+    const linkRegex = new RegExp(linkPattern);
 
-    if (!secureLinkRegex.test(this.value.link)) {
-      throw new Error('Auction photo link must be a valid secure URL');
+    if (!linkRegex.test(this.value.link)) {
+      throw new Error(`Auction photo link '${this.value.link}' is not a valid URL`);
     }
   }
 

@@ -8,10 +8,12 @@ import CreateAuctionUseCase from './@core/auction/application/create-auction.use
 import { AuctionRepository } from './@core/auction/domain/repositories/auction.repository';
 import AuctioneerRepository from './@core/auction/domain/repositories/auctioneer.repository';
 import HealthController from './health.controller';
+import AuctioneerController from './@core/auction/infra/api/auctioneer.controller';
+import CreateAuctioneerUseCase from './@core/auction/application/create-auctioneer.usecase';
 
 @Module({
   imports: [ConfModule, MongoModule],
-  controllers: [HealthController, AuctionController],
+  controllers: [HealthController, AuctionController, AuctioneerController],
   providers: [
     {
       provide: 'AuctionRepository',
@@ -30,6 +32,13 @@ import HealthController from './health.controller';
         auctioneerRepository: AuctioneerRepository,
       ) => new CreateAuctionUseCase(auctionRepository, auctioneerRepository),
       inject: ['AuctionRepository', 'AuctioneerRepository'],
+    },
+    {
+      provide: CreateAuctioneerUseCase,
+      useFactory: (
+        auctioneerRepository: AuctioneerRepository,
+      ) => new CreateAuctioneerUseCase(auctioneerRepository),
+      inject: ['AuctioneerRepository'],
     },
   ],
 })

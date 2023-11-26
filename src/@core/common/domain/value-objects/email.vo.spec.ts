@@ -11,7 +11,7 @@ describe('Email', () => {
   it('should throw an error for an invalid email format', () => {
     const invalidEmail = 'invalid-email';
     expect(() => new Email(invalidEmail)).toThrow(
-      'Email is not in a valid format',
+      `Email ${invalidEmail} is not in a valid format`,
     );
   });
 

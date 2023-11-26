@@ -12,6 +12,8 @@ describe('Auctioneer', () => {
         name: { firstName: 'John', lastName: 'Doe' },
         email: 'john@gmmail.com',
         registration: '12/345-A',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
       };
 
       const auctioneer = new Auctioneer(params);
@@ -19,10 +21,12 @@ describe('Auctioneer', () => {
 
       expect(auctioneer).toBeInstanceOf(Auctioneer);
       expect(data.id).toEqual(id);
-      expect(data.fistName).toEqual(params.name.firstName);
+      expect(data.firstName).toEqual(params.name.firstName);
       expect(data.lastName).toEqual(params.name.lastName);
       expect(data.email).toEqual(params.email);
       expect(data.registration).toEqual(params.registration);
+      expect(data.createdAt).toEqual(params.createdAt);
+      expect(data.updatedAt).toEqual(params.updatedAt);
     });
 
     it('should create an Auctioneer instance using the create method', () => {
@@ -37,7 +41,7 @@ describe('Auctioneer', () => {
 
       expect(auctioneer).toBeInstanceOf(Auctioneer);
       expect(data.id).toBeDefined();
-      expect(data.fistName).toEqual(params.name.firstName);
+      expect(data.firstName).toEqual(params.name.firstName);
       expect(data.lastName).toEqual(params.name.lastName);
       expect(data.email).toEqual(params.email);
       expect(data.registration).toEqual(params.registration);

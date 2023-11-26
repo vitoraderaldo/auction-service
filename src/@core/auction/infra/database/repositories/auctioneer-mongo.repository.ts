@@ -21,4 +21,17 @@ export default class AuctioneerMongoRepository implements AuctioneerRepository {
     const data = AuctioneerSchema.toDatabase(auctioneer);
     await this.model.create(data);
   }
+
+  async findByRegistrationOrEmail(params: {
+    registration: string
+    email: string
+  }): Promise<Auctioneer> {
+    const document = await this.model.findOne({
+      $or: [
+        { registration: params.registration },
+        { email: params.email },
+      ],
+    });
+    return AuctioneerSchema.toDomain(document);
+  }
 }

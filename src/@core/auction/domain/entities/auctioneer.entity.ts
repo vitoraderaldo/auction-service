@@ -21,6 +21,8 @@ export type AuctioneerConstructorProps = {
   name: { firstName: string; lastName: string };
   email: string;
   registration: string;
+  createdAt: string;
+  updatedAt: string;
 };
 
 export default class Auctioneer extends Entity {
@@ -32,12 +34,18 @@ export default class Auctioneer extends Entity {
 
   private registration: AuctioneerRegistration;
 
+  private createdAt: string;
+
+  private updatedAt: string;
+
   constructor(params: AuctioneerConstructorProps) {
     super();
     this.id = params.id;
     this.name = new PersonName(params.name);
     this.email = new Email(params.email);
     this.registration = new AuctioneerRegistration(params.registration);
+    this.createdAt = params.createdAt;
+    this.updatedAt = params.updatedAt;
   }
 
   static create(params: {
@@ -52,6 +60,8 @@ export default class Auctioneer extends Entity {
       name,
       email,
       registration,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     });
   }
 
@@ -65,14 +75,20 @@ export default class Auctioneer extends Entity {
   toJSON() {
     return {
       id: this.id.value,
-      fistName: this.name.value.firstName,
+      firstName: this.name.value.firstName,
       lastName: this.name.value.lastName,
       email: this.email.value,
       registration: this.registration.value,
+      createdAt: this.createdAt,
+      updatedAt: this.updatedAt,
     };
   }
 
   getId(): string {
     return this.id.value;
+  }
+
+  getRegistration(): string {
+    return this.registration.value;
   }
 }

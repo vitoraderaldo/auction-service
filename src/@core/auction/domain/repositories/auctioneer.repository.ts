@@ -4,4 +4,8 @@ import Auctioneer from '../entities/auctioneer.entity';
 export default interface AuctioneerRepository {
   save(auctioneer: Auctioneer): Promise<void>;
   findById(id: Uuid | string): Promise<Auctioneer>;
+  findByRegistrationOrEmail(params: {
+    registration: string
+    email: string
+  }): Promise<Auctioneer>;
 }

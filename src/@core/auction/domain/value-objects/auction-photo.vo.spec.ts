@@ -9,17 +9,10 @@ describe('AuctionPhoto', () => {
       expect(auctionPhoto.value.link).toEqual(validLink);
     });
 
-    it('should throw an error if link is not HTTPS', () => {
-      const invalidLink = 'http://example.com/photo.jpg';
-      expect(() => new AuctionPhoto({ link: invalidLink })).toThrow(
-        'Auction photo link must be a valid secure URL',
-      );
-    });
-
     it('should throw an error if initialized with an invalid link', () => {
       const invalidLink = 'invalid-link';
       expect(() => new AuctionPhoto({ link: invalidLink })).toThrow(
-        'Auction photo link must be a valid secure URL',
+        `Auction photo link '${invalidLink}' is not a valid URL`,
       );
     });
   });

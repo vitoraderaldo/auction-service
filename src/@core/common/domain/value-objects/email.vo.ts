@@ -7,9 +7,9 @@ export default class Email extends ValueObject<string> {
   }
 
   validate() {
-    const regex = /^[a-z0-9.]+@[a-z0-9]+\.[a-z]+(\.[a-z]+)?$/i;
+    const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (!regex.test(this.value)) {
-      throw new Error('Email is not in a valid format');
+      throw new Error(`Email ${this.value} is not in a valid format`);
     }
   }
 
