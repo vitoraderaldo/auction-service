@@ -19,7 +19,8 @@
     "test:unit:cov": "npm run test:unit -- --coverage",
     "test:unit:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:integration": "jest --config ./test/integration/jest-e2e.json",
-    "test:integration:watch": "npm run test:integration -- --watch"
+    "test:integration:watch": "npm run test:integration -- --watch",
+    "test:integration:cov": "npm run test:integration -- --coverage"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",

@@ -11,7 +11,7 @@ describe('Person Name - Value Object', () => {
   it('should throw an error for a first name less than 3 characters long', () => {
     const shortName = { firstName: 'Jo', lastName: 'Doe' };
     expect(() => new PersonName(shortName)).toThrow(
-      'First name must be at least 3 characters long',
+      "First name 'Jo' must be at least 3 characters long",
     );
   });
 
