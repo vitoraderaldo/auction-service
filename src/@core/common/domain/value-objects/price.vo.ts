@@ -18,4 +18,12 @@ export default class Price extends ValueObject<number> {
   isEqualTo(other: Price): boolean {
     return this.value === other.value;
   }
+
+  isGreaterThan(other: Price): boolean {
+    return this.value > other.value;
+  }
+
+  toString(): string {
+    return this.value.toString();
+  }
 }

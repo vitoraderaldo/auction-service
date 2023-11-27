@@ -14,6 +14,7 @@ import {
 import AuctionPhoto from './auction-photo';
 
 export default class CreateAuctionRest {
+  // todo: remove this, must grab from token header
   @IsUUID()
     auctioneerId: string;
 

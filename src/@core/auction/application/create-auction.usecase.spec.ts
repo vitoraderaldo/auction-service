@@ -68,7 +68,6 @@ describe('CreateAuctionUseCase', () => {
     expect(response.startDate).toEqual(input.startDate);
     expect(response.endDate).toEqual(input.endDate);
     expect(response.startPrice).toEqual(input.startPrice);
-    expect(response.currentPrice).toEqual(null);
     expect(response.status).toEqual('CREATED');
     expect(response.auctioneerId).toEqual(input.auctioneerId);
     expect(response.createdAt).toBeDefined();

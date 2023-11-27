@@ -6,6 +6,7 @@ import AuctionPhoto from '../value-objects/auction-photo.vo';
 import AuctionStatus, {
   AuctionStatusEnum,
 } from '../value-objects/auction-status.vo';
+import Bid from './bid.entity';
 
 export interface AuctionConstructorProps {
   id: Uuid;
@@ -15,9 +16,9 @@ export interface AuctionConstructorProps {
   startDate: string;
   endDate: string;
   startPrice: number;
-  currentPrice: number | null;
   status: AuctionStatusEnum;
   auctioneerId: string;
+  bids: Bid[];
   createdAt?: string;
   updatedAt?: string;
 }
@@ -49,8 +50,6 @@ export default class Auction extends Entity {
 
   private startPrice: Price;
 
-  private currentPrice: Price | null;
-
   private status: AuctionStatus;
 
   private auctioneerId: string;
@@ -58,6 +57,8 @@ export default class Auction extends Entity {
   private createdAt: IsoStringDate;
 
   private updatedAt: IsoStringDate;
+
+  private bids: Bid[];
 
   constructor(props: AuctionConstructorProps) {
     super();
@@ -70,11 +71,9 @@ export default class Auction extends Entity {
     this.startDate = new IsoStringDate(props.startDate);
     this.endDate = new IsoStringDate(props.endDate);
     this.startPrice = new Price(props.startPrice);
-    this.currentPrice = props.currentPrice
-      ? new Price(props.currentPrice)
-      : null;
     this.status = new AuctionStatus(props.status);
     this.auctioneerId = props.auctioneerId;
+    this.bids = props.bids;
     this.createdAt = new IsoStringDate(props.createdAt);
     this.updatedAt = new IsoStringDate(props.updatedAt);
 
@@ -82,10 +81,12 @@ export default class Auction extends Entity {
   }
 
   static create(props: AuctionCreateProps): Auction {
-    const now = new Date();
+    const fiveMinutesAgo = new Date();
+    fiveMinutesAgo.setMinutes(fiveMinutesAgo.getMinutes() - 5);
+
     const startDate = new Date(props.startDate);
 
-    if (startDate.getTime() < now.getTime()) {
+    if (startDate.getTime() < fiveMinutesAgo.getTime()) {
       throw new Error('Start date must not be in the past');
     }
 
@@ -99,9 +100,9 @@ export default class Auction extends Entity {
       auctioneerId: props.auctioneerId,
       id: new Uuid(),
       status: AuctionStatusEnum.CREATED,
-      currentPrice: null,
-      createdAt: now.toISOString(),
-      updatedAt: now.toISOString(),
+      bids: [],
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     });
   }
 
@@ -145,6 +146,53 @@ export default class Auction extends Entity {
     return this.id.value;
   }
 
+  createBid(params: {
+    value: number;
+    bidderId: string;
+  }): Bid {
+    const publishedStatus = new AuctionStatus(AuctionStatusEnum.PUBLISHED);
+
+    if (!this.status.isEqualTo(publishedStatus)) {
+      throw new Error(
+        `Auction can not receive bid when status is '${this.status.toString()}'`,
+      );
+    }
+
+    const now = new IsoStringDate(new Date().toISOString());
+
+    if (this.startDate.isAfter(now)) {
+      throw new Error('Bid period has not started yet');
+    }
+
+    if (this.endDate.isBefore(now)) {
+      throw new Error('Bid period is over');
+    }
+
+    const bidPrice = new Price(params.value);
+
+    if (this.startPrice.isGreaterThan(bidPrice)) {
+      throw new Error('Bid value must be greater than start price');
+    }
+
+    const isGreaterThanOtherBids = this.bids.every(
+      (bid) => bidPrice.isGreaterThan(bid.getPrice()),
+    );
+
+    if (!isGreaterThanOtherBids) {
+      throw new Error('Bid value is not greater than other bids');
+    }
+
+    const newBid = Bid.create({
+      bidderId: params.bidderId,
+      auctionId: this.id.value,
+      value: bidPrice,
+    });
+
+    this.bids.push(newBid);
+
+    return newBid;
+  }
+
   toJSON() {
     return {
       id: this.id.value,
@@ -154,8 +202,8 @@ export default class Auction extends Entity {
       startDate: this.startDate.value,
       endDate: this.endDate.value,
       startPrice: this.startPrice.value,
-      currentPrice: this.currentPrice?.value ?? null,
       status: this.status.value,
+      bids: this.bids.map((bid) => bid.toJSON()),
       auctioneerId: this.auctioneerId,
       createdAt: this.createdAt.value,
       updatedAt: this.updatedAt.value,

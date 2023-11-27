@@ -10,6 +10,10 @@ import AuctioneerMongoRepository from './@core/auction/infra/database/repositori
 import AuctioneerSchema, {
   AuctioneerModel,
 } from './@core/auction/infra/database/schemas/auctioneer.schema';
+import BidderSchema, { BidderModel } from './@core/auction/infra/database/schemas/bidder.schema';
+import BidSchema, { BidModel } from './@core/auction/infra/database/schemas/bid.schema';
+import BidderMongoRepository from './@core/auction/infra/database/repositories/bidder-mongo.repository';
+import BidMongoRepository from './@core/auction/infra/database/repositories/bid-mongo.repository';
 
 const MONGOOSE_CONNECTION = 'MONGOOSE_CONNECTION';
 
@@ -37,6 +41,16 @@ const MONGOOSE_CONNECTION = 'MONGOOSE_CONNECTION';
       inject: [MONGOOSE_CONNECTION],
     },
     {
+      provide: 'BIDDER_MODEL',
+      useFactory: (connection: Mongoose) => BidderSchema.getModel(connection),
+      inject: [MONGOOSE_CONNECTION],
+    },
+    {
+      provide: 'BID_MODEL',
+      useFactory: (connection: Mongoose) => BidSchema.getModel(connection),
+      inject: [MONGOOSE_CONNECTION],
+    },
+    {
       provide: AuctionMongoRepository,
       useFactory: (model: AuctionModel) => new AuctionMongoRepository(model),
       inject: ['AUCTION_MODEL'],
@@ -46,10 +60,22 @@ const MONGOOSE_CONNECTION = 'MONGOOSE_CONNECTION';
       useFactory: (model: AuctioneerModel) => new AuctioneerMongoRepository(model),
       inject: ['AUCTIONEER_MODEL'],
     },
+    {
+      provide: BidderMongoRepository,
+      useFactory: (model: BidderModel) => new BidderMongoRepository(model),
+      inject: ['BIDDER_MODEL'],
+    },
+    {
+      provide: BidMongoRepository,
+      useFactory: (model: BidModel) => new BidMongoRepository(model),
+      inject: ['BID_MODEL'],
+    },
   ],
   exports: [
     AuctionMongoRepository,
     AuctioneerMongoRepository,
+    BidderMongoRepository,
+    BidMongoRepository,
     MONGOOSE_CONNECTION,
   ],
 })

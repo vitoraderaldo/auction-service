@@ -23,7 +23,6 @@ export interface CreateAuctionOutput {
   startDate: string;
   endDate: string;
   startPrice: number;
-  currentPrice: number;
   status: string;
   auctioneerId: string;
   createdAt: string;
@@ -66,7 +65,6 @@ export default class CreateAuctionUseCase {
       startDate: auctionData.startDate,
       endDate: auctionData.endDate,
       startPrice: auctionData.startPrice,
-      currentPrice: auctionData.currentPrice,
       status: auctionData.status,
       auctioneerId: auctionData.auctioneerId,
       createdAt: auctionData.createdAt,

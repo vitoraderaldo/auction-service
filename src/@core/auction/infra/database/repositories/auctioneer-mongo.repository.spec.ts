@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker';
+import { randomUUID } from 'crypto';
 import { connect, Mongoose } from 'mongoose';
-import { MongoMemoryServer } from 'mongodb-memory-server';
 import AuctioneerSchema, {
   AuctioneerModel,
   AuctioneerMongoInterface,
@@ -10,15 +10,13 @@ import Auctioneer from '../../../domain/entities/auctioneer.entity';
 import buildAuctioneer from '../../../../../../test/util/auctioneer.mock';
 
 describe('AuctioneerMongoRepository', () => {
-  let mongoServer: MongoMemoryServer;
   let connection: Mongoose;
   let model: AuctioneerModel;
   let repository: AuctioneerMongoRepository;
 
   beforeEach(async () => {
     if (!connection) {
-      mongoServer = await MongoMemoryServer.create();
-      connection = await connect(mongoServer.getUri());
+      connection = await connect(process.env.MONGO_URI, { dbName: randomUUID() });
     }
 
     model = AuctioneerSchema.getModel(connection);
@@ -28,7 +26,6 @@ describe('AuctioneerMongoRepository', () => {
 
   afterAll(async () => {
     await connection.disconnect();
-    mongoServer.stop();
   });
 
   it('should save an auctioneer on the database', async () => {

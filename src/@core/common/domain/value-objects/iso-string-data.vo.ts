@@ -22,4 +22,10 @@ export default class IsoStringDate extends ValueObject<string> {
     const otherDate = new Date(other.value);
     return thisDate < otherDate;
   }
+
+  isAfter(other: IsoStringDate): boolean {
+    const thisDate = new Date(this.value);
+    const otherDate = new Date(other.value);
+    return thisDate > otherDate;
+  }
 }

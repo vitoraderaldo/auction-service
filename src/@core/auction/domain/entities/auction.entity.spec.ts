@@ -1,9 +1,14 @@
+import { randomUUID } from 'crypto';
+import buildAuction from '../../../../../test/util/auction.mock';
 import Uuid from '../../../common/domain/value-objects/uuid.vo';
 import { AuctionStatusEnum } from '../value-objects/auction-status.vo';
 import Auction, {
   AuctionConstructorProps,
   AuctionCreateProps,
 } from './auction.entity';
+import buildBid from '../../../../../test/util/bid.mock';
+import Price from '../../../common/domain/value-objects/price.vo';
+import Bid from './bid.entity';
 
 describe('Auction', () => {
   let validAuctionProps: AuctionConstructorProps;
@@ -17,15 +22,15 @@ describe('Auction', () => {
       startDate: '2023-01-01T00:00:00.000Z',
       endDate: '2023-01-02T00:00:00.000Z',
       startPrice: 100,
-      currentPrice: null,
       status: AuctionStatusEnum.CREATED,
       auctioneerId: 'auctioneer-id',
+      bids: [],
       createdAt: '2023-01-01T00:00:00.000Z',
       updatedAt: '2023-01-01T00:00:00.000Z',
     };
   });
 
-  describe('constructor', () => {
+  describe('Constructor', () => {
     it('should create an Auction instance with valid properties', () => {
       const auction = new Auction(validAuctionProps);
       expect(auction).toBeInstanceOf(Auction);
@@ -83,7 +88,7 @@ describe('Auction', () => {
     });
   });
 
-  describe('create', () => {
+  describe('Create', () => {
     it('should create a new Auction instance with default values', () => {
       const startDate = new Date();
       startDate.setUTCHours(startDate.getUTCHours() + 1);
@@ -107,7 +112,6 @@ describe('Auction', () => {
       expect(auction).toBeInstanceOf(Auction);
       expect(data.id).toBeTruthy();
       expect(data.status).toEqual(AuctionStatusEnum.CREATED);
-      expect(data.currentPrice).toBeNull();
     });
 
     it('should throw an error if the start date is in the past', () => {
@@ -127,7 +131,7 @@ describe('Auction', () => {
     });
   });
 
-  describe('publish', () => {
+  describe('Publish', () => {
     it('should publish an auction', () => {
       const auction = new Auction(validAuctionProps);
       const expectedStatus = AuctionStatusEnum.PUBLISHED;
@@ -154,5 +158,152 @@ describe('Auction', () => {
         );
       },
     );
+  });
+
+  describe('Bid', () => {
+    it.each`
+      status
+      ${AuctionStatusEnum.CREATED}
+      ${AuctionStatusEnum.BID_PERIOD_FINISHED}
+    `('should not add a bid if auction status is $status', ({ status }: { status: AuctionStatusEnum }) => {
+      const auction = buildAuction({
+        status,
+      });
+
+      const input = {
+        bidderId: randomUUID(),
+        value: 200,
+      };
+
+      expect(() => auction.createBid(input)).toThrow(
+        `Auction can not receive bid when status is '${status}'`,
+      );
+    });
+
+    it('should not add a bid when bid period has not started', () => {
+      const status = AuctionStatusEnum.PUBLISHED;
+      const oneHourLater = new Date();
+      oneHourLater.setUTCHours(oneHourLater.getUTCHours() + 1);
+
+      const auction = buildAuction({
+        status,
+        startDate: oneHourLater.toISOString(),
+      });
+
+      const input = {
+        bidderId: randomUUID(),
+        value: 200,
+      };
+
+      expect(() => auction.createBid(input)).toThrow(
+        'Bid period has not started yet',
+      );
+    });
+
+    it('should not add a bid when bid period has finished', () => {
+      const status = AuctionStatusEnum.PUBLISHED;
+
+      const fitfteenDaysAgo = new Date();
+      fitfteenDaysAgo.setUTCDate(fitfteenDaysAgo.getUTCDate() - 15);
+
+      const fiveMinutesAgo = new Date();
+      fiveMinutesAgo.setUTCMinutes(fiveMinutesAgo.getUTCMinutes() - 5);
+
+      const auction = buildAuction({
+        status,
+        startDate: fitfteenDaysAgo.toISOString(),
+        endDate: fiveMinutesAgo.toISOString(),
+      });
+
+      const input = {
+        bidderId: randomUUID(),
+        value: 200,
+      };
+
+      expect(() => auction.createBid(input)).toThrow(
+        'Bid period is over',
+      );
+    });
+
+    it('should not add a bid when it is lower than the start price', () => {
+      const status = AuctionStatusEnum.PUBLISHED;
+      const startPrice = 100;
+
+      const auction = buildAuction({
+        status,
+        startPrice,
+      });
+
+      const input = {
+        bidderId: randomUUID(),
+        value: startPrice - 1,
+      };
+
+      expect(() => auction.createBid(input)).toThrow(
+        'Bid value must be greater than start price',
+      );
+    });
+
+    it('should not add a bid when it is lower than the highest bid', () => {
+      const status = AuctionStatusEnum.PUBLISHED;
+      const startPrice = 90;
+
+      const bids = [
+        buildBid({ value: new Price(200) }),
+        buildBid({ value: new Price(300) }),
+        buildBid({ value: new Price(100) }),
+      ];
+
+      const auction = buildAuction({
+        status,
+        startPrice,
+        bids,
+      });
+
+      const input = {
+        bidderId: randomUUID(),
+        value: 300,
+      };
+
+      expect(() => auction.createBid(input)).toThrow(
+        'Bid value is not greater than other bids',
+      );
+    });
+
+    it('should add a bid successfully', () => {
+      const status = AuctionStatusEnum.PUBLISHED;
+      const startPrice = 100;
+
+      const bids = [
+        buildBid({ value: new Price(200) }),
+        buildBid({ value: new Price(300) }),
+        buildBid({ value: new Price(100) }),
+      ];
+
+      const auction = buildAuction({
+        status,
+        startPrice,
+        bids,
+      });
+
+      const input = {
+        bidderId: randomUUID(),
+        value: 301,
+      };
+
+      const bid = auction.createBid(input);
+
+      const bidData = bid.toJSON();
+      const auctionBids = auction.toJSON().bids;
+
+      expect(bid).toBeInstanceOf(Bid);
+      expect(bidData.id).toBeTruthy();
+      expect(bidData.auctionId).toEqual(auction.getId());
+      expect(bidData.bidderId).toEqual(input.bidderId);
+      expect(bidData.value).toEqual(input.value);
+      expect(bidData.createdAt).toBeTruthy();
+      expect(bidData.updatedAt).toBeTruthy();
+      expect(auctionBids).toHaveLength(4);
+    });
   });
 });

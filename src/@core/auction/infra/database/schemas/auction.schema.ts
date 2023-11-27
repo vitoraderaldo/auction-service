@@ -13,7 +13,6 @@ export interface AuctionMongoInterface {
   startDate: string;
   endDate: string;
   startPrice: number;
-  currentPrice: number | null;
   status: string;
   auctioneerId: string;
   createdAt: Date;
@@ -33,7 +32,6 @@ const auctionSchema = new Schema(
     startDate: String,
     endDate: String,
     startPrice: Number,
-    currentPrice: Number,
     status: String,
     auctioneerId: String,
   },
@@ -61,9 +59,9 @@ export default class AuctionSchema {
       startDate: document.startDate,
       endDate: document.endDate,
       startPrice: document.startPrice,
-      currentPrice: document.currentPrice,
       status: document.status as AuctionStatusEnum,
       auctioneerId: document.auctioneerId,
+      bids: [],
       createdAt: document.createdAt.toISOString(),
       updatedAt: document.updatedAt.toISOString(),
     });
@@ -82,7 +80,6 @@ export default class AuctionSchema {
       startDate: data.startDate,
       endDate: data.endDate,
       startPrice: data.startPrice,
-      currentPrice: data.currentPrice ?? null,
       status: data.status,
       auctioneerId: data.auctioneerId,
     };
