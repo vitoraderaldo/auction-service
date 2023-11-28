@@ -1,6 +1,7 @@
 import { AuctionRepository } from '../domain/repositories/auction.repository';
 
 interface PublishAuctionInput {
+  auctioneerId: string;
   auctionId: string;
 }
 

@@ -20,6 +20,7 @@ describe('Publish Auction Use Case', () => {
 
     const input = {
       auctionId: randomUUID(),
+      auctioneerId: randomUUID(),
     };
 
     const result = useCase.execute(input);
@@ -36,6 +37,7 @@ describe('Publish Auction Use Case', () => {
 
     const input = {
       auctionId: randomUUID(),
+      auctioneerId: randomUUID(),
     };
 
     await useCase.execute(input);

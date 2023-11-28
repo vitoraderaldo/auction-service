@@ -63,6 +63,7 @@ describe('Auction (e2e)', () => {
 
     const response = await request(app.getHttpServer())
       .post('/v1/auction')
+      .set('Authorization', auctioneer.getId())
       .send(body)
       .expect(201);
 
@@ -109,6 +110,7 @@ describe('Auction (e2e)', () => {
 
     await request(app.getHttpServer())
       .post(`/v1/auction/${auctionId}/publish`)
+      .set('Authorization', auctioneer.getId())
       .expect(200);
 
     const savedAuction = await auctionModel.findOne({ id: auctionId });
@@ -139,6 +141,7 @@ describe('Auction (e2e)', () => {
 
     const response = await request(app.getHttpServer())
       .post(`/v1/auction/${auctionId}/bid`)
+      .set('Authorization', bidder.getId())
       .send(input)
       .expect(201);
 

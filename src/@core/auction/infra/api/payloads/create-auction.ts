@@ -5,7 +5,6 @@ import {
   IsNumber,
   IsPositive,
   IsString,
-  IsUUID,
   MaxLength,
   Min,
   MinLength,
@@ -14,10 +13,6 @@ import {
 import AuctionPhoto from './auction-photo';
 
 export default class CreateAuctionRest {
-  // todo: remove this, must grab from token header
-  @IsUUID()
-    auctioneerId: string;
-
   @IsString()
   @MinLength(3)
   @MaxLength(500)

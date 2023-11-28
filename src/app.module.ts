@@ -16,7 +16,7 @@ import BidderMongoRepository from './@core/auction/infra/database/repositories/b
 import BidMongoRepository from './@core/auction/infra/database/repositories/bid-mongo.repository';
 import CreateBidUseCase from './@core/auction/application/create-bid.usecase';
 import BidRepository from './@core/auction/domain/repositories/bid.repository';
-import BidderController from './@core/auction/infra/api/payloads/bidder.controller';
+import BidderController from './@core/auction/infra/api/bidder.controller';
 import PublishAuctionUseCase from './@core/auction/application/publishes-auction.usecase';
 
 @Module({
