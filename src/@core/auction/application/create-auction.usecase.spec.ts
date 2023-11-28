@@ -46,7 +46,7 @@ describe('CreateAuctionUseCase', () => {
       .spyOn(auctioneerRepository, 'findById')
       .mockResolvedValueOnce(auctioneer);
 
-    const saveSpy = jest.spyOn(auctionRepository, 'save');
+    const saveSpy = jest.spyOn(auctionRepository, 'create');
 
     const input = {
       auctioneerId: auctioneer.getId(),

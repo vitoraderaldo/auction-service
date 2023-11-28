@@ -17,7 +17,7 @@ export default class AuctioneerMongoRepository implements AuctioneerRepository {
     return AuctioneerSchema.toDomain(document);
   }
 
-  async save(auctioneer: Auctioneer): Promise<void> {
+  async create(auctioneer: Auctioneer): Promise<void> {
     const data = AuctioneerSchema.toDatabase(auctioneer);
     await this.model.create(data);
   }

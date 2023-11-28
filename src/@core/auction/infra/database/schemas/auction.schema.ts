@@ -2,6 +2,7 @@ import { Schema, Model, Mongoose } from 'mongoose';
 import Auction from '../../../domain/entities/auction.entity';
 import { AuctionStatusEnum } from '../../../domain/value-objects/auction-status.vo';
 import Uuid from '../../../../common/domain/value-objects/uuid.vo';
+import BidSchema, { BidMongoInterface } from './bid.schema';
 
 export interface AuctionMongoInterface {
   id: string;
@@ -48,22 +49,25 @@ export default class AuctionSchema {
     return connection.model<AuctionMongoDocument>('Auction', auctionSchema);
   }
 
-  static toDomain(document: AuctionMongoInterface) {
-    if (!document) return null;
+  static toDomain(
+    auction: AuctionMongoInterface,
+    bids: BidMongoInterface[],
+  ) {
+    if (!auction) return null;
 
     return new Auction({
-      id: new Uuid(document.id),
-      title: document.title,
-      description: document.description,
-      photos: document.photos,
-      startDate: document.startDate,
-      endDate: document.endDate,
-      startPrice: document.startPrice,
-      status: document.status as AuctionStatusEnum,
-      auctioneerId: document.auctioneerId,
-      bids: [],
-      createdAt: document.createdAt.toISOString(),
-      updatedAt: document.updatedAt.toISOString(),
+      id: new Uuid(auction.id),
+      title: auction.title,
+      description: auction.description,
+      photos: auction.photos,
+      startDate: auction.startDate,
+      endDate: auction.endDate,
+      startPrice: auction.startPrice,
+      status: auction.status as AuctionStatusEnum,
+      auctioneerId: auction.auctioneerId,
+      bids: bids.map(BidSchema.toDomain),
+      createdAt: auction.createdAt.toISOString(),
+      updatedAt: auction.updatedAt.toISOString(),
     });
   }
 

@@ -44,7 +44,7 @@ export default class CreateAuctioneerUseCase {
       registration,
     });
 
-    await this.auctioneerRepository.save(auctioneer);
+    await this.auctioneerRepository.create(auctioneer);
 
     const auctioneerData = auctioneer.toJSON();
 

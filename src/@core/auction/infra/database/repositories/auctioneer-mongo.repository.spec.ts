@@ -35,7 +35,7 @@ describe('AuctioneerMongoRepository', () => {
       registration: '12/345-A',
     });
 
-    await repository.save(auctioneer);
+    await repository.create(auctioneer);
 
     const savedAuctioneer = await model.findOne<Auctioneer>({
       id: auctioneer.getId(),
@@ -57,7 +57,7 @@ describe('AuctioneerMongoRepository', () => {
       name: { firstName: 'John', lastName: 'Doe' },
       registration: '12/345-A',
     });
-    await repository.save(auctioneer);
+    await repository.create(auctioneer);
 
     const foundAuctioneer = await repository.findById(auctioneer.getId());
 
@@ -80,7 +80,7 @@ describe('AuctioneerMongoRepository', () => {
       name: { firstName: 'John', lastName: 'Doe' },
       registration: '12/345-A',
     });
-    await repository.save(auctioneer);
+    await repository.create(auctioneer);
 
     const foundAuctioneer = await model.findOne<AuctioneerMongoInterface>({
       id: auctioneer.getId(),
@@ -101,7 +101,7 @@ describe('AuctioneerMongoRepository', () => {
       const registration = '12/345-A';
 
       const auctioneer = buildAuctioneer({ email, registration });
-      await repository.save(auctioneer);
+      await repository.create(auctioneer);
 
       const foundAuctioneer = await repository.findByRegistrationOrEmail({
         email,
@@ -126,7 +126,7 @@ describe('AuctioneerMongoRepository', () => {
       const registration = '12/345-A';
 
       const auctioneer = buildAuctioneer({ email, registration });
-      await repository.save(auctioneer);
+      await repository.create(auctioneer);
 
       const foundAuctioneer = await repository.findByRegistrationOrEmail({
         email: '',

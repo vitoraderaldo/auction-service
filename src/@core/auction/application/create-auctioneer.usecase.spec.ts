@@ -36,7 +36,7 @@ describe('CreateAuctioneerUseCase', () => {
       .spyOn(auctioneerRepository, 'findByRegistrationOrEmail')
       .mockResolvedValueOnce(null);
 
-    const saveSpy = jest.spyOn(auctioneerRepository, 'save');
+    const saveSpy = jest.spyOn(auctioneerRepository, 'create');
 
     const input = {
       firstName: faker.person.firstName(),

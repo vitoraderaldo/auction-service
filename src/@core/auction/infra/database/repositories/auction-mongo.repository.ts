@@ -2,31 +2,64 @@ import Uuid from '../../../../common/domain/value-objects/uuid.vo';
 import Auction from '../../../domain/entities/auction.entity';
 import { AuctionRepository } from '../../../domain/repositories/auction.repository';
 import AuctionSchema, { AuctionModel } from '../schemas/auction.schema';
+import { BidModel } from '../schemas/bid.schema';
 
 export default class AuctionMongoRepository implements AuctionRepository {
-  constructor(private readonly model: AuctionModel) {}
+  constructor(
+    private readonly auctionModel: AuctionModel,
+    private readonly bidModel: BidModel,
+  ) {}
 
-  async save(auction: Auction): Promise<void> {
-    const data = AuctionSchema.toDatabase(auction);
-    await this.model.create(data);
+  async create(auction: Auction): Promise<void> {
+    const document = AuctionSchema.toDatabase(auction);
+    await this.auctionModel.create(document);
   }
 
   async findById(id: Uuid | string): Promise<Auction> {
     const value = typeof id === 'string' ? new Uuid(id) : id;
-    const auction = await this.model.findOne({
-      id: value.value,
-    });
-    return AuctionSchema.toDomain(auction);
+    const [document, bids] = await Promise.all([
+      this.auctionModel.findOne({
+        id: value.value,
+      }),
+      this.bidModel.find({
+        auctionId: value.value,
+      }),
+    ]);
+
+    return AuctionSchema.toDomain(document, bids);
   }
 
   async update(auction: Auction): Promise<void> {
-    const data = AuctionSchema.toDatabase(auction);
-    const result = await this.model.updateOne({
+    const document = AuctionSchema.toDatabase(auction);
+    const result = await this.auctionModel.updateOne({
       id: auction.getId(),
-    }, data);
+    }, document);
 
     if (!result.modifiedCount) {
       throw new Error('Auction not found while updating');
     }
   }
+
+  // async updatev2(auction: Auction): Promise<void> {
+  //   const auctionDoc = AuctionSchema.toDatabase(auction);
+  //   const bidDocs = auction.getBids().map(BidSchema.toDatabase);
+
+  //   // const session = await this.auctionModel.db.startSession();
+  //   // session.startTransaction();
+
+  //   const result = await this.auctionModel.updateOne({
+  //     id: auction.getId(),
+  //   }, auctionDoc);
+
+  //   await this.bidModel.updateMany({
+  //     auctionId: auction.getId(),
+  //   }, bidDocs, { upsert: true });
+
+  //   // await session.commitTransaction();
+  //   // session.endSession();
+
+  //   if (!result.modifiedCount) {
+  //     throw new Error('Auction not found while updating');
+  //   }
+  // }
 }

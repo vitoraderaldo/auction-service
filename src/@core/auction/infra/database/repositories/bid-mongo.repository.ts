@@ -5,7 +5,7 @@ import BidSchema, { BidModel } from '../schemas/bid.schema';
 export default class BidMongoRepository implements BidRepository {
   constructor(private readonly model: BidModel) {}
 
-  async save(bid: Bid): Promise<void> {
+  async create(bid: Bid): Promise<void> {
     const document = BidSchema.toDatabase(bid);
     await this.model.create(document);
   }

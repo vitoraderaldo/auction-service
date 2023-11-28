@@ -146,6 +146,10 @@ export default class Auction extends Entity {
     return this.id.value;
   }
 
+  getBids(): Bid[] {
+    return this.bids;
+  }
+
   createBid(params: {
     value: number;
     bidderId: string;

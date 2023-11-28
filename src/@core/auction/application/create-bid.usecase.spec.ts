@@ -79,7 +79,7 @@ describe('Create Bid Use Case', () => {
       .spyOn(bidderRepository, 'findById')
       .mockResolvedValueOnce(bidder);
 
-    const saveSpy = jest.spyOn(bidRepository, 'save');
+    const saveSpy = jest.spyOn(bidRepository, 'create');
 
     const input = {
       auctionId: auction.getId(),

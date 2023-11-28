@@ -8,10 +8,12 @@ import AuctionMongoRepository from './auction-mongo.repository';
 import buildAuction from '../../../../../../test/util/auction.mock';
 import Uuid from '../../../../common/domain/value-objects/uuid.vo';
 import { AuctionStatusEnum } from '../../../domain/value-objects/auction-status.vo';
+import BidSchema, { BidModel } from '../schemas/bid.schema';
 
 describe('AuctionMongoRepository', () => {
   let connection: Mongoose;
-  let model: AuctionModel;
+  let auctionModel: AuctionModel;
+  let bidModel: BidModel;
   let repository: AuctionMongoRepository;
 
   beforeEach(async () => {
@@ -19,8 +21,9 @@ describe('AuctionMongoRepository', () => {
       connection = await connect(process.env.MONGO_URI, { dbName: randomUUID() });
     }
 
-    model = AuctionSchema.getModel(connection);
-    repository = new AuctionMongoRepository(model);
+    auctionModel = AuctionSchema.getModel(connection);
+    bidModel = BidSchema.getModel(connection);
+    repository = new AuctionMongoRepository(auctionModel, bidModel);
     await connection.connection.db.dropDatabase();
   });
 
@@ -32,9 +35,9 @@ describe('AuctionMongoRepository', () => {
     const auction = buildAuction({
       photos: [],
     });
-    await repository.save(auction);
+    await repository.create(auction);
 
-    const savedAuction = await model.findOne<AuctionMongoInterface>({
+    const savedAuction = await auctionModel.findOne<AuctionMongoInterface>({
       id: auction.getId(),
     });
 
@@ -55,7 +58,7 @@ describe('AuctionMongoRepository', () => {
 
   it('should find an auction by id', async () => {
     const auction = buildAuction();
-    await repository.save(auction);
+    await repository.create(auction);
 
     const foundAuction = await repository.findById(auction.getId());
 
@@ -76,7 +79,7 @@ describe('AuctionMongoRepository', () => {
   });
 
   it('should return null if auction is not found', async () => {
-    await repository.save(buildAuction());
+    await repository.create(buildAuction());
 
     const auction = await repository.findById(randomUUID());
     expect(auction).toBeNull();
@@ -84,7 +87,7 @@ describe('AuctionMongoRepository', () => {
 
   it('should update an auction', async () => {
     const auction = buildAuction();
-    await repository.save(auction);
+    await repository.create(auction);
 
     const updatedAuction = buildAuction({
       id: new Uuid(auction.getId()),
@@ -97,7 +100,7 @@ describe('AuctionMongoRepository', () => {
 
     await repository.update(updatedAuction);
 
-    const foundAuction = await model.findOne<AuctionMongoInterface>({
+    const foundAuction = await auctionModel.findOne<AuctionMongoInterface>({
       id: updatedAuction.getId(),
     });
 
@@ -116,7 +119,7 @@ describe('AuctionMongoRepository', () => {
       'Auction not found while updating',
     );
 
-    const foundAuction = await model.findOne<AuctionMongoInterface>({
+    const foundAuction = await auctionModel.findOne<AuctionMongoInterface>({
       id: updatedAuction.getId(),
     });
 

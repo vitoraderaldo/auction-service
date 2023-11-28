@@ -36,7 +36,7 @@ export default class CreateBidderUseCase {
       email,
     });
 
-    await this.bidderRepository.save(bidder);
+    await this.bidderRepository.create(bidder);
     const bidderData = bidder.toJSON();
 
     return {

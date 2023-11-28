@@ -21,7 +21,7 @@ export default class BidderMongoRepository implements BidderRepository {
     return BidderSchema.toDomain(document);
   }
 
-  async save(bidder: Bidder): Promise<void> {
+  async create(bidder: Bidder): Promise<void> {
     const document = BidderSchema.toDatabase(bidder);
     await this.model.create(document);
   }

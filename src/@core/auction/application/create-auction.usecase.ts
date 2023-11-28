@@ -53,7 +53,7 @@ export default class CreateAuctionUseCase {
       startPrice: input.startPrice,
     });
 
-    await this.auctionRepository.save(auction);
+    await this.auctionRepository.create(auction);
 
     const auctionData = auction.toJSON();
 

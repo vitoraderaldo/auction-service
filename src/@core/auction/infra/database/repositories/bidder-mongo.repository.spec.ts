@@ -31,7 +31,7 @@ describe('BidderMongoRepository', () => {
 
   it('should save an bidder on the database', async () => {
     const bidder = buildBidder();
-    await repository.save(bidder);
+    await repository.create(bidder);
 
     const savedBidder = await model.findOne<BidderMongoInterface>({
       id: bidder.getId(),
@@ -50,7 +50,7 @@ describe('BidderMongoRepository', () => {
   it('should find an bidder by id as UUID', async () => {
     const id = new Uuid(randomUUID());
     const bidder = buildBidder({ id });
-    await repository.save(bidder);
+    await repository.create(bidder);
 
     const foundBidder = await repository.findById(id);
 
@@ -69,7 +69,7 @@ describe('BidderMongoRepository', () => {
   it('should find an bidder by id as string', async () => {
     const id = randomUUID().toString();
     const bidder = buildBidder({ id: new Uuid(id) });
-    await repository.save(bidder);
+    await repository.create(bidder);
 
     const foundBidder = await repository.findById(id);
 
@@ -86,7 +86,7 @@ describe('BidderMongoRepository', () => {
   });
 
   it('should return null if no bidder is found by ID', async () => {
-    await repository.save(buildBidder());
+    await repository.create(buildBidder());
     const foundBidder = await repository.findById(randomUUID());
 
     expect(foundBidder).toBeNull();
@@ -95,7 +95,7 @@ describe('BidderMongoRepository', () => {
   it('should find an bidder by email', async () => {
     const email = faker.internet.email();
     const bidder = buildBidder({ email });
-    await repository.save(bidder);
+    await repository.create(bidder);
 
     const foundBidder = await repository.findByEmail(email);
 
@@ -112,7 +112,7 @@ describe('BidderMongoRepository', () => {
   });
 
   it('should return null if no bidder is found by email', async () => {
-    await repository.save(buildBidder());
+    await repository.create(buildBidder());
     const foundBidder = await repository.findByEmail(faker.internet.email());
 
     expect(foundBidder).toBeNull();

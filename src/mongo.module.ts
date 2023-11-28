@@ -52,8 +52,11 @@ const MONGOOSE_CONNECTION = 'MONGOOSE_CONNECTION';
     },
     {
       provide: AuctionMongoRepository,
-      useFactory: (model: AuctionModel) => new AuctionMongoRepository(model),
-      inject: ['AUCTION_MODEL'],
+      useFactory: (
+        auctionModel: AuctionModel,
+        bidModel: BidModel,
+      ) => new AuctionMongoRepository(auctionModel, bidModel),
+      inject: ['AUCTION_MODEL', 'BID_MODEL'],
     },
     {
       provide: AuctioneerMongoRepository,

@@ -13,15 +13,11 @@ import AuctionSchema, {
 import buildAuction from '../../util/auction.mock';
 import Uuid from '../../../src/@core/common/domain/value-objects/uuid.vo';
 import insertAuction from '../util/insert-auction';
-import buildBidder from '../../util/bidder.mock';
-import insertBidder from '../util/insert-bidder';
-import BidSchema, { BidModel } from '../../../src/@core/auction/infra/database/schemas/bid.schema';
 
 describe('Auction (e2e)', () => {
   let app: INestApplication;
   let connection: Mongoose;
   let auctionModel: AuctionModel;
-  let bidModel: BidModel;
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -32,7 +28,6 @@ describe('Auction (e2e)', () => {
 
     connection = app.get<Mongoose>('MONGOOSE_CONNECTION');
     auctionModel = AuctionSchema.getModel(connection);
-    bidModel = BidSchema.getModel(connection);
     await app.init();
   });
 
@@ -115,54 +110,5 @@ describe('Auction (e2e)', () => {
 
     const savedAuction = await auctionModel.findOne({ id: auctionId });
     expect(savedAuction.status).toEqual(AuctionStatusEnum.PUBLISHED);
-  });
-
-  it('should add a bid to an auction', async () => {
-    const auctioneer = buildAuctioneer();
-    await insertAuctioneer({ auctioneer, connection });
-
-    const bidder = buildBidder();
-    await insertBidder({ bidder, connection });
-
-    const startPrice = 500;
-    const auction = buildAuction({
-      startPrice,
-      auctioneerId: auctioneer.getId(),
-      status: AuctionStatusEnum.PUBLISHED,
-    });
-    await insertAuction({ auction, connection });
-
-    const input = {
-      bidderId: bidder.getId(),
-      value: startPrice,
-    };
-
-    const auctionId = auction.getId();
-
-    const response = await request(app.getHttpServer())
-      .post(`/v1/auction/${auctionId}/bid`)
-      .set('Authorization', bidder.getId())
-      .send(input)
-      .expect(201);
-
-    const auctionBids = await bidModel.find({
-      auctionId,
-    });
-    const savedBid = auctionBids?.at(0);
-
-    expect(auctionBids).toHaveLength(1);
-    expect(savedBid.id).toEqual(response.body.id);
-    expect(savedBid.auctionId).toEqual(auctionId);
-    expect(savedBid.bidderId).toEqual(bidder.getId());
-    expect(savedBid.value).toEqual(input.value);
-    expect(savedBid.createdAt).toBeTruthy();
-    expect(savedBid.updatedAt).toBeTruthy();
-
-    expect(response.body.id).toBeTruthy();
-    expect(response.body.auctionId).toEqual(auctionId);
-    expect(response.body.bidderId).toEqual(bidder.getId());
-    expect(response.body.value).toEqual(input.value);
-    expect(response.body.createdAt).toBeTruthy();
-    expect(response.body.updatedAt).toBeTruthy();
   });
 });

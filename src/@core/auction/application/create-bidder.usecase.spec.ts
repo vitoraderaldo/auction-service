@@ -35,7 +35,7 @@ describe('Create Bidder Use Case', () => {
       .spyOn(bidderRepository, 'findByEmail')
       .mockResolvedValueOnce(null);
 
-    const saveSpy = jest.spyOn(bidderRepository, 'save');
+    const saveSpy = jest.spyOn(bidderRepository, 'create');
 
     const input = {
       firstName: faker.person.firstName(),

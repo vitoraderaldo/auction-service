@@ -28,13 +28,11 @@ export default class CreateBidUseCase {
     const { auctionId, bidderId, value } = params;
 
     const auction = await this.auctionRepository.findById(auctionId);
-
     if (!auction) {
       throw new Error('Auction not found');
     }
 
     const bidder = await this.bidderRepository.findById(bidderId);
-
     if (!bidder) {
       throw new Error('Bidder not found');
     }
@@ -44,7 +42,7 @@ export default class CreateBidUseCase {
       value,
     });
 
-    await this.bidRepository.save(bid);
+    await this.bidRepository.create(bid);
     const bidData = bid.toJSON();
 
     return {

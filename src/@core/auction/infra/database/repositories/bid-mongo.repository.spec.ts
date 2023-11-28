@@ -28,7 +28,7 @@ describe('BidMongoRepository', () => {
 
   it('should save a bid on the database', async () => {
     const bid = buildBid();
-    await repository.save(bid);
+    await repository.create(bid);
 
     const savedBid = await model.findOne<BidMongoInterface>({
       id: bid.getId(),
