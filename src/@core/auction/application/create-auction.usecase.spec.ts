@@ -3,6 +3,7 @@ import { AuctionRepository } from '../domain/repositories/auction.repository';
 import AuctioneerRepository from '../domain/repositories/auctioneer.repository';
 import CreateAuctionUseCase from './create-auction.usecase';
 import buildAuctioneer from '../../../../test/util/auctioneer.mock';
+import AuctioneerNotFoundError from '../../common/error/auctioneer-not-found';
 
 describe('CreateAuctionUseCase', () => {
   let auctioneerRepository: AuctioneerRepository;
@@ -30,7 +31,7 @@ describe('CreateAuctionUseCase', () => {
     };
 
     const response = useCase.execute(input);
-    await expect(response).rejects.toThrow('Auctioneer not found');
+    await expect(response).rejects.toThrow(AuctioneerNotFoundError);
   });
 
   it('should create an auction successfully', async () => {

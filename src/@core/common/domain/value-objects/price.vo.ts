@@ -1,3 +1,4 @@
+import InvalidPriceError from '../../error/invalid-price';
 import ValueObject from './value-object';
 
 export default class Price extends ValueObject<number> {
@@ -8,10 +9,16 @@ export default class Price extends ValueObject<number> {
 
   validate() {
     if (typeof this.value !== 'number') {
-      throw new Error('Price must be a number');
+      throw new InvalidPriceError({
+        price: this.value,
+        reason: 'Price must be a number',
+      });
     }
     if (this.value <= 0) {
-      throw new Error('Price must be greater than 0');
+      throw new InvalidPriceError({
+        price: this.value,
+        reason: 'Price must be greater than 0',
+      });
     }
   }
 
@@ -21,6 +28,10 @@ export default class Price extends ValueObject<number> {
 
   isGreaterThan(other: Price): boolean {
     return this.value > other.value;
+  }
+
+  isGreaterThanOrEqualTo(other: Price): boolean {
+    return this.value >= other.value;
   }
 
   toString(): string {

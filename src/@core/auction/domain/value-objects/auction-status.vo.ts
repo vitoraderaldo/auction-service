@@ -1,4 +1,5 @@
 import ValueObject from '../../../common/domain/value-objects/value-object';
+import InvalidAuctionStatusError from '../../../common/error/invalid-auction-status';
 
 export enum AuctionStatusEnum {
   CREATED = 'CREATED',
@@ -14,7 +15,7 @@ export default class AuctionStatus extends ValueObject<AuctionStatusEnum> {
 
   private validate(): void {
     if (!Object.values(AuctionStatusEnum).includes(this.value)) {
-      throw new Error(`Invalid auction status: ${this.value}`);
+      throw new InvalidAuctionStatusError({ status: this.value });
     }
   }
 

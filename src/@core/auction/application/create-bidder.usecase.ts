@@ -1,3 +1,4 @@
+import BidderAlreadyExistsError from '../../common/error/bidder-already-exists';
 import Bidder from '../domain/entities/bidder.entity';
 import BidderRepository from '../domain/repositories/bidder.repository';
 
@@ -27,7 +28,7 @@ export default class CreateBidderUseCase {
     const foundBidder = await this.bidderRepository.findByEmail(email);
 
     if (foundBidder) {
-      throw new Error('Bidder already exists');
+      throw new BidderAlreadyExistsError({ email });
     }
 
     const bidder = Bidder.create({

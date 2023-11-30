@@ -9,6 +9,14 @@ import Auction, {
 import buildBid from '../../../../../test/util/bid.mock';
 import Price from '../../../common/domain/value-objects/price.vo';
 import Bid from './bid.entity';
+import AuctioneerNotFoundError from '../../../common/error/auctioneer-not-found';
+import DateInThePastError from '../../../common/error/date-in-the-past';
+import NotAllowedInAuctionStatusError from '../../../common/error/not-allowed-auction-status';
+import InvalidAuctionDescriptionError from '../../../common/error/invalid-auction-description';
+import InvalidAuctionTitleError from '../../../common/error/invalid-auction-title';
+import EndDateBeforeStartDateError from '../../../common/error/date-in-the-past copy';
+import InvalidBidAmountError from '../../../common/error/invalid-bid-amount';
+import InvalidBidPeriodError from '../../../common/error/invalid-bid-period';
 
 describe('Auction', () => {
   let validAuctionProps: AuctionConstructorProps;
@@ -42,27 +50,27 @@ describe('Auction', () => {
 
     it('should throw an errors without auctioneer', () => {
       const invalidProps = { ...validAuctionProps, auctioneerId: '' };
-      expect(() => new Auction(invalidProps)).toThrow('Invalid auctioneer');
+      expect(() => new Auction(invalidProps)).toThrow(AuctioneerNotFoundError);
     });
 
     it('should throw an error with title containing few characters', () => {
       const invalidProps = { ...validAuctionProps, title: 'titl' };
       expect(() => new Auction(invalidProps)).toThrow(
-        'Title must be at least 5 characters long',
+        InvalidAuctionTitleError,
       );
     });
 
     it('should throw an error with title containing many characters', () => {
       const invalidProps = { ...validAuctionProps, title: 'a'.repeat(101) };
       expect(() => new Auction(invalidProps)).toThrow(
-        'Title must be less than 100 characters long',
+        InvalidAuctionTitleError,
       );
     });
 
     it('should throw an error with description containing few characters', () => {
       const invalidProps = { ...validAuctionProps, description: 'descripti' };
       expect(() => new Auction(invalidProps)).toThrow(
-        'Description must be at least 10 characters long',
+        InvalidAuctionDescriptionError,
       );
     });
 
@@ -72,7 +80,7 @@ describe('Auction', () => {
         description: 'a'.repeat(10001),
       };
       expect(() => new Auction(invalidProps)).toThrow(
-        'Description must be less than 10000 characters long',
+        InvalidAuctionDescriptionError,
       );
     });
 
@@ -83,7 +91,7 @@ describe('Auction', () => {
         startDate: '2023-01-02T00:00:00.000Z',
       };
       expect(() => new Auction(invalidProps)).toThrow(
-        'End date must be after start date',
+        EndDateBeforeStartDateError,
       );
     });
   });
@@ -126,7 +134,7 @@ describe('Auction', () => {
       };
 
       expect(() => Auction.create(createProps)).toThrow(
-        'Start date must not be in the past',
+        DateInThePastError,
       );
     });
   });
@@ -151,10 +159,9 @@ describe('Auction', () => {
           ...validAuctionProps,
           status,
         });
-        const data = auction.toJSON();
 
         expect(() => auction.publish()).toThrow(
-          `Auction can not be published with status ${data.status}`,
+          NotAllowedInAuctionStatusError,
         );
       },
     );
@@ -176,7 +183,7 @@ describe('Auction', () => {
       };
 
       expect(() => auction.createBid(input)).toThrow(
-        `Auction can not receive bid when status is '${status}'`,
+        NotAllowedInAuctionStatusError,
       );
     });
 
@@ -196,7 +203,7 @@ describe('Auction', () => {
       };
 
       expect(() => auction.createBid(input)).toThrow(
-        'Bid period has not started yet',
+        InvalidBidPeriodError,
       );
     });
 
@@ -221,7 +228,7 @@ describe('Auction', () => {
       };
 
       expect(() => auction.createBid(input)).toThrow(
-        'Bid period is over',
+        InvalidBidPeriodError,
       );
     });
 
@@ -240,7 +247,7 @@ describe('Auction', () => {
       };
 
       expect(() => auction.createBid(input)).toThrow(
-        'Bid value must be greater than start price',
+        InvalidBidAmountError,
       );
     });
 
@@ -266,7 +273,7 @@ describe('Auction', () => {
       };
 
       expect(() => auction.createBid(input)).toThrow(
-        'Bid value is not greater than other bids',
+        InvalidBidAmountError,
       );
     });
 

@@ -1,3 +1,5 @@
+import AuctionNotFoundError from '../../common/error/auction-not-found';
+import BidderNotFoundError from '../../common/error/bidder-not-found';
 import { AuctionRepository } from '../domain/repositories/auction.repository';
 import BidRepository from '../domain/repositories/bid.repository';
 import BidderRepository from '../domain/repositories/bidder.repository';
@@ -29,12 +31,12 @@ export default class CreateBidUseCase {
 
     const auction = await this.auctionRepository.findById(auctionId);
     if (!auction) {
-      throw new Error('Auction not found');
+      throw new AuctionNotFoundError({ auctionId });
     }
 
     const bidder = await this.bidderRepository.findById(bidderId);
     if (!bidder) {
-      throw new Error('Bidder not found');
+      throw new BidderNotFoundError({ id: bidderId });
     }
 
     const bid = bidder.createBid({

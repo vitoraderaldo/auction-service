@@ -9,6 +9,7 @@ import buildAuction from '../../../../../../test/util/auction.mock';
 import Uuid from '../../../../common/domain/value-objects/uuid.vo';
 import { AuctionStatusEnum } from '../../../domain/value-objects/auction-status.vo';
 import BidSchema, { BidModel } from '../schemas/bid.schema';
+import AuctionNotFoundError from '../../../../common/error/auction-not-found';
 
 describe('AuctionMongoRepository', () => {
   let connection: Mongoose;
@@ -115,9 +116,7 @@ describe('AuctionMongoRepository', () => {
     const updatedAuction = buildAuction();
     const triggerUpdate = () => repository.update(updatedAuction);
 
-    await expect(triggerUpdate()).rejects.toThrow(
-      'Auction not found while updating',
-    );
+    await expect(triggerUpdate()).rejects.toThrow(AuctionNotFoundError);
 
     const foundAuction = await auctionModel.findOne<AuctionMongoInterface>({
       id: updatedAuction.getId(),

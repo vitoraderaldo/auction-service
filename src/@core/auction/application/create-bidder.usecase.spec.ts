@@ -3,6 +3,7 @@ import { faker } from '@faker-js/faker';
 import BidderRepository from '../domain/repositories/bidder.repository';
 import buildBidder from '../../../../test/util/bidder.mock';
 import CreateBidderUseCase from './create-bidder.usecase';
+import BidderAlreadyExistsError from '../../common/error/bidder-already-exists';
 
 describe('Create Bidder Use Case', () => {
   let useCase: CreateBidderUseCase;
@@ -27,7 +28,7 @@ describe('Create Bidder Use Case', () => {
     };
 
     const result = useCase.execute(input);
-    await expect(result).rejects.toThrow('Bidder already exists');
+    await expect(result).rejects.toThrow(BidderAlreadyExistsError);
   });
 
   it('should create a bidder', async () => {

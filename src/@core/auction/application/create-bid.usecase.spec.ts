@@ -7,6 +7,8 @@ import BidRepository from '../domain/repositories/bid.repository';
 import buildAuction from '../../../../test/util/auction.mock';
 import buildBidder from '../../../../test/util/bidder.mock';
 import { AuctionStatusEnum } from '../domain/value-objects/auction-status.vo';
+import AuctionNotFoundError from '../../common/error/auction-not-found';
+import BidderNotFoundError from '../../common/error/bidder-not-found';
 
 describe('Create Bid Use Case', () => {
   let createBidUseCase: CreateBidUseCase;
@@ -38,7 +40,7 @@ describe('Create Bid Use Case', () => {
     };
 
     const result = createBidUseCase.execute(input);
-    await expect(result).rejects.toThrow('Auction not found');
+    await expect(result).rejects.toThrow(AuctionNotFoundError);
   });
 
   it('should not create a bid if bidder does not exist', async () => {
@@ -58,7 +60,7 @@ describe('Create Bid Use Case', () => {
     };
 
     const result = createBidUseCase.execute(input);
-    await expect(result).rejects.toThrow('Bidder not found');
+    await expect(result).rejects.toThrow(BidderNotFoundError);
   });
 
   it('should create a bid successfully', async () => {

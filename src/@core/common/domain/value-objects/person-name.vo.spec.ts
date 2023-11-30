@@ -1,3 +1,4 @@
+import InvalidNameError from '../../error/invalid-name';
 import PersonName from './person-name.vo';
 
 describe('Person Name - Value Object', () => {
@@ -11,14 +12,14 @@ describe('Person Name - Value Object', () => {
   it('should throw an error for a first name less than 3 characters long', () => {
     const shortName = { firstName: 'Jo', lastName: 'Doe' };
     expect(() => new PersonName(shortName)).toThrow(
-      "First name 'Jo' must be at least 3 characters long",
+      InvalidNameError,
     );
   });
 
   it('should throw an error for a last name less than 3 characters long', () => {
     const shortName = { firstName: 'John', lastName: 'Do' };
     expect(() => new PersonName(shortName)).toThrow(
-      'Last name must be at least 3 characters long',
+      InvalidNameError,
     );
   });
 

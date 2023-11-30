@@ -1,3 +1,4 @@
+import AuctioneerAlreadyExistsError from '../../common/error/auctioneer-already-exists';
 import Auctioneer from '../domain/entities/auctioneer.entity';
 import AuctioneerRepository from '../domain/repositories/auctioneer.repository';
 
@@ -32,7 +33,7 @@ export default class CreateAuctioneerUseCase {
     });
 
     if (foundAuctioneer) {
-      throw new Error(`Auctioneer already exists with email '${email}' or registration '${registration}'`);
+      throw new AuctioneerAlreadyExistsError({ registration, email });
     }
 
     const auctioneer = Auctioneer.create({

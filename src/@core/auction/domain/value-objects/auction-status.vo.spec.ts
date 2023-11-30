@@ -1,3 +1,4 @@
+import InvalidAuctionStatusError from '../../../common/error/invalid-auction-status';
 import AuctionStatus, { AuctionStatusEnum } from './auction-status.vo';
 
 describe('AuctionStatus', () => {
@@ -12,7 +13,7 @@ describe('AuctionStatus', () => {
     it('should throw an error if initialized with an invalid status', () => {
       const invalidStatus = 'INVALID_STATUS' as AuctionStatusEnum;
       expect(() => new AuctionStatus(invalidStatus)).toThrow(
-        `Invalid auction status: ${invalidStatus}`,
+        InvalidAuctionStatusError,
       );
     });
   });

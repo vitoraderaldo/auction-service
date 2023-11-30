@@ -1,3 +1,4 @@
+import InvalidUuidError from '../../error/invalid-uuid';
 import Uuid from './uuid.vo';
 
 describe('Uuid - Value Object', () => {
@@ -22,7 +23,7 @@ describe('Uuid - Value Object', () => {
 
   it('should throw an error for an invalid UUID', () => {
     const invalidUuid = 'invalid-uuid';
-    expect(() => new Uuid(invalidUuid)).toThrow('Invalid UUID');
+    expect(() => new Uuid(invalidUuid)).toThrow(InvalidUuidError);
   });
 
   it('should be equal to another uuid with the same value', () => {

@@ -1,3 +1,4 @@
+import InvalidAuctioneerRegistrationError from '../../../common/error/invalid-registration';
 import AuctioneerRegistration from './auctioneer-registration.vo';
 
 describe('Auctioneer Registration - Object Value', () => {
@@ -18,21 +19,21 @@ describe('Auctioneer Registration - Object Value', () => {
   it('should throw an error for a registration less than 3 characters long', () => {
     const shortRegistration = '12';
     expect(() => new AuctioneerRegistration(shortRegistration)).toThrow(
-      'Registration must be at least 3 characters long',
+      InvalidAuctioneerRegistrationError,
     );
   });
 
   it('should throw an error for a 3-character registration that is not a number', () => {
     const invalidRegistration = '12c';
     expect(() => new AuctioneerRegistration(invalidRegistration)).toThrow(
-      'Registration must be a number',
+      InvalidAuctioneerRegistrationError,
     );
   });
 
   it('should throw an error for an invalid format registration', () => {
     const invalidFormatRegistration = '12/345';
     expect(() => new AuctioneerRegistration(invalidFormatRegistration)).toThrow(
-      'Registration is not in a valid format',
+      InvalidAuctioneerRegistrationError,
     );
   });
 

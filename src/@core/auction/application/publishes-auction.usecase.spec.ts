@@ -3,6 +3,7 @@ import { randomUUID } from 'crypto';
 import PublishAuctionUseCase from './publishes-auction.usecase';
 import { AuctionRepository } from '../domain/repositories/auction.repository';
 import buildAuction from '../../../../test/util/auction.mock';
+import AuctionNotFoundError from '../../common/error/auction-not-found';
 
 describe('Publish Auction Use Case', () => {
   let useCase: PublishAuctionUseCase;
@@ -24,7 +25,7 @@ describe('Publish Auction Use Case', () => {
     };
 
     const result = useCase.execute(input);
-    await expect(result).rejects.toThrow('Auction not found');
+    await expect(result).rejects.toThrow(AuctionNotFoundError);
   });
 
   it('should publish an auction', async () => {

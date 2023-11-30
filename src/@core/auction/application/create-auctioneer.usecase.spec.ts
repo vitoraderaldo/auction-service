@@ -3,6 +3,7 @@ import { faker } from '@faker-js/faker';
 import AuctioneerRepository from '../domain/repositories/auctioneer.repository';
 import CreateAuctioneerUseCase from './create-auctioneer.usecase';
 import buildAuctioneer from '../../../../test/util/auctioneer.mock';
+import AuctioneerAlreadyExistsError from '../../common/error/auctioneer-already-exists';
 
 describe('CreateAuctioneerUseCase', () => {
   let auctioneerRepository: AuctioneerRepository;
@@ -28,7 +29,7 @@ describe('CreateAuctioneerUseCase', () => {
     };
 
     const response = useCase.execute(input);
-    await expect(response).rejects.toThrow(`Auctioneer already exists with email '${input.email}' or registration '${input.registration}'`);
+    await expect(response).rejects.toThrow(AuctioneerAlreadyExistsError);
   });
 
   it('should create an auctioneer successfully', async () => {

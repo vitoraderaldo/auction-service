@@ -2,6 +2,14 @@ import Entity from '../../../common/domain/entity';
 import IsoStringDate from '../../../common/domain/value-objects/iso-string-data.vo';
 import Price from '../../../common/domain/value-objects/price.vo';
 import Uuid from '../../../common/domain/value-objects/uuid.vo';
+import AuctioneerNotFoundError from '../../../common/error/auctioneer-not-found';
+import DateInThePastError from '../../../common/error/date-in-the-past';
+import EndDateBeforeStartDateError from '../../../common/error/date-in-the-past copy';
+import InvalidAuctionDescriptionError from '../../../common/error/invalid-auction-description';
+import InvalidAuctionTitleError from '../../../common/error/invalid-auction-title';
+import InvalidBidAmountError from '../../../common/error/invalid-bid-amount';
+import InvalidBidPeriodError from '../../../common/error/invalid-bid-period';
+import NotAllowedInAuctionStatusError from '../../../common/error/not-allowed-auction-status';
 import AuctionPhoto from '../value-objects/auction-photo.vo';
 import AuctionStatus, {
   AuctionStatusEnum,
@@ -87,7 +95,7 @@ export default class Auction extends Entity {
     const startDate = new Date(props.startDate);
 
     if (startDate.getTime() < fiveMinutesAgo.getTime()) {
-      throw new Error('Start date must not be in the past');
+      throw new DateInThePastError({ date: props.startDate, field: 'startDate' });
     }
 
     return new Auction({
@@ -109,36 +117,49 @@ export default class Auction extends Entity {
   publish(): void {
     const createdStatus = new AuctionStatus(AuctionStatusEnum.CREATED);
     if (!this.status.isEqualTo(createdStatus)) {
-      throw new Error(
-        `Auction can not be published with status ${this.status.toString()}`,
-      );
+      throw new NotAllowedInAuctionStatusError({ status: this.status.toString() });
     }
     this.status = new AuctionStatus(AuctionStatusEnum.PUBLISHED);
   }
 
   private validate() {
     if (!this.auctioneerId) {
-      throw new Error('Invalid auctioneer');
+      throw new AuctioneerNotFoundError({ id: this.auctioneerId });
     }
 
     if (!this.title || this.title?.length < 5) {
-      throw new Error('Title must be at least 5 characters long');
+      throw new InvalidAuctionTitleError({
+        title: this.title,
+        reason: 'Title must be at least 5 characters long',
+      });
     }
 
     if (this.title.length > 100) {
-      throw new Error('Title must be less than 100 characters long');
+      throw new InvalidAuctionTitleError({
+        title: this.title,
+        reason: 'Title must be less than 100 characters long',
+      });
     }
 
     if (!this.description || this.description?.length < 10) {
-      throw new Error('Description must be at least 10 characters long');
+      throw new InvalidAuctionDescriptionError({
+        description: this.description,
+        reason: 'Description must be at least 10 characters long',
+      });
     }
 
     if (this.description.length > 10000) {
-      throw new Error('Description must be less than 10000 characters long');
+      throw new InvalidAuctionDescriptionError({
+        description: this.description,
+        reason: 'Description must be less than 10000 characters long',
+      });
     }
 
     if (this.endDate.isBefore(this.startDate)) {
-      throw new Error('End date must be after start date');
+      throw new EndDateBeforeStartDateError({
+        startDate: this.startDate.value,
+        endDate: this.endDate.value,
+      });
     }
   }
 
@@ -150,6 +171,16 @@ export default class Auction extends Entity {
     return this.bids;
   }
 
+  private getHighestBid(): Bid {
+    return this.bids.reduce((highest, current) => {
+      if (highest.getPrice().isGreaterThan(current.getPrice())) {
+        return highest;
+      }
+
+      return current;
+    }, this.bids[0]);
+  }
+
   createBid(params: {
     value: number;
     bidderId: string;
@@ -157,33 +188,37 @@ export default class Auction extends Entity {
     const publishedStatus = new AuctionStatus(AuctionStatusEnum.PUBLISHED);
 
     if (!this.status.isEqualTo(publishedStatus)) {
-      throw new Error(
-        `Auction can not receive bid when status is '${this.status.toString()}'`,
-      );
+      throw new NotAllowedInAuctionStatusError({
+        status: this.status.toString(),
+      });
     }
 
     const now = new IsoStringDate(new Date().toISOString());
 
     if (this.startDate.isAfter(now)) {
-      throw new Error('Bid period has not started yet');
+      throw new InvalidBidPeriodError({ reason: 'Bid period has not started' });
     }
 
     if (this.endDate.isBefore(now)) {
-      throw new Error('Bid period is over');
+      throw new InvalidBidPeriodError({ reason: 'Bid period is over' });
     }
 
     const bidPrice = new Price(params.value);
 
     if (this.startPrice.isGreaterThan(bidPrice)) {
-      throw new Error('Bid value must be greater than start price');
+      throw new InvalidBidAmountError({
+        value: bidPrice.value,
+        startPrice: this.startPrice.value,
+      });
     }
 
-    const isGreaterThanOtherBids = this.bids.every(
-      (bid) => bidPrice.isGreaterThan(bid.getPrice()),
-    );
+    const highestBid = this.getHighestBid()?.getPrice();
 
-    if (!isGreaterThanOtherBids) {
-      throw new Error('Bid value is not greater than other bids');
+    if (highestBid?.isGreaterThanOrEqualTo(bidPrice)) {
+      throw new InvalidBidAmountError({
+        value: bidPrice.value,
+        highestBid: highestBid.value,
+      });
     }
 
     const newBid = Bid.create({

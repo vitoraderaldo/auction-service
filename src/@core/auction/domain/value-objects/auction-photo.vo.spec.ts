@@ -1,3 +1,4 @@
+import InvalidPhotoUrlError from '../../../common/error/invalid-photo-url';
 import AuctionPhoto from './auction-photo.vo';
 
 describe('AuctionPhoto', () => {
@@ -12,7 +13,7 @@ describe('AuctionPhoto', () => {
     it('should throw an error if initialized with an invalid link', () => {
       const invalidLink = 'invalid-link';
       expect(() => new AuctionPhoto({ link: invalidLink })).toThrow(
-        `Auction photo link '${invalidLink}' is not a valid URL`,
+        InvalidPhotoUrlError,
       );
     });
   });

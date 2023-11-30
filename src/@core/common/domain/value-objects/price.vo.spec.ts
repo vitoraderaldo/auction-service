@@ -1,3 +1,4 @@
+import InvalidPriceError from '../../error/invalid-price';
 import Price from './price.vo';
 
 describe('Price', () => {
@@ -11,13 +12,13 @@ describe('Price', () => {
 
     it('should throw an error if initialized with a non-number value', () => {
       const invalidValue = 'invalid' as unknown as number;
-      expect(() => new Price(invalidValue)).toThrow('Price must be a number');
+      expect(() => new Price(invalidValue)).toThrow(InvalidPriceError);
     });
 
     it('should throw an error if initialized with a value less than or equal to 0', () => {
       const invalidValue = 0;
       expect(() => new Price(invalidValue)).toThrow(
-        'Price must be greater than 0',
+        InvalidPriceError,
       );
     });
   });

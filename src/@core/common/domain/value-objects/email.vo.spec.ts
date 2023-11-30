@@ -1,3 +1,4 @@
+import InvalidEmailError from '../../error/invalid-email';
 import Email from './email.vo';
 
 describe('Email', () => {
@@ -11,7 +12,7 @@ describe('Email', () => {
   it('should throw an error for an invalid email format', () => {
     const invalidEmail = 'invalid-email';
     expect(() => new Email(invalidEmail)).toThrow(
-      `Email ${invalidEmail} is not in a valid format`,
+      InvalidEmailError,
     );
   });
 

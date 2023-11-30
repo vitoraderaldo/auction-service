@@ -1,3 +1,4 @@
+import InvalidDateFormatError from '../../error/invalid-date-format';
 import IsoStringDate from './iso-string-data.vo';
 
 describe('IsoStringDate', () => {
@@ -12,7 +13,7 @@ describe('IsoStringDate', () => {
     it('should throw an error if initialized with an invalid ISO string date', () => {
       const invalidIsoDateString = 'invalid-date';
       expect(() => new IsoStringDate(invalidIsoDateString)).toThrow(
-        'Invalid ISO string date',
+        InvalidDateFormatError,
       );
     });
   });

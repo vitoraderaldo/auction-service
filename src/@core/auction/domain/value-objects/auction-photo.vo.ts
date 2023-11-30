@@ -1,4 +1,5 @@
 import ValueObject from '../../../common/domain/value-objects/value-object';
+import InvalidPhotoUrlError from '../../../common/error/invalid-photo-url';
 
 export interface AuctionPhotoProps {
   link: string;
@@ -15,7 +16,7 @@ export default class AuctionPhoto extends ValueObject<AuctionPhotoProps> {
     const linkRegex = new RegExp(linkPattern);
 
     if (!linkRegex.test(this.value.link)) {
-      throw new Error(`Auction photo link '${this.value.link}' is not a valid URL`);
+      throw new InvalidPhotoUrlError({ url: this.value.link });
     }
   }
 

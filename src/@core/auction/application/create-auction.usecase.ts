@@ -1,3 +1,4 @@
+import AuctioneerNotFoundError from '../../common/error/auctioneer-not-found';
 import { AuctionRepository } from '../domain/repositories/auction.repository';
 import AuctioneerRepository from '../domain/repositories/auctioneer.repository';
 
@@ -41,7 +42,7 @@ export default class CreateAuctionUseCase {
     );
 
     if (!auctioneer) {
-      throw new Error('Auctioneer not found');
+      throw new AuctioneerNotFoundError({ id: input.auctioneerId });
     }
 
     const auction = auctioneer.createAuction({

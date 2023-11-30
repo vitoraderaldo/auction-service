@@ -1,3 +1,4 @@
+import AuctionNotFoundError from '../../common/error/auction-not-found';
 import { AuctionRepository } from '../domain/repositories/auction.repository';
 
 interface PublishAuctionInput {
@@ -11,10 +12,11 @@ export default class PublishAuctionUseCase {
   ) {}
 
   async execute(input: PublishAuctionInput): Promise<void> {
-    const auction = await this.auctionRepository.findById(input.auctionId);
+    const { auctionId } = input;
+    const auction = await this.auctionRepository.findById(auctionId);
 
     if (!auction) {
-      throw new Error('Auction not found');
+      throw new AuctionNotFoundError({ auctionId });
     }
 
     auction.publish();

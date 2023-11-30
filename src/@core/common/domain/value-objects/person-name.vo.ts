@@ -1,3 +1,4 @@
+import InvalidNameError from '../../error/invalid-name';
 import ValueObject from './value-object';
 
 interface PersonNameProps {
@@ -13,10 +14,16 @@ export default class PersonName extends ValueObject<PersonNameProps> {
 
   validate() {
     if (this.value.firstName.length < 3) {
-      throw new Error(`First name '${this.value.firstName}' must be at least 3 characters long`);
+      throw new InvalidNameError({
+        firstName: this.value.firstName,
+        reason: 'First name must be at least 3 characters long',
+      });
     }
     if (this.value.lastName.length < 3) {
-      throw new Error('Last name must be at least 3 characters long');
+      throw new InvalidNameError({
+        lastName: this.value.lastName,
+        reason: 'Last name must be at least 3 characters long',
+      });
     }
   }
 

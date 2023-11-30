@@ -1,4 +1,5 @@
 import Uuid from '../../../../common/domain/value-objects/uuid.vo';
+import AuctionNotFoundError from '../../../../common/error/auction-not-found';
 import Auction from '../../../domain/entities/auction.entity';
 import { AuctionRepository } from '../../../domain/repositories/auction.repository';
 import AuctionSchema, { AuctionModel } from '../schemas/auction.schema';
@@ -35,8 +36,8 @@ export default class AuctionMongoRepository implements AuctionRepository {
       id: auction.getId(),
     }, document);
 
-    if (!result.modifiedCount) {
-      throw new Error('Auction not found while updating');
+    if (!result.matchedCount) {
+      throw new AuctionNotFoundError({ auctionId: auction.getId() });
     }
   }
 
@@ -58,8 +59,8 @@ export default class AuctionMongoRepository implements AuctionRepository {
   //   // await session.commitTransaction();
   //   // session.endSession();
 
-  //   if (!result.modifiedCount) {
-  //     throw new Error('Auction not found while updating');
-  //   }
+  //   // if (!result.matchedCount) {
+  //   //   throw new AuctionNotFoundError({ auctionId: auction.getId() });
+  //   // }
   // }
 }
