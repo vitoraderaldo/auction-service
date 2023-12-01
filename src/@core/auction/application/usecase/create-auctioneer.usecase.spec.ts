@@ -1,10 +1,10 @@
 import { createMock } from '@golevelup/ts-jest';
 import { faker } from '@faker-js/faker';
-import AuctioneerRepository from '../domain/repositories/auctioneer.repository';
+import AuctioneerRepository from '../../domain/repositories/auctioneer.repository';
 import CreateAuctioneerUseCase from './create-auctioneer.usecase';
-import buildAuctioneer from '../../../../test/util/auctioneer.mock';
-import AuctioneerAlreadyExistsError from '../../common/error/auctioneer-already-exists';
-import { generateFirstName, generateLastName } from '../../../../test/util/string-generation';
+import buildAuctioneer from '../../../../../test/util/auctioneer.mock';
+import AuctioneerAlreadyExistsError from '../../../common/error/auctioneer-already-exists';
+import { generateFirstName, generateLastName } from '../../../../../test/util/string-generation';
 
 describe('CreateAuctioneerUseCase', () => {
   let auctioneerRepository: AuctioneerRepository;

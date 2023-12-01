@@ -1,6 +1,6 @@
-import { LoggerInterface } from '../../common/application/logger';
-import AuctionNotFoundError from '../../common/error/auction-not-found';
-import { AuctionRepository } from '../domain/repositories/auction.repository';
+import { LoggerInterface } from '../../../common/application/service/logger';
+import AuctionNotFoundError from '../../../common/error/auction-not-found';
+import { AuctionRepository } from '../../domain/repositories/auction.repository';
 
 interface PublishAuctionInput {
   auctioneerId: string;

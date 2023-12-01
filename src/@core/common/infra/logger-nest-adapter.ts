@@ -1,5 +1,5 @@
 import { LoggerService } from '@nestjs/common';
-import { LoggerInterface } from '../application/logger';
+import { LoggerInterface } from '../application/service/logger';
 
 export default class NestLoggerAdapter implements LoggerService {
   constructor(

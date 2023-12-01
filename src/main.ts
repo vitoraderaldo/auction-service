@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
-import AppModule from './app.module';
+import AppModule from './nest/modules/app.module';
 import AllExceptionsFilter from './@core/common/infra/exception-filter';
 import LoggerFactory from './@core/common/infra/logger-factory';
 import NestLoggerAdapter from './@core/common/infra/logger-nest-adapter';

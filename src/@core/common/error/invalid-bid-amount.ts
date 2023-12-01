@@ -1,4 +1,5 @@
-import DomainError, { ErrorCode } from './domain.error';
+import DomainError from './domain.error';
+import ErrorCode from './error-code';
 
 export default class InvalidBidAmountError extends DomainError {
   constructor(details: {

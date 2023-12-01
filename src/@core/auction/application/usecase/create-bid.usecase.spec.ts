@@ -1,14 +1,14 @@
 import { createMock } from '@golevelup/ts-jest';
 import { randomUUID } from 'crypto';
-import { AuctionRepository } from '../domain/repositories/auction.repository';
+import { AuctionRepository } from '../../domain/repositories/auction.repository';
 import CreateBidUseCase from './create-bid.usecase';
-import BidderRepository from '../domain/repositories/bidder.repository';
-import BidRepository from '../domain/repositories/bid.repository';
-import buildAuction from '../../../../test/util/auction.mock';
-import buildBidder from '../../../../test/util/bidder.mock';
-import { AuctionStatusEnum } from '../domain/value-objects/auction-status.vo';
-import AuctionNotFoundError from '../../common/error/auction-not-found';
-import BidderNotFoundError from '../../common/error/bidder-not-found';
+import BidderRepository from '../../domain/repositories/bidder.repository';
+import BidRepository from '../../domain/repositories/bid.repository';
+import buildAuction from '../../../../../test/util/auction.mock';
+import buildBidder from '../../../../../test/util/bidder.mock';
+import { AuctionStatusEnum } from '../../domain/value-objects/auction-status.vo';
+import AuctionNotFoundError from '../../../common/error/auction-not-found';
+import BidderNotFoundError from '../../../common/error/bidder-not-found';
 
 describe('Create Bid Use Case', () => {
   let useCase: CreateBidUseCase;

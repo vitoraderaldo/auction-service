@@ -1,7 +1,7 @@
 import {
   Body, Controller, Post,
 } from '@nestjs/common';
-import CreateBidderUseCase, { CreateBidderOutput } from '../../application/create-bidder.usecase';
+import CreateBidderUseCase, { CreateBidderOutput } from '../../application/usecase/create-bidder.usecase';
 import CreateBidderRest from './payloads/create-bidder';
 
 @Controller('/v1/bidder')

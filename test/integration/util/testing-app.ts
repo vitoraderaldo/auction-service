@@ -1,7 +1,7 @@
 import { Mongoose } from 'mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
-import AppModule from '../../../src/app.module';
+import AppModule from '../../../src/nest/modules/app.module';
 import AllExceptionsFilter from '../../../src/@core/common/infra/exception-filter';
 import LoggerFactory from '../../../src/@core/common/infra/logger-factory';
 

@@ -1,6 +1,6 @@
 import { Logger } from 'winston';
 import { inspect } from 'util';
-import { LoggerInterface } from '../application/logger';
+import { LoggerInterface } from '../application/service/logger';
 
 export default class WinstonLogger implements LoggerInterface {
   constructor(

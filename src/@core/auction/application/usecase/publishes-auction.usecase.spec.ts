@@ -1,9 +1,9 @@
 import { createMock } from '@golevelup/ts-jest';
 import { randomUUID } from 'crypto';
 import PublishAuctionUseCase from './publishes-auction.usecase';
-import { AuctionRepository } from '../domain/repositories/auction.repository';
-import buildAuction from '../../../../test/util/auction.mock';
-import AuctionNotFoundError from '../../common/error/auction-not-found';
+import { AuctionRepository } from '../../domain/repositories/auction.repository';
+import buildAuction from '../../../../../test/util/auction.mock';
+import AuctionNotFoundError from '../../../common/error/auction-not-found';
 
 describe('Publish Auction Use Case', () => {
   let useCase: PublishAuctionUseCase;

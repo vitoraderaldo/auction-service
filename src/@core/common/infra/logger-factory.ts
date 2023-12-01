@@ -1,4 +1,4 @@
-import { LoggerInterface } from '../application/logger';
+import { LoggerInterface } from '../application/service/logger';
 import winstonClient from './winston-client';
 import WinstonLogger from './winston-logger';
 

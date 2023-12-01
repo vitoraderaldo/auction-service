@@ -1,5 +1,5 @@
 import { Body, Controller, Post } from '@nestjs/common';
-import CreateAuctioneerUseCase, { CreateAuctioneerOutput } from '../../application/create-auctioneer.usecase';
+import CreateAuctioneerUseCase, { CreateAuctioneerOutput } from '../../application/usecase/create-auctioneer.usecase';
 import CreateAuctioneerRest from './payloads/create-auctioneer';
 
 @Controller('/v1/auctioneer')

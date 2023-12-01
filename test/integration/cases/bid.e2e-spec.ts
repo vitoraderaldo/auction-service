@@ -13,7 +13,7 @@ import Auctioneer from '../../../src/@core/auction/domain/entities/auctioneer.en
 import Auction from '../../../src/@core/auction/domain/entities/auction.entity';
 import Bidder from '../../../src/@core/auction/domain/entities/bidder.entity';
 import { startTestingApp, getMongoConnection } from '../util/testing-app';
-import { ErrorCode } from '../../../src/@core/common/error/domain.error';
+import ErrorCode from '../../../src/@core/common/error/error-code';
 
 describe('Bid (e2e)', () => {
   let app: INestApplication;

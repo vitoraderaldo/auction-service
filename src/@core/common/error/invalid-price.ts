@@ -1,4 +1,5 @@
-import DomainError, { ErrorCode } from './domain.error';
+import DomainError from './domain.error';
+import ErrorCode from './error-code';
 
 export default class InvalidPriceError extends DomainError {
   constructor(details: {

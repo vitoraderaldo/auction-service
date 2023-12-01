@@ -1,19 +1,19 @@
 import { Module } from '@nestjs/common';
 import { Mongoose, connect } from 'mongoose';
-import AuctionMongoRepository from './@core/auction/infra/database/repositories/auction-mongo.repository';
+import AuctionMongoRepository from '../../@core/auction/infra/database/repositories/auction-mongo.repository';
 import ConfModule from './config.module';
-import { EnvironmentConfigInterface } from './@core/common/domain/environment-config.interface';
+import { EnvironmentConfigInterface } from '../../@core/common/domain/environment-config.interface';
 import AuctionSchema, {
   AuctionModel,
-} from './@core/auction/infra/database/schemas/auction.schema';
-import AuctioneerMongoRepository from './@core/auction/infra/database/repositories/auctioneer-mongo.repository';
+} from '../../@core/auction/infra/database/schemas/auction.schema';
+import AuctioneerMongoRepository from '../../@core/auction/infra/database/repositories/auctioneer-mongo.repository';
 import AuctioneerSchema, {
   AuctioneerModel,
-} from './@core/auction/infra/database/schemas/auctioneer.schema';
-import BidderSchema, { BidderModel } from './@core/auction/infra/database/schemas/bidder.schema';
-import BidSchema, { BidModel } from './@core/auction/infra/database/schemas/bid.schema';
-import BidderMongoRepository from './@core/auction/infra/database/repositories/bidder-mongo.repository';
-import BidMongoRepository from './@core/auction/infra/database/repositories/bid-mongo.repository';
+} from '../../@core/auction/infra/database/schemas/auctioneer.schema';
+import BidderSchema, { BidderModel } from '../../@core/auction/infra/database/schemas/bidder.schema';
+import BidSchema, { BidModel } from '../../@core/auction/infra/database/schemas/bid.schema';
+import BidderMongoRepository from '../../@core/auction/infra/database/repositories/bidder-mongo.repository';
+import BidMongoRepository from '../../@core/auction/infra/database/repositories/bid-mongo.repository';
 
 const MONGOOSE_CONNECTION = 'MONGOOSE_CONNECTION';
 

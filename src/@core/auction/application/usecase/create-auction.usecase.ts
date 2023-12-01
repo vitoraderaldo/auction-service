@@ -1,7 +1,7 @@
-import { LoggerInterface } from '../../common/application/logger';
-import AuctioneerNotFoundError from '../../common/error/auctioneer-not-found';
-import { AuctionRepository } from '../domain/repositories/auction.repository';
-import AuctioneerRepository from '../domain/repositories/auctioneer.repository';
+import { LoggerInterface } from '../../../common/application/service/logger';
+import AuctioneerNotFoundError from '../../../common/error/auctioneer-not-found';
+import { AuctionRepository } from '../../domain/repositories/auction.repository';
+import AuctioneerRepository from '../../domain/repositories/auctioneer.repository';
 
 interface CreateAuctionInput {
   auctioneerId: string;

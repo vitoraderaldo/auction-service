@@ -8,8 +8,9 @@ import {
 } from '@nestjs/common';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Request, Response } from 'express';
-import DomainError, { ErrorCode } from '../error/domain.error';
-import { LoggerInterface } from '../application/logger';
+import { LoggerInterface } from '../application/service/logger';
+import ErrorCode from '../error/error-code';
+import DomainError from '../error/domain.error';
 
 @Catch()
 export default class AllExceptionsFilter implements ExceptionFilter {

@@ -1,4 +1,5 @@
-import DomainError, { ErrorCode } from './domain.error';
+import DomainError from './domain.error';
+import ErrorCode from './error-code';
 
 export default class InvalidPhotoUrlError extends DomainError {
   constructor(searchCriteria: {

@@ -1,11 +1,11 @@
 import {
   Body, Controller, HttpCode, Param, Post, UseGuards,
 } from '@nestjs/common';
-import CreateAuctionUseCase, { CreateAuctionOutput } from '../../application/create-auction.usecase';
+import CreateAuctionUseCase, { CreateAuctionOutput } from '../../application/usecase/create-auction.usecase';
 import CreateAuctionRest from './payloads/create-auction';
 import CreateBidRest from './payloads/create-bid';
-import CreateBidUseCase, { CreateBidOutput } from '../../application/create-bid.usecase';
-import PublishAuctionUseCase from '../../application/publishes-auction.usecase';
+import CreateBidUseCase, { CreateBidOutput } from '../../application/usecase/create-bid.usecase';
+import PublishAuctionUseCase from '../../application/usecase/publishes-auction.usecase';
 import AuctioneerGuard from '../../../common/infra/api/guards/auctioneer.guard';
 import BidderGuard from '../../../common/infra/api/guards/bidder.guard';
 import { AuctioneerId, BidderId } from '../../../common/infra/api/guards/user.decorators';
