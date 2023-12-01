@@ -9,11 +9,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-    - name: Start Containers
-      run: docker-compose up -d
-
     - name: Checkout code
       uses: actions/checkout@v3
+
+    - name: Start Containers
+      run: docker-compose up -d
 
     - name: Install Node v20.9.0
       uses: actions/setup-node@v3
