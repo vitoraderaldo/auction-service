@@ -26,7 +26,7 @@ jobs:
       run: npm run test:unit
 
     - name: Start Containers
-      run: docker-compose up -d --wait
+      run: docker-compose -f "docker-compose.yaml" up -d --build --wait
 
     - name: Run Integration Tests
       run: npm run test:integration
