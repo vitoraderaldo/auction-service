@@ -1,10 +1,9 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { Mongoose } from 'mongoose';
-import AppModule from '../../../src/app.module';
 import buildAuctioneer from '../../util/auctioneer.mock';
 import AuctioneerSchema, { AuctioneerModel } from '../../../src/@core/auction/infra/database/schemas/auctioneer.schema';
+import { getMongoConnection, startTestingApp } from '../util/testing-app';
 
 describe('Create Auctioneer (e2e)', () => {
   let app: INestApplication;
@@ -12,13 +11,9 @@ describe('Create Auctioneer (e2e)', () => {
   let auctioneerModel: AuctioneerModel;
 
   beforeEach(async () => {
-    const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AppModule],
-    }).compile();
+    app = await startTestingApp();
 
-    app = moduleFixture.createNestApplication();
-
-    connection = app.get<Mongoose>('MONGOOSE_CONNECTION');
+    connection = getMongoConnection(app);
     auctioneerModel = AuctioneerSchema.getModel(connection);
     await app.init();
   });

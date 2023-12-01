@@ -4,6 +4,7 @@ import BidderRepository from '../domain/repositories/bidder.repository';
 import buildBidder from '../../../../test/util/bidder.mock';
 import CreateBidderUseCase from './create-bidder.usecase';
 import BidderAlreadyExistsError from '../../common/error/bidder-already-exists';
+import { generateFirstName, generateLastName } from '../../../../test/util/string-generation';
 
 describe('Create Bidder Use Case', () => {
   let useCase: CreateBidderUseCase;
@@ -22,13 +23,20 @@ describe('Create Bidder Use Case', () => {
       .mockResolvedValueOnce(bidder);
 
     const input = {
-      firstName: faker.person.firstName(),
-      lastName: faker.person.lastName(),
+      firstName: generateFirstName(),
+      lastName: generateLastName(),
       email: faker.internet.email(),
     };
 
-    const result = useCase.execute(input);
-    await expect(result).rejects.toThrow(BidderAlreadyExistsError);
+    try {
+      await useCase.execute(input);
+      expect(true).toEqual(false);
+    } catch (err) {
+      expect(err).toBeInstanceOf(BidderAlreadyExistsError);
+      expect(err.details).toEqual({
+        email: input.email,
+      });
+    }
   });
 
   it('should create a bidder', async () => {
@@ -39,8 +47,8 @@ describe('Create Bidder Use Case', () => {
     const saveSpy = jest.spyOn(bidderRepository, 'create');
 
     const input = {
-      firstName: faker.person.firstName(),
-      lastName: faker.person.lastName(),
+      firstName: generateFirstName(),
+      lastName: generateLastName(),
       email: faker.internet.email(),
     };
 

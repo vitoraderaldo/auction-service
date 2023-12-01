@@ -24,8 +24,15 @@ describe('Publish Auction Use Case', () => {
       auctioneerId: randomUUID(),
     };
 
-    const result = useCase.execute(input);
-    await expect(result).rejects.toThrow(AuctionNotFoundError);
+    try {
+      await useCase.execute(input);
+      expect(true).toEqual(false);
+    } catch (err) {
+      expect(err).toBeInstanceOf(AuctionNotFoundError);
+      expect(err.details).toEqual({
+        auctionId: input.auctionId,
+      });
+    }
   });
 
   it('should publish an auction', async () => {

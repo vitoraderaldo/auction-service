@@ -50,28 +50,61 @@ describe('Auction', () => {
 
     it('should throw an errors without auctioneer', () => {
       const invalidProps = { ...validAuctionProps, auctioneerId: '' };
-      expect(() => new Auction(invalidProps)).toThrow(AuctioneerNotFoundError);
+
+      try {
+        new Auction(invalidProps);
+        expect(true).toEqual(false);
+      } catch (err) {
+        expect(err).toBeInstanceOf(AuctioneerNotFoundError);
+        expect(err.details).toEqual({
+          auctioneerId: invalidProps.auctioneerId,
+        });
+      }
     });
 
     it('should throw an error with title containing few characters', () => {
       const invalidProps = { ...validAuctionProps, title: 'titl' };
-      expect(() => new Auction(invalidProps)).toThrow(
-        InvalidAuctionTitleError,
-      );
+
+      try {
+        new Auction(invalidProps);
+        expect(true).toEqual(false);
+      } catch (err) {
+        expect(err).toBeInstanceOf(InvalidAuctionTitleError);
+        expect(err.details).toEqual({
+          title: invalidProps.title,
+          reason: 'Title must be at least 5 characters long',
+        });
+      }
     });
 
     it('should throw an error with title containing many characters', () => {
       const invalidProps = { ...validAuctionProps, title: 'a'.repeat(101) };
-      expect(() => new Auction(invalidProps)).toThrow(
-        InvalidAuctionTitleError,
-      );
+
+      try {
+        new Auction(invalidProps);
+        expect(true).toEqual(false);
+      } catch (err) {
+        expect(err).toBeInstanceOf(InvalidAuctionTitleError);
+        expect(err.details).toEqual({
+          title: invalidProps.title,
+          reason: 'Title must be less than 100 characters long',
+        });
+      }
     });
 
     it('should throw an error with description containing few characters', () => {
       const invalidProps = { ...validAuctionProps, description: 'descripti' };
-      expect(() => new Auction(invalidProps)).toThrow(
-        InvalidAuctionDescriptionError,
-      );
+
+      try {
+        new Auction(invalidProps);
+        expect(true).toEqual(false);
+      } catch (err) {
+        expect(err).toBeInstanceOf(InvalidAuctionDescriptionError);
+        expect(err.details).toEqual({
+          description: invalidProps.description,
+          reason: 'Description must be at least 10 characters long',
+        });
+      }
     });
 
     it('should throw an error if description with description containing many characters', () => {
@@ -79,9 +112,17 @@ describe('Auction', () => {
         ...validAuctionProps,
         description: 'a'.repeat(10001),
       };
-      expect(() => new Auction(invalidProps)).toThrow(
-        InvalidAuctionDescriptionError,
-      );
+
+      try {
+        new Auction(invalidProps);
+        expect(true).toEqual(false);
+      } catch (err) {
+        expect(err).toBeInstanceOf(InvalidAuctionDescriptionError);
+        expect(err.details).toEqual({
+          description: invalidProps.description,
+          reason: 'Description must be between 10 and 10000 characters',
+        });
+      }
     });
 
     it('should throw an error if start date is after end date', () => {
@@ -90,9 +131,17 @@ describe('Auction', () => {
         endDate: '2023-01-01T00:00:00.000Z',
         startDate: '2023-01-02T00:00:00.000Z',
       };
-      expect(() => new Auction(invalidProps)).toThrow(
-        EndDateBeforeStartDateError,
-      );
+
+      try {
+        new Auction(invalidProps);
+        expect(true).toEqual(false);
+      } catch (err) {
+        expect(err).toBeInstanceOf(EndDateBeforeStartDateError);
+        expect(err.details).toEqual({
+          startDate: invalidProps.startDate,
+          endDate: invalidProps.endDate,
+        });
+      }
     });
   });
 
@@ -133,9 +182,16 @@ describe('Auction', () => {
         auctioneerId: 'auctioneer-id',
       };
 
-      expect(() => Auction.create(createProps)).toThrow(
-        DateInThePastError,
-      );
+      try {
+        Auction.create(createProps);
+        expect(true).toEqual(false);
+      } catch (err) {
+        expect(err).toBeInstanceOf(DateInThePastError);
+        expect(err.details).toEqual({
+          date: createProps.startDate,
+          field: 'startDate',
+        });
+      }
     });
   });
 
@@ -160,9 +216,16 @@ describe('Auction', () => {
           status,
         });
 
-        expect(() => auction.publish()).toThrow(
-          NotAllowedInAuctionStatusError,
-        );
+        try {
+          auction.publish();
+          expect(true).toEqual(false);
+        } catch (err) {
+          expect(err).toBeInstanceOf(NotAllowedInAuctionStatusError);
+          expect(err.details).toEqual({
+            auctionId: auction.getId(),
+            status,
+          });
+        }
       },
     );
   });
@@ -182,9 +245,16 @@ describe('Auction', () => {
         value: 200,
       };
 
-      expect(() => auction.createBid(input)).toThrow(
-        NotAllowedInAuctionStatusError,
-      );
+      try {
+        auction.createBid(input);
+        expect(true).toEqual(false);
+      } catch (err) {
+        expect(err).toBeInstanceOf(NotAllowedInAuctionStatusError);
+        expect(err.details).toEqual({
+          auctionId: auction.getId(),
+          status,
+        });
+      }
     });
 
     it('should not add a bid when bid period has not started', () => {
@@ -202,9 +272,16 @@ describe('Auction', () => {
         value: 200,
       };
 
-      expect(() => auction.createBid(input)).toThrow(
-        InvalidBidPeriodError,
-      );
+      try {
+        auction.createBid(input);
+        expect(true).toEqual(false);
+      } catch (err) {
+        expect(err).toBeInstanceOf(InvalidBidPeriodError);
+        expect(err.details).toEqual({
+          auctionId: auction.getId(),
+          reason: 'Bid period has not started',
+        });
+      }
     });
 
     it('should not add a bid when bid period has finished', () => {
@@ -227,9 +304,16 @@ describe('Auction', () => {
         value: 200,
       };
 
-      expect(() => auction.createBid(input)).toThrow(
-        InvalidBidPeriodError,
-      );
+      try {
+        auction.createBid(input);
+        expect(true).toEqual(false);
+      } catch (err) {
+        expect(err).toBeInstanceOf(InvalidBidPeriodError);
+        expect(err.details).toEqual({
+          auctionId: auction.getId(),
+          reason: 'Bid period is over',
+        });
+      }
     });
 
     it('should not add a bid when it is lower than the start price', () => {
@@ -246,9 +330,17 @@ describe('Auction', () => {
         value: startPrice - 1,
       };
 
-      expect(() => auction.createBid(input)).toThrow(
-        InvalidBidAmountError,
-      );
+      try {
+        auction.createBid(input);
+        expect(true).toEqual(false);
+      } catch (err) {
+        expect(err).toBeInstanceOf(InvalidBidAmountError);
+        expect(err.details).toEqual({
+          auctionId: auction.getId(),
+          value: input.value,
+          startPrice,
+        });
+      }
     });
 
     it('should not add a bid when it is lower than the highest bid', () => {
@@ -272,9 +364,17 @@ describe('Auction', () => {
         value: 300,
       };
 
-      expect(() => auction.createBid(input)).toThrow(
-        InvalidBidAmountError,
-      );
+      try {
+        auction.createBid(input);
+        expect(true).toEqual(false);
+      } catch (err) {
+        expect(err).toBeInstanceOf(InvalidBidAmountError);
+        expect(err.details).toEqual({
+          auctionId: auction.getId(),
+          value: input.value,
+          highestBid: 300,
+        });
+      }
     });
 
     it('should add a bid successfully', () => {

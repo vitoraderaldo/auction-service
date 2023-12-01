@@ -117,14 +117,17 @@ export default class Auction extends Entity {
   publish(): void {
     const createdStatus = new AuctionStatus(AuctionStatusEnum.CREATED);
     if (!this.status.isEqualTo(createdStatus)) {
-      throw new NotAllowedInAuctionStatusError({ status: this.status.toString() });
+      throw new NotAllowedInAuctionStatusError({
+        auctionId: this.getId(),
+        status: this.status.toString(),
+      });
     }
     this.status = new AuctionStatus(AuctionStatusEnum.PUBLISHED);
   }
 
   private validate() {
     if (!this.auctioneerId) {
-      throw new AuctioneerNotFoundError({ id: this.auctioneerId });
+      throw new AuctioneerNotFoundError({ auctioneerId: this.auctioneerId });
     }
 
     if (!this.title || this.title?.length < 5) {
@@ -151,7 +154,7 @@ export default class Auction extends Entity {
     if (this.description.length > 10000) {
       throw new InvalidAuctionDescriptionError({
         description: this.description,
-        reason: 'Description must be less than 10000 characters long',
+        reason: 'Description must be between 10 and 10000 characters',
       });
     }
 
@@ -189,6 +192,7 @@ export default class Auction extends Entity {
 
     if (!this.status.isEqualTo(publishedStatus)) {
       throw new NotAllowedInAuctionStatusError({
+        auctionId: this.getId(),
         status: this.status.toString(),
       });
     }
@@ -196,17 +200,18 @@ export default class Auction extends Entity {
     const now = new IsoStringDate(new Date().toISOString());
 
     if (this.startDate.isAfter(now)) {
-      throw new InvalidBidPeriodError({ reason: 'Bid period has not started' });
+      throw new InvalidBidPeriodError({ auctionId: this.getId(), reason: 'Bid period has not started' });
     }
 
     if (this.endDate.isBefore(now)) {
-      throw new InvalidBidPeriodError({ reason: 'Bid period is over' });
+      throw new InvalidBidPeriodError({ auctionId: this.getId(), reason: 'Bid period is over' });
     }
 
     const bidPrice = new Price(params.value);
 
     if (this.startPrice.isGreaterThan(bidPrice)) {
       throw new InvalidBidAmountError({
+        auctionId: this.id.value,
         value: bidPrice.value,
         startPrice: this.startPrice.value,
       });
@@ -216,6 +221,7 @@ export default class Auction extends Entity {
 
     if (highestBid?.isGreaterThanOrEqualTo(bidPrice)) {
       throw new InvalidBidAmountError({
+        auctionId: this.id.value,
         value: bidPrice.value,
         highestBid: highestBid.value,
       });

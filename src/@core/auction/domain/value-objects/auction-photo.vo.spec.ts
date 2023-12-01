@@ -12,9 +12,16 @@ describe('AuctionPhoto', () => {
 
     it('should throw an error if initialized with an invalid link', () => {
       const invalidLink = 'invalid-link';
-      expect(() => new AuctionPhoto({ link: invalidLink })).toThrow(
-        InvalidPhotoUrlError,
-      );
+
+      try {
+        new AuctionPhoto({ link: invalidLink });
+        expect(true).toEqual(false);
+      } catch (err) {
+        expect(err).toBeInstanceOf(InvalidPhotoUrlError);
+        expect(err.details).toEqual({
+          url: invalidLink,
+        });
+      }
     });
   });
 

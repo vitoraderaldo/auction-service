@@ -1,10 +1,9 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { Mongoose } from 'mongoose';
-import AppModule from '../../../src/app.module';
 import buildBidder from '../../util/bidder.mock';
 import BidderSchema, { BidderModel } from '../../../src/@core/auction/infra/database/schemas/bidder.schema';
+import { getMongoConnection, startTestingApp } from '../util/testing-app';
 
 describe('Create Bidder (e2e)', () => {
   let app: INestApplication;
@@ -12,13 +11,9 @@ describe('Create Bidder (e2e)', () => {
   let bidderModel: BidderModel;
 
   beforeEach(async () => {
-    const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AppModule],
-    }).compile();
+    app = await startTestingApp();
 
-    app = moduleFixture.createNestApplication();
-
-    connection = app.get<Mongoose>('MONGOOSE_CONNECTION');
+    connection = getMongoConnection(app);
     bidderModel = BidderSchema.getModel(connection);
     await app.init();
   });

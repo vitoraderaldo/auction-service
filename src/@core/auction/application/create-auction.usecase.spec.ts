@@ -30,8 +30,15 @@ describe('CreateAuctionUseCase', () => {
       photos: [],
     };
 
-    const response = useCase.execute(input);
-    await expect(response).rejects.toThrow(AuctioneerNotFoundError);
+    try {
+      await useCase.execute(input);
+      expect(true).toEqual(false);
+    } catch (err) {
+      expect(err).toBeInstanceOf(AuctioneerNotFoundError);
+      expect(err.details).toEqual({
+        auctioneerId: input.auctioneerId,
+      });
+    }
   });
 
   it('should create an auction successfully', async () => {

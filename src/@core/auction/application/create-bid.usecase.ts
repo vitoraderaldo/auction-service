@@ -36,7 +36,7 @@ export default class CreateBidUseCase {
 
     const bidder = await this.bidderRepository.findById(bidderId);
     if (!bidder) {
-      throw new BidderNotFoundError({ id: bidderId });
+      throw new BidderNotFoundError({ bidderId });
     }
 
     const bid = bidder.createBid({

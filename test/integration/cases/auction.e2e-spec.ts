@@ -1,9 +1,7 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { faker } from '@faker-js/faker';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { Mongoose } from 'mongoose';
-import AppModule from '../../../src/app.module';
 import buildAuctioneer from '../../util/auctioneer.mock';
 import insertAuctioneer from '../util/insert-auctioneer';
 import { AuctionStatusEnum } from '../../../src/@core/auction/domain/value-objects/auction-status.vo';
@@ -13,6 +11,7 @@ import AuctionSchema, {
 import buildAuction from '../../util/auction.mock';
 import Uuid from '../../../src/@core/common/domain/value-objects/uuid.vo';
 import insertAuction from '../util/insert-auction';
+import { getMongoConnection, startTestingApp } from '../util/testing-app';
 
 describe('Auction (e2e)', () => {
   let app: INestApplication;
@@ -20,13 +19,9 @@ describe('Auction (e2e)', () => {
   let auctionModel: AuctionModel;
 
   beforeEach(async () => {
-    const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AppModule],
-    }).compile();
+    app = await startTestingApp();
 
-    app = moduleFixture.createNestApplication();
-
-    connection = app.get<Mongoose>('MONGOOSE_CONNECTION');
+    connection = getMongoConnection(app);
     auctionModel = AuctionSchema.getModel(connection);
     await app.init();
   });

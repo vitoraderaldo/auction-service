@@ -1,21 +1,16 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { Mongoose } from 'mongoose';
-import AppModule from '../../../src/app.module';
+import { getMongoConnection, startTestingApp } from '../util/testing-app';
 
 describe('Health Controller (e2e)', () => {
   let app: INestApplication;
   let connection: Mongoose;
 
   beforeEach(async () => {
-    const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AppModule],
-    }).compile();
+    app = await startTestingApp();
 
-    app = moduleFixture.createNestApplication();
-
-    connection = app.get<Mongoose>('MONGOOSE_CONNECTION');
+    connection = getMongoConnection(app);
     await app.init();
   });
 

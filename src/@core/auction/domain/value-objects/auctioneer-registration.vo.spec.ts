@@ -18,23 +18,47 @@ describe('Auctioneer Registration - Object Value', () => {
 
   it('should throw an error for a registration less than 3 characters long', () => {
     const shortRegistration = '12';
-    expect(() => new AuctioneerRegistration(shortRegistration)).toThrow(
-      InvalidAuctioneerRegistrationError,
-    );
+
+    try {
+      new AuctioneerRegistration(shortRegistration);
+      expect(true).toEqual(false);
+    } catch (err) {
+      expect(err).toBeInstanceOf(InvalidAuctioneerRegistrationError);
+      expect(err.details).toEqual({
+        value: shortRegistration,
+        reason: 'Registration must be at least 3 characters long',
+      });
+    }
   });
 
   it('should throw an error for a 3-character registration that is not a number', () => {
     const invalidRegistration = '12c';
-    expect(() => new AuctioneerRegistration(invalidRegistration)).toThrow(
-      InvalidAuctioneerRegistrationError,
-    );
+
+    try {
+      new AuctioneerRegistration(invalidRegistration);
+      expect(true).toEqual(false);
+    } catch (err) {
+      expect(err).toBeInstanceOf(InvalidAuctioneerRegistrationError);
+      expect(err.details).toEqual({
+        value: invalidRegistration,
+        reason: 'Registration with 3 characters must be a number',
+      });
+    }
   });
 
   it('should throw an error for an invalid format registration', () => {
     const invalidFormatRegistration = '12/345';
-    expect(() => new AuctioneerRegistration(invalidFormatRegistration)).toThrow(
-      InvalidAuctioneerRegistrationError,
-    );
+
+    try {
+      new AuctioneerRegistration(invalidFormatRegistration);
+      expect(true).toEqual(false);
+    } catch (err) {
+      expect(err).toBeInstanceOf(InvalidAuctioneerRegistrationError);
+      expect(err.details).toEqual({
+        value: invalidFormatRegistration,
+        reason: 'Registration is not in a valid format',
+      });
+    }
   });
 
   it('should return true when two instances are equal', () => {

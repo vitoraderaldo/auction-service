@@ -42,7 +42,7 @@ export default class CreateAuctionUseCase {
     );
 
     if (!auctioneer) {
-      throw new AuctioneerNotFoundError({ id: input.auctioneerId });
+      throw new AuctioneerNotFoundError({ auctioneerId: input.auctioneerId });
     }
 
     const auction = auctioneer.createAuction({

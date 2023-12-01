@@ -18,9 +18,10 @@ import CreateBidUseCase from './@core/auction/application/create-bid.usecase';
 import BidRepository from './@core/auction/domain/repositories/bid.repository';
 import BidderController from './@core/auction/infra/api/bidder.controller';
 import PublishAuctionUseCase from './@core/auction/application/publishes-auction.usecase';
+import LoggerModule from './logger.module';
 
 @Module({
-  imports: [ConfModule, MongoModule],
+  imports: [LoggerModule, ConfModule, MongoModule],
   controllers: [HealthController, AuctionController, AuctioneerController, BidderController],
   providers: [
     {

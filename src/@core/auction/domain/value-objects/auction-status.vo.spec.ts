@@ -12,9 +12,16 @@ describe('AuctionStatus', () => {
 
     it('should throw an error if initialized with an invalid status', () => {
       const invalidStatus = 'INVALID_STATUS' as AuctionStatusEnum;
-      expect(() => new AuctionStatus(invalidStatus)).toThrow(
-        InvalidAuctionStatusError,
-      );
+
+      try {
+        new AuctionStatus(invalidStatus);
+        expect(true).toEqual(false);
+      } catch (err) {
+        expect(err).toBeInstanceOf(InvalidAuctionStatusError);
+        expect(err.details).toEqual({
+          status: invalidStatus,
+        });
+      }
     });
   });
 

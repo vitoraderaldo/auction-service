@@ -42,6 +42,7 @@ module.exports = {
           'error',
           { devDependencies: true},
         ],
+        'no-new': 'off',
       },
     },
   ]

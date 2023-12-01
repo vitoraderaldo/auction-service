@@ -12,9 +12,16 @@ describe('IsoStringDate', () => {
 
     it('should throw an error if initialized with an invalid ISO string date', () => {
       const invalidIsoDateString = 'invalid-date';
-      expect(() => new IsoStringDate(invalidIsoDateString)).toThrow(
-        InvalidDateFormatError,
-      );
+
+      try {
+        new IsoStringDate(invalidIsoDateString);
+        expect(true).toEqual(false);
+      } catch (err) {
+        expect(err).toBeInstanceOf(InvalidDateFormatError);
+        expect(err.details).toEqual({
+          date: invalidIsoDateString,
+        });
+      }
     });
   });
 

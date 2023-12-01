@@ -11,16 +11,32 @@ describe('Person Name - Value Object', () => {
 
   it('should throw an error for a first name less than 3 characters long', () => {
     const shortName = { firstName: 'Jo', lastName: 'Doe' };
-    expect(() => new PersonName(shortName)).toThrow(
-      InvalidNameError,
-    );
+
+    try {
+      new PersonName(shortName);
+      expect(true).toEqual(false);
+    } catch (err) {
+      expect(err).toBeInstanceOf(InvalidNameError);
+      expect(err.details).toEqual({
+        firstName: shortName.firstName,
+        reason: 'First name must be at least 3 characters long',
+      });
+    }
   });
 
   it('should throw an error for a last name less than 3 characters long', () => {
     const shortName = { firstName: 'John', lastName: 'Do' };
-    expect(() => new PersonName(shortName)).toThrow(
-      InvalidNameError,
-    );
+
+    try {
+      new PersonName(shortName);
+      expect(true).toEqual(false);
+    } catch (err) {
+      expect(err).toBeInstanceOf(InvalidNameError);
+      expect(err.details).toEqual({
+        lastName: shortName.lastName,
+        reason: 'Last name must be at least 3 characters long',
+      });
+    }
   });
 
   it('should be equal when first name and last name are the same', () => {

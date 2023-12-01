@@ -21,9 +21,18 @@ describe('Uuid - Value Object', () => {
     expect(uuid.value).toBe(validUuid);
   });
 
-  it('should throw an error for an invalid UUID', () => {
+  it('should throw an error for an invalid UUID', async () => {
     const invalidUuid = 'invalid-uuid';
-    expect(() => new Uuid(invalidUuid)).toThrow(InvalidUuidError);
+
+    try {
+      new Uuid(invalidUuid);
+      expect(true).toEqual(false);
+    } catch (error) {
+      expect(error).toBeInstanceOf(InvalidUuidError);
+      expect(error.details).toEqual({
+        uuid: invalidUuid,
+      });
+    }
   });
 
   it('should be equal to another uuid with the same value', () => {

@@ -10,6 +10,7 @@ export default class AuctioneerRegistration extends ValueObject<string> {
   validate() {
     if (this.value.length < 3) {
       throw new InvalidAuctioneerRegistrationError({
+        value: this.value,
         reason: 'Registration must be at least 3 characters long',
       });
     }
@@ -17,11 +18,13 @@ export default class AuctioneerRegistration extends ValueObject<string> {
     if (this.value.length === 3) {
       if (!this.value.match(/^[0-9]{3}$/)) {
         throw new InvalidAuctioneerRegistrationError({
-          reason: 'Registration must be a number',
+          value: this.value,
+          reason: 'Registration with 3 characters must be a number',
         });
       }
     } else if (!this.value.match(/^[0-9]{2}\/[0-9]{3}-[A-Z]$/)) {
       throw new InvalidAuctioneerRegistrationError({
+        value: this.value,
         reason: 'Registration is not in a valid format',
       });
     }

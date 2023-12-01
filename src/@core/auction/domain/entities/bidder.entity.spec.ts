@@ -2,6 +2,7 @@ import { randomUUID } from 'crypto';
 import { faker } from '@faker-js/faker';
 import Uuid from '../../../common/domain/value-objects/uuid.vo';
 import Bidder, { BidderConstructorProps } from './bidder.entity';
+import { generateFirstName, generateLastName } from '../../../../../test/util/string-generation';
 
 describe('Bidder Entity', () => {
   it('should create a Bidder instance', () => {
@@ -10,8 +11,8 @@ describe('Bidder Entity', () => {
     // Mocking the parameters
     const params: BidderConstructorProps = {
       id: new Uuid(bidderId),
-      firstName: faker.person.firstName(),
-      lastName: faker.person.lastName(),
+      firstName: generateFirstName(),
+      lastName: generateLastName(),
       email: faker.internet.email(),
       createdAt: '2023-01-01T00:00:00.000Z',
       updatedAt: '2023-01-01T00:00:00.000Z',
@@ -32,8 +33,8 @@ describe('Bidder Entity', () => {
 
   it('should create a Bidder instance using the static create method', () => {
     const params = {
-      firstName: faker.person.firstName(),
-      lastName: faker.person.lastName(),
+      firstName: generateFirstName(),
+      lastName: generateLastName(),
       email: faker.internet.email(),
     };
 

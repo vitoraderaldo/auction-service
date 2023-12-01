@@ -11,7 +11,7 @@ import AuctionNotFoundError from '../../common/error/auction-not-found';
 import BidderNotFoundError from '../../common/error/bidder-not-found';
 
 describe('Create Bid Use Case', () => {
-  let createBidUseCase: CreateBidUseCase;
+  let useCase: CreateBidUseCase;
   let auctionRepository: AuctionRepository;
   let bidderRepository: BidderRepository;
   let bidRepository: BidRepository;
@@ -21,7 +21,7 @@ describe('Create Bid Use Case', () => {
     bidderRepository = createMock<BidderRepository>();
     bidRepository = createMock<BidRepository>();
 
-    createBidUseCase = new CreateBidUseCase(
+    useCase = new CreateBidUseCase(
       auctionRepository,
       bidderRepository,
       bidRepository,
@@ -39,8 +39,15 @@ describe('Create Bid Use Case', () => {
       value: 50.6,
     };
 
-    const result = createBidUseCase.execute(input);
-    await expect(result).rejects.toThrow(AuctionNotFoundError);
+    try {
+      await useCase.execute(input);
+      expect(true).toEqual(false);
+    } catch (err) {
+      expect(err).toBeInstanceOf(AuctionNotFoundError);
+      expect(err.details).toEqual({
+        auctionId: input.auctionId,
+      });
+    }
   });
 
   it('should not create a bid if bidder does not exist', async () => {
@@ -59,8 +66,15 @@ describe('Create Bid Use Case', () => {
       value: 50.6,
     };
 
-    const result = createBidUseCase.execute(input);
-    await expect(result).rejects.toThrow(BidderNotFoundError);
+    try {
+      await useCase.execute(input);
+      expect(true).toEqual(false);
+    } catch (err) {
+      expect(err).toBeInstanceOf(BidderNotFoundError);
+      expect(err.details).toEqual({
+        bidderId: input.bidderId,
+      });
+    }
   });
 
   it('should create a bid successfully', async () => {
@@ -89,7 +103,7 @@ describe('Create Bid Use Case', () => {
       value: bidValue,
     };
 
-    const result = await createBidUseCase.execute(input);
+    const result = await useCase.execute(input);
 
     expect(result.id).toBeDefined();
     expect(result.value).toEqual(input.value);

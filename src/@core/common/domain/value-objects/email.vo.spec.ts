@@ -11,9 +11,16 @@ describe('Email', () => {
 
   it('should throw an error for an invalid email format', () => {
     const invalidEmail = 'invalid-email';
-    expect(() => new Email(invalidEmail)).toThrow(
-      InvalidEmailError,
-    );
+
+    try {
+      new Email(invalidEmail);
+      expect(true).toEqual(false);
+    } catch (err) {
+      expect(err).toBeInstanceOf(InvalidEmailError);
+      expect(err.details).toEqual({
+        email: invalidEmail,
+      });
+    }
   });
 
   it('should be equal to another Email with the same value', () => {

@@ -1,8 +1,6 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { Mongoose } from 'mongoose';
-import AppModule from '../../../src/app.module';
 import buildAuctioneer from '../../util/auctioneer.mock';
 import insertAuctioneer from '../util/insert-auctioneer';
 import { AuctionStatusEnum } from '../../../src/@core/auction/domain/value-objects/auction-status.vo';
@@ -14,6 +12,8 @@ import BidSchema, { BidModel } from '../../../src/@core/auction/infra/database/s
 import Auctioneer from '../../../src/@core/auction/domain/entities/auctioneer.entity';
 import Auction from '../../../src/@core/auction/domain/entities/auction.entity';
 import Bidder from '../../../src/@core/auction/domain/entities/bidder.entity';
+import { startTestingApp, getMongoConnection } from '../util/testing-app';
+import { ErrorCode } from '../../../src/@core/common/error/domain.error';
 
 describe('Bid (e2e)', () => {
   let app: INestApplication;
@@ -27,13 +27,9 @@ describe('Bid (e2e)', () => {
   let auctionId: string;
 
   beforeEach(async () => {
-    const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AppModule],
-    }).compile();
+    app = await startTestingApp();
 
-    app = moduleFixture.createNestApplication();
-
-    connection = app.get<Mongoose>('MONGOOSE_CONNECTION');
+    connection = getMongoConnection(app);
     bidModel = BidSchema.getModel(connection);
     await app.init();
 
@@ -108,14 +104,24 @@ describe('Bid (e2e)', () => {
       bidderId: bidder2.getId(),
       value: startPrice + 100,
     };
-    await request(app.getHttpServer())
+
+    const response = await request(app.getHttpServer())
       .post(`/v1/auction/${auctionId}/bid`)
       .set('Authorization', bidder2.getId())
       .send(secondBid)
       .expect(500);
 
+    const errorCode = response?.body?.errorCode;
+    const errorDetails = response?.body?.errorDetails;
     const auctionBids = await bidModel.find({ auctionId });
     const savedBid = auctionBids?.at(0);
+
+    expect(errorCode).toEqual(ErrorCode.INVALID_BID_AMOUNT);
+    expect(errorDetails).toEqual({
+      auctionId,
+      highestBid: firstBid.value,
+      value: secondBid.value,
+    });
 
     expect(auctionBids).toHaveLength(1);
     expect(savedBid.auctionId).toEqual(auctionId);

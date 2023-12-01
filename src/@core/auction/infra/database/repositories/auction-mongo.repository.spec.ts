@@ -114,9 +114,16 @@ describe('AuctionMongoRepository', () => {
 
   it('should throw an error if auction is not found when updating', async () => {
     const updatedAuction = buildAuction();
-    const triggerUpdate = () => repository.update(updatedAuction);
 
-    await expect(triggerUpdate()).rejects.toThrow(AuctionNotFoundError);
+    try {
+      await repository.update(updatedAuction);
+      expect(true).toEqual(false);
+    } catch (err) {
+      expect(err).toBeInstanceOf(AuctionNotFoundError);
+      expect(err.details).toEqual({
+        auctionId: updatedAuction.getId(),
+      });
+    }
 
     const foundAuction = await auctionModel.findOne<AuctionMongoInterface>({
       id: updatedAuction.getId(),

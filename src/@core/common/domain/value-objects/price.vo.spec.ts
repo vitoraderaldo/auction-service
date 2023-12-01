@@ -12,14 +12,31 @@ describe('Price', () => {
 
     it('should throw an error if initialized with a non-number value', () => {
       const invalidValue = 'invalid' as unknown as number;
-      expect(() => new Price(invalidValue)).toThrow(InvalidPriceError);
+      try {
+        new Price(invalidValue);
+        expect(true).toEqual(false);
+      } catch (err) {
+        expect(err).toBeInstanceOf(InvalidPriceError);
+        expect(err.details).toEqual({
+          price: invalidValue,
+          reason: 'Price must be a number',
+        });
+      }
     });
 
     it('should throw an error if initialized with a value less than or equal to 0', () => {
       const invalidValue = 0;
-      expect(() => new Price(invalidValue)).toThrow(
-        InvalidPriceError,
-      );
+
+      try {
+        new Price(invalidValue);
+        expect(true).toEqual(false);
+      } catch (err) {
+        expect(err).toBeInstanceOf(InvalidPriceError);
+        expect(err.details).toEqual({
+          price: 0,
+          reason: 'Price must be greater than 0',
+        });
+      }
     });
   });
 
