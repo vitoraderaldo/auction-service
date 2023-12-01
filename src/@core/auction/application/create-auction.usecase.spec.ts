@@ -14,7 +14,7 @@ describe('CreateAuctionUseCase', () => {
     auctioneerRepository = createMock<AuctioneerRepository>();
     auctionRepository = createMock<AuctionRepository>();
 
-    useCase = new CreateAuctionUseCase(auctionRepository, auctioneerRepository);
+    useCase = new CreateAuctionUseCase(auctionRepository, auctioneerRepository, console);
   });
 
   it('should not create an auction if the auctioneer does not exist', async () => {

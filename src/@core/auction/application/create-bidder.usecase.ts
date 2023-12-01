@@ -1,3 +1,4 @@
+import { LoggerInterface } from '../../common/application/logger';
 import BidderAlreadyExistsError from '../../common/error/bidder-already-exists';
 import Bidder from '../domain/entities/bidder.entity';
 import BidderRepository from '../domain/repositories/bidder.repository';
@@ -20,10 +21,12 @@ export interface CreateBidderOutput {
 export default class CreateBidderUseCase {
   constructor(
     private readonly bidderRepository: BidderRepository,
+    private readonly logger: LoggerInterface,
   ) {}
 
   async execute(params: CreateBidderInput): Promise<CreateBidderOutput> {
     const { firstName, lastName, email } = params;
+    this.logger.info(`Starting to create bidder for email (${email})`);
 
     const foundBidder = await this.bidderRepository.findByEmail(email);
 
@@ -40,6 +43,7 @@ export default class CreateBidderUseCase {
     await this.bidderRepository.create(bidder);
     const bidderData = bidder.toJSON();
 
+    this.logger.info(`Finished to create bidder for email (${email})`);
     return {
       id: bidderData.id,
       firstName: bidderData.firstName,

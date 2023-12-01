@@ -11,7 +11,7 @@ describe('Publish Auction Use Case', () => {
 
   beforeEach(() => {
     auctionRepository = createMock<AuctionRepository>();
-    useCase = new PublishAuctionUseCase(auctionRepository);
+    useCase = new PublishAuctionUseCase(auctionRepository, console);
   });
 
   it('should not publish an auction if it does not exist', async () => {

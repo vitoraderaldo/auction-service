@@ -1,3 +1,4 @@
+import { LoggerInterface } from '../../common/application/logger';
 import AuctionNotFoundError from '../../common/error/auction-not-found';
 import BidderNotFoundError from '../../common/error/bidder-not-found';
 import { AuctionRepository } from '../domain/repositories/auction.repository';
@@ -24,10 +25,12 @@ export default class CreateBidUseCase {
     private readonly auctionRepository: AuctionRepository,
     private readonly bidderRepository: BidderRepository,
     private readonly bidRepository: BidRepository,
+    private readonly logger: LoggerInterface,
   ) {}
 
   async execute(params: CreateBidInput): Promise<CreateBidOutput> {
     const { auctionId, bidderId, value } = params;
+    this.logger.info(`Starting to create bid for auctionId (${auctionId}) and bidderId (${bidderId})`);
 
     const auction = await this.auctionRepository.findById(auctionId);
     if (!auction) {
@@ -46,6 +49,8 @@ export default class CreateBidUseCase {
 
     await this.bidRepository.create(bid);
     const bidData = bid.toJSON();
+
+    this.logger.info(`Finished to create bid for auctionId (${auctionId}) and bidderId (${bidderId})`);
 
     return {
       id: bidData.id,

@@ -25,6 +25,7 @@ describe('Create Bid Use Case', () => {
       auctionRepository,
       bidderRepository,
       bidRepository,
+      console,
     );
   });
 

@@ -8,17 +8,27 @@ export default class WinstonLogger implements LoggerInterface {
   ) {}
 
   info(message: string, metadata?: object): void {
-    const metadataStringified = inspect(metadata);
-    this.winstonClient.info(`${message} - ${metadataStringified}`);
+    const fullMessage = this.createMessage(message, metadata);
+    this.winstonClient.info(fullMessage);
   }
 
   error(message: string, metadata?: object): void {
-    const metadataStringified = inspect(metadata);
-    this.winstonClient.error(`${message} - ${metadataStringified}`);
+    const fullMessage = this.createMessage(message, metadata);
+    this.winstonClient.error(fullMessage);
   }
 
   warn(message: string, metadata?: object): void {
+    const fullMessage = this.createMessage(message, metadata);
+    this.winstonClient.warn(fullMessage);
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  private createMessage(message: string, metadata?: object): string {
+    if (!metadata) {
+      return message;
+    }
+
     const metadataStringified = inspect(metadata);
-    this.winstonClient.warn(`${message} - ${metadataStringified}`);
+    return `${message} - ${metadataStringified}`;
   }
 }

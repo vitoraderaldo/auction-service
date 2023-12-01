@@ -12,7 +12,7 @@ describe('CreateAuctioneerUseCase', () => {
 
   beforeEach(async () => {
     auctioneerRepository = createMock<AuctioneerRepository>();
-    useCase = new CreateAuctioneerUseCase(auctioneerRepository);
+    useCase = new CreateAuctioneerUseCase(auctioneerRepository, console);
   });
 
   it('should not create an auctioneer if it already exists', async () => {

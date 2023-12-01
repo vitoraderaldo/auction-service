@@ -19,6 +19,7 @@ import BidRepository from './@core/auction/domain/repositories/bid.repository';
 import BidderController from './@core/auction/infra/api/bidder.controller';
 import PublishAuctionUseCase from './@core/auction/application/publishes-auction.usecase';
 import LoggerModule from './logger.module';
+import { LoggerInterface } from './@core/common/application/logger';
 
 @Module({
   imports: [LoggerModule, ConfModule, MongoModule],
@@ -49,22 +50,25 @@ import LoggerModule from './logger.module';
       useFactory: (
         auctionRepository: AuctionRepository,
         auctioneerRepository: AuctioneerRepository,
-      ) => new CreateAuctionUseCase(auctionRepository, auctioneerRepository),
-      inject: ['AuctionRepository', 'AuctioneerRepository'],
+        loggerInterface: LoggerInterface,
+      ) => new CreateAuctionUseCase(auctionRepository, auctioneerRepository, loggerInterface),
+      inject: ['AuctionRepository', 'AuctioneerRepository', 'LoggerInterface'],
     },
     {
       provide: CreateAuctioneerUseCase,
       useFactory: (
         auctioneerRepository: AuctioneerRepository,
-      ) => new CreateAuctioneerUseCase(auctioneerRepository),
-      inject: ['AuctioneerRepository'],
+        loggerInterface: LoggerInterface,
+      ) => new CreateAuctioneerUseCase(auctioneerRepository, loggerInterface),
+      inject: ['AuctioneerRepository', 'LoggerInterface'],
     },
     {
       provide: CreateBidderUseCase,
       useFactory: (
         bidderRepository: BidderRepository,
-      ) => new CreateBidderUseCase(bidderRepository),
-      inject: ['BidderRepository'],
+        loggerInterface: LoggerInterface,
+      ) => new CreateBidderUseCase(bidderRepository, loggerInterface),
+      inject: ['BidderRepository', 'LoggerInterface'],
     },
     {
       provide: CreateBidUseCase,
@@ -72,15 +76,22 @@ import LoggerModule from './logger.module';
         auctionRepository: AuctionRepository,
         bidderRepository: BidderRepository,
         bidRepository: BidRepository,
-      ) => new CreateBidUseCase(auctionRepository, bidderRepository, bidRepository),
-      inject: ['AuctionRepository', 'BidderRepository', 'BidRepository'],
+        loggerInterface: LoggerInterface,
+      ) => new CreateBidUseCase(
+        auctionRepository,
+        bidderRepository,
+        bidRepository,
+        loggerInterface,
+      ),
+      inject: ['AuctionRepository', 'BidderRepository', 'BidRepository', 'LoggerInterface'],
     },
     {
       provide: PublishAuctionUseCase,
       useFactory: (
         auctionRepository: AuctionRepository,
-      ) => new PublishAuctionUseCase(auctionRepository),
-      inject: ['AuctionRepository'],
+        loggerInterface: LoggerInterface,
+      ) => new PublishAuctionUseCase(auctionRepository, loggerInterface),
+      inject: ['AuctionRepository', 'LoggerInterface'],
     },
   ],
 })

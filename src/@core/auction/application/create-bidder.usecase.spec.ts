@@ -13,7 +13,7 @@ describe('Create Bidder Use Case', () => {
   beforeEach(() => {
     bidderRepository = createMock<BidderRepository>();
 
-    useCase = new CreateBidderUseCase(bidderRepository);
+    useCase = new CreateBidderUseCase(bidderRepository, console);
   });
 
   it('should not create a bidder if already exists', async () => {

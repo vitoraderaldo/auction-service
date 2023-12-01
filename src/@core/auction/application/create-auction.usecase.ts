@@ -1,3 +1,4 @@
+import { LoggerInterface } from '../../common/application/logger';
 import AuctioneerNotFoundError from '../../common/error/auctioneer-not-found';
 import { AuctionRepository } from '../domain/repositories/auction.repository';
 import AuctioneerRepository from '../domain/repositories/auctioneer.repository';
@@ -34,15 +35,18 @@ export default class CreateAuctionUseCase {
   constructor(
     private readonly auctionRepository: AuctionRepository,
     private readonly auctioneerRepository: AuctioneerRepository,
+    private readonly logger: LoggerInterface,
   ) {}
 
   async execute(input: CreateAuctionInput): Promise<CreateAuctionOutput> {
+    const { auctioneerId, title, startPrice } = input;
+    this.logger.info(`Starting to create auction for auctioneerId (${auctioneerId}), title (${title}) and startPrice (${startPrice})`);
     const auctioneer = await this.auctioneerRepository.findById(
       input.auctioneerId,
     );
 
     if (!auctioneer) {
-      throw new AuctioneerNotFoundError({ auctioneerId: input.auctioneerId });
+      throw new AuctioneerNotFoundError({ auctioneerId });
     }
 
     const auction = auctioneer.createAuction({
@@ -57,6 +61,8 @@ export default class CreateAuctionUseCase {
     await this.auctionRepository.create(auction);
 
     const auctionData = auction.toJSON();
+
+    this.logger.info(`Finished to create auction for auctioneerId (${auctioneerId}), title (${title}) and startPrice (${startPrice})`);
 
     return {
       id: auctionData.id,
