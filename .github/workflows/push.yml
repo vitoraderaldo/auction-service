@@ -8,8 +8,12 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+
     - name: Checkout code
       uses: actions/checkout@v3
+
+    - name: Start Containers
+      run: docker-compose up -d
 
     - name: Install Node v20.9.0
       uses: actions/setup-node@v3
@@ -24,3 +28,6 @@ jobs:
     
     - name: Run Unit Tests
       run: npm run test:unit
+
+    - name: Run Integration Tests
+      run: npm run test:integration
