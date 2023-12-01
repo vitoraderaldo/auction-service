@@ -10,7 +10,7 @@ jobs:
     steps:
 
     - name: Start Containers
-      run: docker compose up -d --wait
+      run: docker-compose up -d
 
     - name: Checkout code
       uses: actions/checkout@v3
