@@ -24,3 +24,9 @@ jobs:
     
     - name: Run Unit Tests
       run: npm run test:unit
+
+    - name: Start Containers
+      run: docker-compose up -d --wait
+
+    - name: Run Integration Tests
+      run: npm run test:integration
