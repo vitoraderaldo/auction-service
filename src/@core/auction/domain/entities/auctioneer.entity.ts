@@ -1,4 +1,4 @@
-import Entity from '../../../common/domain/entity';
+import AggregateRoot from '../../../common/domain/aggregate-root';
 import Email from '../../../common/domain/value-objects/email.vo';
 import PersonName from '../../../common/domain/value-objects/person-name.vo';
 import Uuid from '../../../common/domain/value-objects/uuid.vo';
@@ -25,7 +25,7 @@ export type AuctioneerConstructorProps = {
   updatedAt: string;
 };
 
-export default class Auctioneer extends Entity {
+export default class Auctioneer extends AggregateRoot {
   private id: Uuid;
 
   private name: PersonName;

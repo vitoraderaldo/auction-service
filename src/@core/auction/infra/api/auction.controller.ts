@@ -9,6 +9,8 @@ import PublishAuctionUseCase from '../../application/usecase/publishes-auction.u
 import AuctioneerGuard from '../../../common/infra/api/guards/auctioneer.guard';
 import BidderGuard from '../../../common/infra/api/guards/bidder.guard';
 import { AuctioneerId, BidderId } from '../../../common/infra/api/guards/user.decorators';
+import SystemGuard from '../../../common/infra/api/guards/system.guard';
+import BidPeriodHasFinishedUseCase, { BidPeriodHasFinishedOutput } from '../../application/usecase/bid-period-has-finished.usecase';
 
 @Controller('/v1/auction')
 export default class AuctionController {
@@ -16,6 +18,7 @@ export default class AuctionController {
     private readonly createAuctionUseCase: CreateAuctionUseCase,
     private readonly createBidUseCase: CreateBidUseCase,
     private readonly publishAuctionUseCase: PublishAuctionUseCase,
+    private readonly bidPeriodHasFinishedUseCase: BidPeriodHasFinishedUseCase,
   ) {}
 
   @UseGuards(AuctioneerGuard)
@@ -56,6 +59,14 @@ export default class AuctionController {
       auctionId,
       bidderId,
     });
+    return response;
+  }
+
+  @UseGuards(SystemGuard)
+  @Post('/change-status')
+  @HttpCode(200)
+  async changeStatus(): Promise<BidPeriodHasFinishedOutput> {
+    const response = await this.bidPeriodHasFinishedUseCase.execute();
     return response;
   }
 }

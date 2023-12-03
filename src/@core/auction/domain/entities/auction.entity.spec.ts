@@ -17,6 +17,7 @@ import InvalidAuctionTitleError from '../../../common/error/invalid-auction-titl
 import EndDateBeforeStartDateError from '../../../common/error/date-in-the-past copy';
 import InvalidBidAmountError from '../../../common/error/invalid-bid-amount';
 import InvalidBidPeriodError from '../../../common/error/invalid-bid-period';
+import BidPeriodFinishedEvent from '../../../common/domain/domain-events/bid-period-finished';
 
 describe('Auction', () => {
   let validAuctionProps: AuctionConstructorProps;
@@ -411,6 +412,67 @@ describe('Auction', () => {
       expect(bidData.createdAt).toBeTruthy();
       expect(bidData.updatedAt).toBeTruthy();
       expect(auctionBids).toHaveLength(4);
+    });
+  });
+
+  describe('Bid Period Finishes', () => {
+    const oneMonthAgo = new Date();
+    oneMonthAgo.setUTCMonth(oneMonthAgo.getUTCMonth() - 1);
+
+    const fiveMinutesAgo = new Date();
+    fiveMinutesAgo.setUTCMinutes(fiveMinutesAgo.getUTCMinutes() - 5);
+
+    it('should not finish the bid period if auction status is not published', () => {
+      const auction = buildAuction();
+
+      try {
+        auction.transitionToBidPeriodFinished();
+        expect(true).toEqual(false);
+      } catch (err) {
+        expect(err).toBeInstanceOf(NotAllowedInAuctionStatusError);
+        expect(err.details).toEqual({
+          auctionId: auction.getId(),
+          status: AuctionStatusEnum.CREATED,
+        });
+      }
+    });
+
+    it('should not finish the bid period if end date has not been reached', () => {
+      const auction = buildAuction({
+        status: AuctionStatusEnum.PUBLISHED,
+      });
+
+      try {
+        auction.transitionToBidPeriodFinished();
+        expect(true).toEqual(false);
+      } catch (err) {
+        expect(err).toBeInstanceOf(InvalidBidPeriodError);
+        expect(err.details).toEqual({
+          auctionId: auction.getId(),
+          reason: 'Bid period has not finished yet',
+        });
+      }
+    });
+
+    it('should finish the bid period successfully', () => {
+      const auction = buildAuction({
+        status: AuctionStatusEnum.PUBLISHED,
+        startDate: oneMonthAgo.toISOString(),
+        endDate: fiveMinutesAgo.toISOString(),
+      });
+
+      auction.transitionToBidPeriodFinished();
+
+      const auctionData = auction.toJSON();
+      const events = auction.getEvents();
+
+      expect(auctionData.status).toEqual(AuctionStatusEnum.BID_PERIOD_FINISHED);
+      expect(events).toHaveLength(1);
+      expect(events[0]).toBeInstanceOf(BidPeriodFinishedEvent);
+      expect(events[0].payload).toEqual({
+        auctionId: auction.getId(),
+        endDate: auction.getEndDate(),
+      });
     });
   });
 });

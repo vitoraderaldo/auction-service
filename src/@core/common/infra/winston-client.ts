@@ -10,7 +10,7 @@ export default createLogger({
         format.colorize(),
         format.timestamp(),
         format.align(),
-        format.printf((info) => `${info.timestamp} - [${info.level}]: ${info.message}`),
+        format.printf((info) => `${info.timestamp} - [${info.level}]: ${info.message?.trim()}`),
       ),
     }),
   ],

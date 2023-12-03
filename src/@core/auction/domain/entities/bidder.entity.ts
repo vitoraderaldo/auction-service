@@ -1,4 +1,4 @@
-import Entity from '../../../common/domain/entity';
+import AggregateRoot from '../../../common/domain/aggregate-root';
 import Email from '../../../common/domain/value-objects/email.vo';
 import IsoStringDate from '../../../common/domain/value-objects/iso-string-data.vo';
 import PersonName from '../../../common/domain/value-objects/person-name.vo';
@@ -15,7 +15,7 @@ export type BidderConstructorProps = {
   updatedAt: string;
 };
 
-export default class Bidder extends Entity {
+export default class Bidder extends AggregateRoot {
   private id: Uuid;
 
   private name: PersonName;

@@ -1,4 +1,5 @@
-import Entity from '../../../common/domain/entity';
+import AggregateRoot from '../../../common/domain/aggregate-root';
+import BidPeriodFinishedEvent from '../../../common/domain/domain-events/bid-period-finished';
 import IsoStringDate from '../../../common/domain/value-objects/iso-string-data.vo';
 import Price from '../../../common/domain/value-objects/price.vo';
 import Uuid from '../../../common/domain/value-objects/uuid.vo';
@@ -43,7 +44,7 @@ export interface AuctionCreateProps {
   auctioneerId: string;
 }
 
-export default class Auction extends Entity {
+export default class Auction extends AggregateRoot {
   private id: Uuid;
 
   private title: string;
@@ -125,6 +126,31 @@ export default class Auction extends Entity {
     this.status = new AuctionStatus(AuctionStatusEnum.PUBLISHED);
   }
 
+  transitionToBidPeriodFinished(): void {
+    const publishedStatus = new AuctionStatus(AuctionStatusEnum.PUBLISHED);
+    if (!this.status.isEqualTo(publishedStatus)) {
+      throw new NotAllowedInAuctionStatusError({
+        auctionId: this.getId(),
+        status: this.status.toString(),
+      });
+    }
+    const now = new IsoStringDate(new Date().toISOString());
+    if (this.endDate.isAfter(now)) {
+      throw new InvalidBidPeriodError({
+        auctionId: this.getId(),
+        reason: 'Bid period has not finished yet',
+      });
+    }
+    this.status = new AuctionStatus(AuctionStatusEnum.BID_PERIOD_FINISHED);
+
+    const event = new BidPeriodFinishedEvent({
+      auctionId: this.id.value,
+      endDate: this.endDate.value,
+    });
+
+    this.addEvent(event);
+  }
+
   private validate() {
     if (!this.auctioneerId) {
       throw new AuctioneerNotFoundError({ auctioneerId: this.auctioneerId });
@@ -172,6 +198,14 @@ export default class Auction extends Entity {
 
   getBids(): Bid[] {
     return this.bids;
+  }
+
+  getStatus(): AuctionStatusEnum {
+    return this.status.value;
+  }
+
+  getEndDate(): string {
+    return this.endDate.value;
   }
 
   private getHighestBid(): Bid {

@@ -20,6 +20,10 @@ import BidderController from '../../@core/auction/infra/api/bidder.controller';
 import PublishAuctionUseCase from '../../@core/auction/application/usecase/publishes-auction.usecase';
 import LoggerModule from './logger.module';
 import { LoggerInterface } from '../../@core/common/application/service/logger';
+import BidPeriodHasFinishedUseCase from '../../@core/auction/application/usecase/bid-period-has-finished.usecase';
+import DomainEventManager from '../../@core/common/domain/domain-event-manager';
+import { EventPublisher } from '../../@core/common/domain/domain-events/event-publisher';
+import DomainEventManagerFactory from '../../@core/common/domain/domain-event-manager.factory';
 
 @Module({
   imports: [LoggerModule, ConfModule, MongoModule],
@@ -44,6 +48,21 @@ import { LoggerInterface } from '../../@core/common/application/service/logger';
       provide: 'BidRepository',
       useFactory: async (mongoRepository: BidMongoRepository) => mongoRepository,
       inject: [BidMongoRepository],
+    },
+    {
+      provide: DomainEventManagerFactory,
+      useFactory: async (logger: LoggerInterface) => new DomainEventManagerFactory(logger),
+      inject: ['LoggerInterface'],
+    },
+    {
+      provide: DomainEventManager,
+      useFactory: async (factory: DomainEventManagerFactory) => factory.getInstance(),
+      inject: [DomainEventManagerFactory],
+    },
+    {
+      provide: 'EventPublisher',
+      useFactory: async (eventManager: DomainEventManager) => eventManager,
+      inject: [DomainEventManager],
     },
     {
       provide: CreateAuctionUseCase,
@@ -92,6 +111,15 @@ import { LoggerInterface } from '../../@core/common/application/service/logger';
         loggerInterface: LoggerInterface,
       ) => new PublishAuctionUseCase(auctionRepository, loggerInterface),
       inject: ['AuctionRepository', 'LoggerInterface'],
+    },
+    {
+      provide: BidPeriodHasFinishedUseCase,
+      useFactory: (
+        auctionRepository: AuctionRepository,
+        loggerInterface: LoggerInterface,
+        eventPublisher: EventPublisher,
+      ) => new BidPeriodHasFinishedUseCase(auctionRepository, eventPublisher, loggerInterface),
+      inject: ['AuctionRepository', 'LoggerInterface', 'EventPublisher'],
     },
   ],
 })
