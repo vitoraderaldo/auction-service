@@ -23,6 +23,7 @@ import { LoggerInterface } from '../../@core/common/application/service/logger';
 import BidPeriodHasFinishedUseCase from '../../@core/auction/application/usecase/bid-period-has-finished.usecase';
 import DomainEventManager from '../../@core/common/domain/domain-event-manager';
 import { EventPublisher } from '../../@core/common/domain/domain-events/event-publisher';
+import DomainEventManagerFactory from '../../@core/common/domain/domain-event-manager.factory';
 
 @Module({
   imports: [LoggerModule, ConfModule, MongoModule],
@@ -49,9 +50,19 @@ import { EventPublisher } from '../../@core/common/domain/domain-events/event-pu
       inject: [BidMongoRepository],
     },
     {
-      provide: 'EventPublisher',
-      useFactory: async (logger: LoggerInterface) => new DomainEventManager(logger),
+      provide: DomainEventManagerFactory,
+      useFactory: async (logger: LoggerInterface) => new DomainEventManagerFactory(logger),
       inject: ['LoggerInterface'],
+    },
+    {
+      provide: DomainEventManager,
+      useFactory: async (factory: DomainEventManagerFactory) => factory.getInstance(),
+      inject: [DomainEventManagerFactory],
+    },
+    {
+      provide: 'EventPublisher',
+      useFactory: async (eventManager: DomainEventManager) => eventManager,
+      inject: [DomainEventManager],
     },
     {
       provide: CreateAuctionUseCase,
