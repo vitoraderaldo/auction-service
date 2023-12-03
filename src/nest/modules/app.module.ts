@@ -20,6 +20,9 @@ import BidderController from '../../@core/auction/infra/api/bidder.controller';
 import PublishAuctionUseCase from '../../@core/auction/application/usecase/publishes-auction.usecase';
 import LoggerModule from './logger.module';
 import { LoggerInterface } from '../../@core/common/application/service/logger';
+import BidPeriodHasFinishedUseCase from '../../@core/auction/application/usecase/bid-period-has-finished.usecase';
+import DomainEventManager from '../../@core/common/domain/domain-event-manager';
+import { EventPublisher } from '../../@core/common/domain/domain-events/event-publisher';
 
 @Module({
   imports: [LoggerModule, ConfModule, MongoModule],
@@ -44,6 +47,11 @@ import { LoggerInterface } from '../../@core/common/application/service/logger';
       provide: 'BidRepository',
       useFactory: async (mongoRepository: BidMongoRepository) => mongoRepository,
       inject: [BidMongoRepository],
+    },
+    {
+      provide: 'EventPublisher',
+      useFactory: async (logger: LoggerInterface) => new DomainEventManager(logger),
+      inject: ['LoggerInterface'],
     },
     {
       provide: CreateAuctionUseCase,
@@ -92,6 +100,15 @@ import { LoggerInterface } from '../../@core/common/application/service/logger';
         loggerInterface: LoggerInterface,
       ) => new PublishAuctionUseCase(auctionRepository, loggerInterface),
       inject: ['AuctionRepository', 'LoggerInterface'],
+    },
+    {
+      provide: BidPeriodHasFinishedUseCase,
+      useFactory: (
+        auctionRepository: AuctionRepository,
+        loggerInterface: LoggerInterface,
+        eventPublisher: EventPublisher,
+      ) => new BidPeriodHasFinishedUseCase(auctionRepository, eventPublisher, loggerInterface),
+      inject: ['AuctionRepository', 'LoggerInterface', 'EventPublisher'],
     },
   ],
 })

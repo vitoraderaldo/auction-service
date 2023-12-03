@@ -2,6 +2,7 @@ import Uuid from '../../../../common/domain/value-objects/uuid.vo';
 import AuctionNotFoundError from '../../../../common/error/auction-not-found';
 import Auction from '../../../domain/entities/auction.entity';
 import { AuctionRepository } from '../../../domain/repositories/auction.repository';
+import { AuctionStatusEnum } from '../../../domain/value-objects/auction-status.vo';
 import AuctionSchema, { AuctionModel } from '../schemas/auction.schema';
 import { BidModel } from '../schemas/bid.schema';
 
@@ -28,6 +29,17 @@ export default class AuctionMongoRepository implements AuctionRepository {
     ]);
 
     return AuctionSchema.toDomain(document, bids);
+  }
+
+  async findExpiredPublishedAuctions(): Promise<Auction[]> {
+    const auctions = await this.auctionModel.find({
+      status: AuctionStatusEnum.PUBLISHED,
+      endDate: {
+        $lte: new Date().toISOString(),
+      },
+    });
+
+    return auctions.map((auction) => AuctionSchema.toDomain(auction, []));
   }
 
   async update(auction: Auction): Promise<void> {
