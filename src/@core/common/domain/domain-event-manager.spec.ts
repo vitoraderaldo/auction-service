@@ -16,15 +16,21 @@ describe('Domain Event Manager', () => {
       endDate: new Date().toISOString(),
     });
 
-    const eventHandler1 = jest.fn(
-      () => Promise.resolve(),
-    );
-    const eventHandler2 = jest.fn(
-      () => Promise.reject(new Error('Random error')),
-    );
-    const eventHandler3 = jest.fn();
+    const eventHandler1 = {
+      handle: jest.fn(),
+    };
+    const eventHandler2 = {
+      handle: jest.fn(
+        () => Promise.reject(new Error('Random error')),
+      ),
+    };
+    const eventHandler3 = {
+      handle: jest.fn(),
+    };
 
-    const eventHandler4 = jest.fn();
+    const eventHandler4 = {
+      handle: jest.fn(),
+    };
 
     eventManager.register(event.type, eventHandler1);
     eventManager.register(event.type, eventHandler2);
@@ -33,12 +39,12 @@ describe('Domain Event Manager', () => {
 
     eventManager.publish([event]);
 
-    expect(eventHandler1).toHaveBeenCalledWith(event);
-    expect(eventHandler1).toHaveBeenCalledTimes(1);
-    expect(eventHandler2).toHaveBeenCalledWith(event);
-    expect(eventHandler2).toHaveBeenCalledTimes(1);
-    expect(eventHandler3).toHaveBeenCalledWith(event);
-    expect(eventHandler3).toHaveBeenCalledTimes(1);
-    expect(eventHandler4).not.toHaveBeenCalled();
+    expect(eventHandler1.handle).toHaveBeenCalledWith(event);
+    expect(eventHandler1.handle).toHaveBeenCalledTimes(1);
+    expect(eventHandler2.handle).toHaveBeenCalledWith(event);
+    expect(eventHandler2.handle).toHaveBeenCalledTimes(1);
+    expect(eventHandler3.handle).toHaveBeenCalledWith(event);
+    expect(eventHandler3.handle).toHaveBeenCalledTimes(1);
+    expect(eventHandler4.handle).not.toHaveBeenCalled();
   });
 });

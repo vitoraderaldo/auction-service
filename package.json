@@ -33,6 +33,7 @@
     "mongoose": "^8.0.1",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.1",
+    "sqs-producer": "^4.0.0",
     "winston": "^3.11.0"
   },
   "devDependencies": {

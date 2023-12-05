@@ -45,5 +45,11 @@ module.exports = {
         'no-new': 'off',
       },
     },
+    {
+      files: ['**/*.guard.ts'],
+      rules: {
+        'class-methods-use-this': 'off',
+      },
+    },
   ]
 };

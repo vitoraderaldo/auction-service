@@ -23,6 +23,7 @@ export default class BidPeriodHasFinishedUseCase {
 
   async execute(): Promise<BidPeriodHasFinishedOutput> {
     this.logger.info('Starting to update auctions with expired bid period');
+
     const auctions = await this.auctionRepository.findExpiredPublishedAuctions();
 
     const promises = auctions.map((auction) => this.handleBidPeriodExpiration(auction));

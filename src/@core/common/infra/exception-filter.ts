@@ -36,7 +36,7 @@ export default class AllExceptionsFilter implements ExceptionFilter {
         break;
       case exception instanceof DomainError:
         body = this.createResponseForDomainError(exception as DomainError);
-        this.loggerInterface.error(body.errorCode, body.errorDetails);
+        this.loggerInterface.warn(body.errorCode, body.errorDetails);
         break;
       default:
         body = this.createResponseForUnexpectedError();

@@ -24,6 +24,17 @@ import BidPeriodHasFinishedUseCase from '../../@core/auction/application/usecase
 import DomainEventManager from '../../@core/common/domain/domain-event-manager';
 import { EventPublisher } from '../../@core/common/domain/domain-events/event-publisher';
 import DomainEventManagerFactory from '../../@core/common/domain/domain-event-manager.factory';
+import EmailNotificationQueueStrategy from '../../@core/notification/application/service/email-notification-queue.strategy';
+import QueueMessagePublisher from '../../@core/common/application/service/queue-message-publisher';
+import EmailSqsPublisher from '../../@core/notification/infra/queue/sqs/email-sqs-publisher';
+import SmsSqsPublisher from '../../@core/notification/infra/queue/sqs/sms-sqs-publisher';
+import SmsNotificationQueueStrategy from '../../@core/notification/application/service/sms-notification-queue.strategy';
+import NotificationStrategyFactory from '../../@core/notification/application/service/notification-strategy.factory';
+import NotifyWinningBidderHandler from '../../@core/notification/application/event-handlers/notify-winning-bidder';
+import SqsProducer from '../../@core/notification/infra/queue/sqs/client/sqs-producer';
+import { EnvironmentConfigInterface } from '../../@core/common/domain/environment-config.interface';
+import { SqsPublisher } from '../../@core/notification/infra/queue/sqs/sqs-publisher.interface';
+import { SqsHelper } from '../../@core/notification/infra/queue/sqs/sqs-helper';
 
 @Module({
   imports: [LoggerModule, ConfModule, MongoModule],
@@ -50,9 +61,78 @@ import DomainEventManagerFactory from '../../@core/common/domain/domain-event-ma
       inject: [BidMongoRepository],
     },
     {
+      provide: SqsHelper,
+      useFactory: async (
+        envConfig: EnvironmentConfigInterface,
+      ) => new SqsHelper(
+        envConfig.getAws(),
+        envConfig.getEnvName(),
+      ),
+      inject: ['EnvironmentConfigInterface'],
+    },
+    {
+      provide: 'SqsPublisher',
+      useFactory: (sqsHelper: SqsHelper) => new SqsProducer(sqsHelper),
+      inject: [SqsHelper],
+    },
+    {
+      provide: 'EMAIL_QUEUE',
+      useFactory: async (
+        logger: LoggerInterface,
+        sqsPublisher: SqsPublisher,
+      ) => new EmailSqsPublisher(
+        logger,
+        sqsPublisher,
+      ),
+      inject: ['LoggerInterface', 'SqsPublisher'],
+    },
+    {
+      provide: 'SMS_QUEUE',
+      useFactory: async (
+        logger: LoggerInterface,
+        sqsPublisher: SqsPublisher,
+      ) => new SmsSqsPublisher(logger, sqsPublisher),
+      inject: ['LoggerInterface', 'SqsPublisher'],
+    },
+    {
+      provide: EmailNotificationQueueStrategy,
+      useFactory: async (
+        emailQueue: QueueMessagePublisher,
+      ) => new EmailNotificationQueueStrategy(emailQueue),
+      inject: ['EMAIL_QUEUE'],
+    },
+    {
+      provide: SmsNotificationQueueStrategy,
+      useFactory: async (
+        smsQueue: QueueMessagePublisher,
+      ) => new SmsNotificationQueueStrategy(smsQueue),
+      inject: ['SMS_QUEUE'],
+    },
+    {
+      provide: NotificationStrategyFactory,
+      useFactory: async (
+        emailStrategy: EmailNotificationQueueStrategy,
+        smsStrategy: SmsNotificationQueueStrategy,
+      ) => new NotificationStrategyFactory(emailStrategy, smsStrategy),
+      inject: [EmailNotificationQueueStrategy, SmsNotificationQueueStrategy],
+    },
+    {
+      provide: NotifyWinningBidderHandler,
+      useFactory: async (
+        strategyFactory: NotificationStrategyFactory,
+      ) => {
+        const result = new NotifyWinningBidderHandler(strategyFactory);
+        return result;
+      },
+      inject: [NotificationStrategyFactory],
+    },
+    {
       provide: DomainEventManagerFactory,
-      useFactory: async (logger: LoggerInterface) => new DomainEventManagerFactory(logger),
-      inject: ['LoggerInterface'],
+      useFactory: async (
+        logger: LoggerInterface,
+        notifyWinningBidder: NotifyWinningBidderHandler,
+      ) => new DomainEventManagerFactory(logger, notifyWinningBidder),
+      inject: ['LoggerInterface', NotifyWinningBidderHandler],
     },
     {
       provide: DomainEventManager,
