@@ -1,8 +1,8 @@
 import InvalidNotificationChannelError from '../../error/invalid-notification-channel';
-import EmailNotificationQueueStrategy from './email-notification-queue.strategy';
+import EmailNotificationQueueStrategy from './email/email-notification-queue.strategy';
 import NotificationQueueStrategyInterface from './notification-queue-strategy.interface';
 import { NotificationChannel } from './notification-type';
-import SmsNotificationQueueStrategy from './sms-notification-queue.strategy';
+import SmsNotificationQueueStrategy from './sms/sms-notification-queue.strategy';
 
 export default class NotificationStrategyFactory {
   constructor(

@@ -68,4 +68,8 @@ export default class Bid extends Entity {
   getPrice(): Price {
     return this.value;
   }
+
+  getBidderId(): string {
+    return this.bidderId.value;
+  }
 }

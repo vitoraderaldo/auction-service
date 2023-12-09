@@ -14,6 +14,8 @@ describe('Domain Event Manager', () => {
     const event = new BidPeriodFinishedEvent({
       auctionId: randomUUID(),
       endDate: new Date().toISOString(),
+      winnerBidderId: randomUUID(),
+      winningBidId: randomUUID(),
     });
 
     const eventHandler1 = {

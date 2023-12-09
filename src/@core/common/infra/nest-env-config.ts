@@ -4,6 +4,7 @@ import {
   EnvironmentConfigInterface,
   EnvironmentName,
   MongoConfig,
+  SendGridConfig,
 } from '../domain/environment-config.interface';
 
 export default class NestConfigService implements EnvironmentConfigInterface {
@@ -26,5 +27,19 @@ export default class NestConfigService implements EnvironmentConfigInterface {
       uri: this.nestConfig.get('MONGO_URI'),
       dbName: this.nestConfig.get('MONGO_DB_NAME'),
     };
+  }
+
+  getSendGrid(): SendGridConfig {
+    return {
+      apiKey: this.nestConfig.get('SENDGRID_API_KEY'),
+      baseUrl: this.nestConfig.get('SENDGRID_BASE_URL'),
+      templates: {
+        notifyWinningBidder: this.nestConfig.get('SENDGRID_TEMPLATE_NOTIFY_WINNING_BIDDER'),
+      },
+    };
+  }
+
+  getDefaultSenderEmail(): string {
+    return this.nestConfig.get('DEFAULT_SENDER_EMAIL');
   }
 }

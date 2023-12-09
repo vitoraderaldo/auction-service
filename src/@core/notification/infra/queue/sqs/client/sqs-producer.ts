@@ -1,8 +1,8 @@
 import { Producer } from 'sqs-producer';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { SQSClient } from '@aws-sdk/client-sqs';
-import { SqsHelper, SqsQueueName } from '../sqs-helper';
-import { SqsPublisher } from '../sqs-publisher.interface';
+import { SqsHelper, SqsQueueName } from './sqs-helper';
+import { SqsPublisher } from './sqs-publisher.interface';
 
 export default class SqsProducer implements SqsPublisher {
   constructor(

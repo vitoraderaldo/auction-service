@@ -183,7 +183,7 @@ describe('AuctionMongoRepository', () => {
         repository.create(auction4),
       ]);
 
-      const auctions = await repository.findExpiredPublishedAuctions();
+      const auctions = await repository.findExpiredPublishedAuctions(10);
       const auctionIds = auctions.map((auction) => auction.getId());
 
       expect(auctions).toHaveLength(2);

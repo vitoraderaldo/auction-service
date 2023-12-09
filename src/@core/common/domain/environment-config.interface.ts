@@ -9,10 +9,22 @@ export interface AWSConfig {
   region: string,
 }
 
+export interface SendGridTemplates {
+  notifyWinningBidder: string;
+}
+
+export interface SendGridConfig {
+  baseUrl: string;
+  apiKey: string;
+  templates: SendGridTemplates
+}
+
 export type EnvironmentName = 'local' | 'develop' | 'production';
 
 export interface EnvironmentConfigInterface {
   getMongo(): MongoConfig;
   getEnvName(): EnvironmentName;
   getAws(): AWSConfig;
+  getSendGrid(): SendGridConfig;
+  getDefaultSenderEmail(): string;
 }

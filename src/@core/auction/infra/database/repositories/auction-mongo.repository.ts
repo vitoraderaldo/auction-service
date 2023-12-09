@@ -1,3 +1,4 @@
+import { groupBy } from 'lodash';
 import Uuid from '../../../../common/domain/value-objects/uuid.vo';
 import AuctionNotFoundError from '../../../../common/error/auction-not-found';
 import Auction from '../../../domain/entities/auction.entity';
@@ -31,15 +32,25 @@ export default class AuctionMongoRepository implements AuctionRepository {
     return AuctionSchema.toDomain(document, bids);
   }
 
-  async findExpiredPublishedAuctions(): Promise<Auction[]> {
+  async findExpiredPublishedAuctions(limit: number): Promise<Auction[]> {
     const auctions = await this.auctionModel.find({
       status: AuctionStatusEnum.PUBLISHED,
       endDate: {
         $lte: new Date().toISOString(),
       },
-    });
+    }).limit(limit);
 
-    return auctions.map((auction) => AuctionSchema.toDomain(auction, []));
+    const bids = await this.bidModel.find({
+      auctionId: {
+        $in: auctions.map(({ id }) => id),
+      },
+    });
+    const groupedBids = groupBy(bids, 'auctionId');
+
+    return auctions.map((auction) => AuctionSchema.toDomain(
+      auction,
+      groupedBids[auction.id] || [],
+    ));
   }
 
   async update(auction: Auction): Promise<void> {

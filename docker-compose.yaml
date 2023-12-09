@@ -30,3 +30,11 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./bootstrap/localstack:/etc/localstack/init/ready.d
+
+  sendgrid-mock:
+    image: ghashange/sendgrid-mock:1.9.0
+    platform: linux/amd64
+    ports:
+      - 4500:3000
+    environment:
+      - API_KEY=SG.api-key

@@ -472,6 +472,8 @@ describe('Auction', () => {
       expect(events[0].payload).toEqual({
         auctionId: auction.getId(),
         endDate: auction.getEndDate(),
+        winnerBidderId: null,
+        winningBidId: null,
       });
     });
   });
