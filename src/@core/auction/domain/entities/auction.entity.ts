@@ -212,6 +212,10 @@ export default class Auction extends AggregateRoot {
     return this.endDate.value;
   }
 
+  getStartPrice(): number {
+    return this.startPrice.value;
+  }
+
   private getHighestBid(): Bid {
     return this.bids.reduce((highest, current) => {
       if (highest.getPrice().isGreaterThan(current.getPrice())) {

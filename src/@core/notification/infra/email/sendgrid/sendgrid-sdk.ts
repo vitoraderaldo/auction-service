@@ -1,11 +1,11 @@
 import { Client } from '@sendgrid/client';
 import { MailService } from '@sendgrid/mail';
-import SendGridClient from './sendgrid.interface';
+import { SendgridClient } from './sendgrid.interface';
 
-export default class SendGridSdk implements SendGridClient {
+export default class SendGridSdk implements SendgridClient {
   private mailService: MailService;
 
-  constructor(config: {
+  constructor(private readonly config: {
     apiKey: string;
     baseUrl: string;
   }) {
@@ -21,17 +21,25 @@ export default class SendGridSdk implements SendGridClient {
   async sendWithTemplate(data: {
     from: string;
     to: string;
-    subject: string;
     templateId: string;
     dynamicTemplateData: any;
   }): Promise<void> {
-    await this.mailService.send({
+    const body = {
       from: data.from,
       to: data.to,
-      subject: data.subject,
-      content: [{ type: '', value: '' }],
       templateId: data.templateId,
       dynamicTemplateData: data.dynamicTemplateData,
+    };
+
+    if (this.config.baseUrl.endsWith('api.sendgrid.com')) {
+      await this.mailService.send(body);
+      return;
+    }
+
+    await this.mailService.send({
+      ...body,
+      content: [{ type: 'type', value: 'value' }],
+      subject: '',
     });
   }
 }

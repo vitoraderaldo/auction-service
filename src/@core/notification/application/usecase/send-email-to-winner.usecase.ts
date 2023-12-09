@@ -8,7 +8,6 @@ import BidNotFoundError from '../../../common/error/bid-not-found';
 import BidderNotFoundError from '../../../common/error/bidder-not-found';
 import BidderNotification from '../../domain/entities/bidder-notification.entity';
 import BidderNotificationRepository from '../../domain/repositories/bidder-notification.repository';
-import EmailSubject from '../service/email/email-subjects';
 import EmailSender, { WinningBidderEmailData } from '../service/email/email.types';
 import { NotificationChannel, NotificationType } from '../service/notification-type';
 
@@ -34,7 +33,7 @@ export default class SendEmailToWinnerUseCase {
 
     const bidder = await this.bidderRepository
       .findById(winnerBidderId)
-      .then((value) => value.toJSON());
+      .then((value) => value?.toJSON());
 
     if (!bidder) {
       throw new BidderNotFoundError({
@@ -44,7 +43,7 @@ export default class SendEmailToWinnerUseCase {
 
     const auction = await this.auctionRepository
       .findById(auctionId)
-      .then((value) => value.toJSON());
+      .then((value) => value?.toJSON());
 
     if (!auction) {
       throw new AuctionNotFoundError({ auctionId });
@@ -61,9 +60,8 @@ export default class SendEmailToWinnerUseCase {
     const emailData: WinningBidderEmailData = {
       from: this.fromEmailAdress,
       to: bidder.email,
-      subject: EmailSubject.NOTIFY_WINNING_BIDDER,
       type: NotificationType.NOTIFY_WINNING_BIDDER,
-      data: {
+      metadata: {
         bidder,
         bid: {
           value: bid.value,

@@ -1,9 +1,10 @@
-export default interface SendGridClient {
+export interface SendgridEmailSenderClient {
   sendWithTemplate(data: {
     from: string;
     to: string;
-    subject: string;
     templateId: string;
     dynamicTemplateData: any;
   }): Promise<void>;
 }
+
+export interface SendgridClient extends SendgridEmailSenderClient {}

@@ -77,4 +77,8 @@ export default class Bidder extends AggregateRoot {
   getId(): string {
     return this.id.value;
   }
+
+  getEmail(): string {
+    return this.email.value;
+  }
 }

@@ -3,14 +3,14 @@ import { EnvironmentConfigInterface } from '../../@core/common/domain/environmen
 import SendGridSdk from '../../@core/notification/infra/email/sendgrid/sendgrid-sdk';
 import ConfModule from './config.module';
 import NotifyWinningBidderSendGrid from '../../@core/notification/infra/email/sendgrid/cases/notify-winning-bidder';
-import SendGridClient from '../../@core/notification/infra/email/sendgrid/sendgrid.interface';
 import SendGridService from '../../@core/notification/infra/email/sendgrid/send-grid.service';
+import { SendgridClient } from '../../@core/notification/infra/email/sendgrid/sendgrid.interface';
 
 @Module({
   imports: [ConfModule],
   providers: [
     {
-      provide: 'SendGridClient',
+      provide: 'SendgridClient',
       useFactory: (
         config: EnvironmentConfigInterface,
       ) => new SendGridSdk(config.getSendGrid()),
@@ -19,10 +19,10 @@ import SendGridService from '../../@core/notification/infra/email/sendgrid/send-
     {
       provide: NotifyWinningBidderSendGrid,
       useFactory: (
-        sendGridClient: SendGridClient,
+        sendGridClient: SendgridClient,
         config: EnvironmentConfigInterface,
       ) => new NotifyWinningBidderSendGrid(sendGridClient, config.getSendGrid().templates),
-      inject: ['SendGridClient', 'EnvironmentConfigInterface'],
+      inject: ['SendgridClient', 'EnvironmentConfigInterface'],
     },
     {
       provide: SendGridService,

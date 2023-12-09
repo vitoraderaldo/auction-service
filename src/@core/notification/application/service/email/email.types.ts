@@ -3,9 +3,9 @@ import { NotificationType } from '../notification-type';
 interface EmailData<T> {
   type: NotificationType;
   from: string;
-  subject: string;
+  subject?: string;
   to: string;
-  data: T;
+  metadata: T;
 }
 
 export interface WinningBidderEmailData extends EmailData<{
