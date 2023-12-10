@@ -1,5 +1,19 @@
 import SendGridSdk from '../../../src/@core/notification/infra/email/sendgrid/sendgrid-sdk';
 
+export interface SendgridEmail {
+  datetime: string;
+  from: {
+    email: string;
+  },
+  subject: string;
+  personalizations: {
+    to: {
+      email: string;
+    }[];
+  }[];
+  template_id: string;
+}
+
 export default class SendgridMockClient extends SendGridSdk {
   private constructor(
     private readonly apiKey: string,
@@ -24,19 +38,7 @@ export default class SendgridMockClient extends SendGridSdk {
     });
   }
 
-  async getEmailsSentTo(email: string): Promise<{
-    datetime: string;
-    from: {
-      email: string;
-    },
-    subject: string;
-    personalizations: {
-      to: {
-        email: string;
-      }[];
-    }[];
-    template_id: string;
-  }[]> {
+  async getEmailsSentTo(email: string): Promise<SendgridEmail[]> {
     const response = await fetch(`${this.baseUrl}/api/mails?to=${email}`);
     return response.json();
   }

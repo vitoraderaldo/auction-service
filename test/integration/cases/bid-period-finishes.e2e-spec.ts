@@ -9,14 +9,15 @@ import Auction from '../../../src/@core/auction/domain/entities/auction.entity';
 import { startTestingApp, getMongoConnection } from '../util/testing-app';
 import AuctionSchema, { AuctionModel } from '../../../src/@core/auction/infra/database/schemas/auction.schema';
 import { BidPeriodHasFinishedOutput } from '../../../src/@core/auction/application/usecase/bid-period-has-finished.usecase';
-import delay from '../util/delay';
 import Bidder from '../../../src/@core/auction/domain/entities/bidder.entity';
 import buildBidder from '../../util/bidder.mock';
 import insertBidder from '../util/insert-bidder';
 import buildBid from '../../util/bid.mock';
 import Price from '../../../src/@core/common/domain/value-objects/price.vo';
 import insertBid from '../util/insert-bid';
-import SendgridMockClient from '../util/sendgrid-mock-client';
+import SendgridMockClient, { SendgridEmail } from '../util/sendgrid-mock-client';
+import LocalStackSqs from '../util/sqs-mock.client';
+import runWithRetries from '../util/fetch-data-recursively';
 
 describe('Bid Period Finishes', () => {
   let app: INestApplication;
@@ -30,13 +31,14 @@ describe('Bid Period Finishes', () => {
 
   const sendGridMockClient = SendgridMockClient.create();
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     app = await startTestingApp();
-
     connection = getMongoConnection(app);
     auctionModel = AuctionSchema.getModel(connection);
     await app.init();
+  });
 
+  beforeEach(async () => {
     const oneMonthAgo = new Date();
     oneMonthAgo.setUTCMonth(oneMonthAgo.getUTCMonth() - 1);
 
@@ -61,6 +63,8 @@ describe('Bid Period Finishes', () => {
       status: AuctionStatusEnum.PUBLISHED,
     });
     await insertAuction({ auction: auctionStillInBidPeriod, connection });
+
+    await LocalStackSqs.purgeAppQueues(app);
   });
 
   afterAll(async () => {
@@ -107,13 +111,13 @@ describe('Bid Period Finishes', () => {
       .send()
       .expect(200);
 
-    await delay(4000);
-
     const savedAuction = await auctionModel.findOne({
       id: auctionId,
     });
 
-    const emails = await sendGridMockClient.getEmailsSentTo(bidder.getEmail());
+    const emails = await runWithRetries<SendgridEmail[]>(
+      () => sendGridMockClient.getEmailsSentTo(bidder.getEmail()),
+    );
 
     expect(savedAuction.id).toEqual(auctionId);
     expect(savedAuction.status).toEqual(AuctionStatusEnum.BID_PERIOD_FINISHED);
@@ -124,5 +128,5 @@ describe('Bid Period Finishes', () => {
     expect(body.success).toEqual(1);
     expect(emails).toHaveLength(1);
     expect(emails[0].template_id).toEqual('sendgrid-template-notify-winning-bidder');
-  }, 10000);
+  });
 });

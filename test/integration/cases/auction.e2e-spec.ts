@@ -18,9 +18,8 @@ describe('Auction (e2e)', () => {
   let connection: Mongoose;
   let auctionModel: AuctionModel;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     app = await startTestingApp();
-
     connection = getMongoConnection(app);
     auctionModel = AuctionSchema.getModel(connection);
     await app.init();
