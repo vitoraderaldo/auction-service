@@ -1,5 +1,6 @@
 import EmailSender, { AllKindOfEmailData, WinningBidderEmailData } from '../../../application/service/email/email.types';
 import { NotificationType } from '../../../application/service/notification-type';
+import InvalidNotificationTypeError from '../../../error/invalid-notification-type';
 import NotifyWinningBidderSendGrid from './cases/notify-winning-bidder';
 
 export default class SendGridService implements EmailSender {
@@ -12,7 +13,7 @@ export default class SendGridService implements EmailSender {
       case NotificationType.NOTIFY_WINNING_BIDDER:
         return this.notifyWinningBidder.send(data as WinningBidderEmailData);
       default:
-        return Promise.resolve();
+        throw new InvalidNotificationTypeError({ message: data });
     }
   }
 }

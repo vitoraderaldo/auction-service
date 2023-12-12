@@ -190,5 +190,19 @@ describe('AuctionMongoRepository', () => {
       expect(auctionIds).toContain(auction1.getId());
       expect(auctionIds).toContain(auction2.getId());
     });
+
+    it('should not return more auctions than the limit', async () => {
+      const promises = Array.from({ length: 20 }).map(() => repository.create(
+        buildAuction({
+          startDate: oneMonthAgo.toISOString(),
+          endDate: fiveMinutesAgo.toISOString(),
+          status: AuctionStatusEnum.PUBLISHED,
+        }),
+      ));
+      await Promise.all(promises);
+
+      const auctions = await repository.findExpiredPublishedAuctions(10);
+      expect(auctions).toHaveLength(10);
+    });
   });
 });

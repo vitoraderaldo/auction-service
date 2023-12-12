@@ -26,7 +26,7 @@ export default class DomainEventManager implements EventPublisher {
       this.eventsSubscriber
         .emitAsync(eventType, event)
         .catch((error) => {
-          this.logger.error(`Error while handling event ${eventType}: ${error?.message}`, error);
+          this.logger.error(`Error while handling event: (${eventType}): ${error?.message}`, error);
         });
     });
   }

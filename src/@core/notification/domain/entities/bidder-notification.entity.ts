@@ -57,6 +57,10 @@ export default class BidderNotification extends Entity {
     });
   }
 
+  getId(): string {
+    return this.bidderId.value;
+  }
+
   toJSON() {
     return {
       bidderId: this.bidderId.value,

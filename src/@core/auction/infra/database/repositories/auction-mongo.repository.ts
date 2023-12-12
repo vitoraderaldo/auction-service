@@ -40,12 +40,7 @@ export default class AuctionMongoRepository implements AuctionRepository {
       },
     }).limit(limit);
 
-    const bids = await this.bidModel.find({
-      auctionId: {
-        $in: auctions.map(({ id }) => id),
-      },
-    });
-    const groupedBids = groupBy(bids, 'auctionId');
+    const groupedBids = await this.getBidsGroupedByAuctionId(auctions);
 
     return auctions.map((auction) => AuctionSchema.toDomain(
       auction,
@@ -64,26 +59,14 @@ export default class AuctionMongoRepository implements AuctionRepository {
     }
   }
 
-  // async updatev2(auction: Auction): Promise<void> {
-  //   const auctionDoc = AuctionSchema.toDatabase(auction);
-  //   const bidDocs = auction.getBids().map(BidSchema.toDatabase);
-
-  //   // const session = await this.auctionModel.db.startSession();
-  //   // session.startTransaction();
-
-  //   const result = await this.auctionModel.updateOne({
-  //     id: auction.getId(),
-  //   }, auctionDoc);
-
-  //   await this.bidModel.updateMany({
-  //     auctionId: auction.getId(),
-  //   }, bidDocs, { upsert: true });
-
-  //   // await session.commitTransaction();
-  //   // session.endSession();
-
-  //   // if (!result.matchedCount) {
-  //   //   throw new AuctionNotFoundError({ auctionId: auction.getId() });
-  //   // }
-  // }
+  private async getBidsGroupedByAuctionId(auctions: {
+    id: string;
+  }[]) {
+    const bids = await this.bidModel.find({
+      auctionId: {
+        $in: auctions.map(({ id }) => id),
+      },
+    });
+    return groupBy(bids, 'auctionId');
+  }
 }

@@ -1,4 +1,5 @@
 import { LoggerInterface } from '../../../common/application/service/logger';
+import InvalidNotificationTypeError from '../../error/invalid-notification-type';
 import { NotificationType } from '../service/notification-type';
 import SendEmailToWinnerUseCase from '../usecase/send-email-to-winner.usecase';
 
@@ -17,9 +18,7 @@ export default class EmailNotificationHandler {
         await this.sendEmailToWinnerUseCase.execute(message.payload);
         break;
       default:
-        this.logger.error('Unknown notification type', message);
-        break;
+        throw new InvalidNotificationTypeError({ message });
     }
-    return Promise.resolve();
   }
 }

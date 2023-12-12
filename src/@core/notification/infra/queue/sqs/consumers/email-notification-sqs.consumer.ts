@@ -12,7 +12,7 @@ export default class EmailNotificationSqsQueueConsumer {
     this.sqsConsumer.registerHandler({
       queueName: SqsQueueName.EMAIL_NOTIFICATION,
       handler: this.emailNotificationHandler.handle.bind(emailNotificationHandler),
-      onError: (error) => this.logger.error('Error on EmailNotificationSqsQueueConsumer', error),
+      onError: (error) => this.logger.error('Failed to handle email notification from queue', error),
     });
   }
 }
