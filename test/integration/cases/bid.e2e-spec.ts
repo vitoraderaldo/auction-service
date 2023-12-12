@@ -26,13 +26,14 @@ describe('Bid (e2e)', () => {
   let startPrice: number;
   let auctionId: string;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     app = await startTestingApp();
-
     connection = getMongoConnection(app);
     bidModel = BidSchema.getModel(connection);
     await app.init();
+  });
 
+  beforeEach(async () => {
     auctioneer = buildAuctioneer();
     await insertAuctioneer({ auctioneer, connection });
 

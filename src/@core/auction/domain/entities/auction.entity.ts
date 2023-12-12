@@ -143,9 +143,13 @@ export default class Auction extends AggregateRoot {
     }
     this.status = new AuctionStatus(AuctionStatusEnum.BID_PERIOD_FINISHED);
 
+    const highestBid = this.getHighestBid();
+
     const event = new BidPeriodFinishedEvent({
       auctionId: this.id.value,
       endDate: this.endDate.value,
+      winnerBidderId: highestBid?.getBidderId() || null,
+      winningBidId: highestBid?.getId() || null,
     });
 
     this.addEvent(event);
@@ -206,6 +210,10 @@ export default class Auction extends AggregateRoot {
 
   getEndDate(): string {
     return this.endDate.value;
+  }
+
+  getStartPrice(): number {
+    return this.startPrice.value;
   }
 
   private getHighestBid(): Bid {

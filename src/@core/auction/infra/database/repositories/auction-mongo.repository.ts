@@ -1,3 +1,4 @@
+import { groupBy } from 'lodash';
 import Uuid from '../../../../common/domain/value-objects/uuid.vo';
 import AuctionNotFoundError from '../../../../common/error/auction-not-found';
 import Auction from '../../../domain/entities/auction.entity';
@@ -31,15 +32,20 @@ export default class AuctionMongoRepository implements AuctionRepository {
     return AuctionSchema.toDomain(document, bids);
   }
 
-  async findExpiredPublishedAuctions(): Promise<Auction[]> {
+  async findExpiredPublishedAuctions(limit: number): Promise<Auction[]> {
     const auctions = await this.auctionModel.find({
       status: AuctionStatusEnum.PUBLISHED,
       endDate: {
         $lte: new Date().toISOString(),
       },
-    });
+    }).limit(limit);
 
-    return auctions.map((auction) => AuctionSchema.toDomain(auction, []));
+    const groupedBids = await this.getBidsGroupedByAuctionId(auctions);
+
+    return auctions.map((auction) => AuctionSchema.toDomain(
+      auction,
+      groupedBids[auction.id] || [],
+    ));
   }
 
   async update(auction: Auction): Promise<void> {
@@ -53,26 +59,14 @@ export default class AuctionMongoRepository implements AuctionRepository {
     }
   }
 
-  // async updatev2(auction: Auction): Promise<void> {
-  //   const auctionDoc = AuctionSchema.toDatabase(auction);
-  //   const bidDocs = auction.getBids().map(BidSchema.toDatabase);
-
-  //   // const session = await this.auctionModel.db.startSession();
-  //   // session.startTransaction();
-
-  //   const result = await this.auctionModel.updateOne({
-  //     id: auction.getId(),
-  //   }, auctionDoc);
-
-  //   await this.bidModel.updateMany({
-  //     auctionId: auction.getId(),
-  //   }, bidDocs, { upsert: true });
-
-  //   // await session.commitTransaction();
-  //   // session.endSession();
-
-  //   // if (!result.matchedCount) {
-  //   //   throw new AuctionNotFoundError({ auctionId: auction.getId() });
-  //   // }
-  // }
+  private async getBidsGroupedByAuctionId(auctions: {
+    id: string;
+  }[]) {
+    const bids = await this.bidModel.find({
+      auctionId: {
+        $in: auctions.map(({ id }) => id),
+      },
+    });
+    return groupBy(bids, 'auctionId');
+  }
 }

@@ -10,9 +10,8 @@ describe('Create Bidder (e2e)', () => {
   let connection: Mongoose;
   let bidderModel: BidderModel;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     app = await startTestingApp();
-
     connection = getMongoConnection(app);
     bidderModel = BidderSchema.getModel(connection);
     await app.init();

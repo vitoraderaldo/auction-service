@@ -14,6 +14,8 @@ import BidderSchema, { BidderModel } from '../../@core/auction/infra/database/sc
 import BidSchema, { BidModel } from '../../@core/auction/infra/database/schemas/bid.schema';
 import BidderMongoRepository from '../../@core/auction/infra/database/repositories/bidder-mongo.repository';
 import BidMongoRepository from '../../@core/auction/infra/database/repositories/bid-mongo.repository';
+import BidderNotificationSchema, { BidderNotificationModel } from '../../@core/notification/infra/database/schemas/bidder-notification.schema';
+import BidderNotificationMongoRepository from '../../@core/notification/infra/database/repositories/bidder-notification-mongo.repository';
 
 const MONGOOSE_CONNECTION = 'MONGOOSE_CONNECTION';
 
@@ -51,6 +53,11 @@ const MONGOOSE_CONNECTION = 'MONGOOSE_CONNECTION';
       inject: [MONGOOSE_CONNECTION],
     },
     {
+      provide: 'BIDDER_NOTIFICATION_MODEL',
+      useFactory: (connection: Mongoose) => BidderNotificationSchema.getModel(connection),
+      inject: [MONGOOSE_CONNECTION],
+    },
+    {
       provide: AuctionMongoRepository,
       useFactory: (
         auctionModel: AuctionModel,
@@ -73,12 +80,18 @@ const MONGOOSE_CONNECTION = 'MONGOOSE_CONNECTION';
       useFactory: (model: BidModel) => new BidMongoRepository(model),
       inject: ['BID_MODEL'],
     },
+    {
+      provide: BidderNotificationMongoRepository,
+      useFactory: (model: BidderNotificationModel) => new BidderNotificationMongoRepository(model),
+      inject: ['BIDDER_NOTIFICATION_MODEL'],
+    },
   ],
   exports: [
     AuctionMongoRepository,
     AuctioneerMongoRepository,
     BidderMongoRepository,
     BidMongoRepository,
+    BidderNotificationMongoRepository,
     MONGOOSE_CONNECTION,
   ],
 })

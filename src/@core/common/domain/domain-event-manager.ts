@@ -3,6 +3,7 @@ import { EventPublisher } from './domain-events/event-publisher';
 import DomainEventType from './domain-events/domain-event.type';
 import { DomainEvent } from './domain-events/domain-event';
 import { LoggerInterface } from '../application/service/logger';
+import DomainEventHandler from '../application/event-handler/event-handler';
 
 export default class DomainEventManager implements EventPublisher {
   eventsSubscriber: EventEmitter2;
@@ -15,8 +16,8 @@ export default class DomainEventManager implements EventPublisher {
     });
   }
 
-  register(event: DomainEventType, handler: (event: DomainEvent) => Promise<void>): void {
-    this.eventsSubscriber.on(event, handler);
+  register(event: DomainEventType, handler: DomainEventHandler): void {
+    this.eventsSubscriber.on(event, handler.handle.bind(handler));
   }
 
   publish(events: DomainEvent[]): void {
@@ -25,7 +26,7 @@ export default class DomainEventManager implements EventPublisher {
       this.eventsSubscriber
         .emitAsync(eventType, event)
         .catch((error) => {
-          this.logger.error(`Error while handling event ${eventType}: ${error?.message}`, error);
+          this.logger.error(`Error while handling event: (${eventType}): ${error?.message}`, error);
         });
     });
   }

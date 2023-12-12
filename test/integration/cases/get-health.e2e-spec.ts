@@ -7,9 +7,8 @@ describe('Health Controller (e2e)', () => {
   let app: INestApplication;
   let connection: Mongoose;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     app = await startTestingApp();
-
     connection = getMongoConnection(app);
     await app.init();
   });

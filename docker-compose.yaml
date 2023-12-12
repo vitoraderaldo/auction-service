@@ -1,4 +1,4 @@
-version: '3'
+version: '3.8'
 services:
   mongo:
     image: mongo:7.0.3
@@ -15,3 +15,26 @@ services:
       timeout: 10s
       retries: 12
       start_period: 10s
+
+  localstack:
+    image: localstack/localstack:3.0.2
+    ports:
+      - "127.0.0.1:4566:4566"            
+      - "127.0.0.1:4510-4559:4510-4559"
+    environment:
+      - SERVICES=sqs
+      - AWS_ACCESS_KEY_ID=localstack
+      - AWS_SECRET_ACCESS_KEY=localstack
+      - DEBUG=1
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./bootstrap/localstack:/etc/localstack/init/ready.d
+
+  sendgrid-mock:
+    image: ghashange/sendgrid-mock:1.9.0
+    platform: linux/amd64
+    ports:
+      - 4500:3000
+    environment:
+      - API_KEY=SG.api-key

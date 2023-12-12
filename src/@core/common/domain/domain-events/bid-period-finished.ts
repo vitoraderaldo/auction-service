@@ -1,8 +1,10 @@
 import { DomainEvent } from './domain-event';
 import DomainEventType from './domain-event.type';
 
-interface BidPeriodFinishedEventPayload {
+export interface BidPeriodFinishedEventPayload {
   auctionId: string;
+  winnerBidderId: string;
+  winningBidId: string;
   endDate: string;
 }
 

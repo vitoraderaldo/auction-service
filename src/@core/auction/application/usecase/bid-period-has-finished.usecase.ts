@@ -15,6 +15,8 @@ export interface BidPeriodHasFinishedOutput {
 }
 
 export default class BidPeriodHasFinishedUseCase {
+  private MAX_AUCTIONS_PER_EXECUTION = 10;
+
   constructor(
     private readonly auctionRepository: AuctionRepository,
     private readonly eventPublisher: EventPublisher,
@@ -23,7 +25,10 @@ export default class BidPeriodHasFinishedUseCase {
 
   async execute(): Promise<BidPeriodHasFinishedOutput> {
     this.logger.info('Starting to update auctions with expired bid period');
-    const auctions = await this.auctionRepository.findExpiredPublishedAuctions();
+
+    const auctions = await this.auctionRepository.findExpiredPublishedAuctions(
+      this.MAX_AUCTIONS_PER_EXECUTION,
+    );
 
     const promises = auctions.map((auction) => this.handleBidPeriodExpiration(auction));
     const results = await Promise.allSettled(promises);
@@ -32,19 +37,28 @@ export default class BidPeriodHasFinishedUseCase {
       .filter((result) => result.status === 'fulfilled')
       .map((result: PromiseFulfilledResult<Auction>) => result.value);
 
-    const failure = results.filter((result) => result.status === 'rejected').length;
+    const failures = results.filter((result) => result.status === 'rejected')
+      .map((result: PromiseRejectedResult) => result);
 
-    this.logger.info('Finished to update auctions with expired bid period');
+    this.logErrors(failures);
+
+    this.logger.info('Finished to update auctions with expired bid period', {
+      auctionIds: auctions.map((auction) => auction.getId()),
+    });
 
     return {
       total: auctions.length,
       success: updatedAuctions.length,
-      failure,
+      failure: failures.length,
       updatedAuctions: updatedAuctions.map((auction) => ({
         id: auction.getId(),
         status: auction.getStatus(),
       })),
     };
+  }
+
+  private logErrors(failures: PromiseRejectedResult[]): void {
+    failures.forEach((failure) => this.logger.error('', failure.reason));
   }
 
   private async handleBidPeriodExpiration(auction: Auction): Promise<Auction> {

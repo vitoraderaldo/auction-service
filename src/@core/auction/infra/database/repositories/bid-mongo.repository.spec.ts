@@ -43,4 +43,20 @@ describe('BidMongoRepository', () => {
     expect(savedBid.createdAt).toBeInstanceOf(Date);
     expect(savedBid.updatedAt).toBeInstanceOf(Date);
   });
+
+  it('should find a bid by id', async () => {
+    const bid = buildBid();
+    await repository.create(bid);
+
+    const foundBid = await model.findOne<BidMongoInterface>({
+      id: bid.getId(),
+    });
+
+    expect(foundBid.id).toEqual(bid.getId());
+    expect(foundBid.auctionId).toEqual(bid.getAuctionId());
+    expect(foundBid.bidderId).toEqual(bid.getBidderId());
+    expect(foundBid.value).toEqual(bid.getPrice().value);
+    expect(foundBid.createdAt).toBeInstanceOf(Date);
+    expect(foundBid.updatedAt).toBeInstanceOf(Date);
+  });
 });

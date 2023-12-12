@@ -12,6 +12,7 @@ export const startTestingApp = async (): Promise<INestApplication> => {
   }).compile();
 
   const app = moduleFixture.createNestApplication();
+  app.enableShutdownHooks();
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
   app.useGlobalFilters(new AllExceptionsFilter(logger));
 

@@ -10,7 +10,7 @@ describe('Create Auctioneer (e2e)', () => {
   let connection: Mongoose;
   let auctioneerModel: AuctioneerModel;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     app = await startTestingApp();
 
     connection = getMongoConnection(app);
