@@ -201,8 +201,8 @@ describe('AuctionMongoRepository', () => {
       ));
       await Promise.all(promises);
 
-      const auctions = await repository.findExpiredPublishedAuctions(10);
-      expect(auctions).toHaveLength(10);
+      const auctions = await repository.findExpiredPublishedAuctions(5);
+      expect(auctions).toHaveLength(5);
     });
   });
 });
