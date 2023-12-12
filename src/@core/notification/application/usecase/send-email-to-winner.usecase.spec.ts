@@ -81,4 +81,30 @@ describe('SendEmailToWinnerUseCase', () => {
     expect(emailSenderMock.send).not.toHaveBeenCalled();
     expect(bidderNotificationRepositoryMock.save).not.toHaveBeenCalled();
   });
+
+  it('should not propagate error when it fails to save the notifcation confirmation', async () => {
+    const bid = buildBid();
+    const bidder = buildBidder();
+    const auction = buildAuction();
+
+    jest
+      .spyOn(bidRepositoryMock, 'findById')
+      .mockResolvedValueOnce(bid);
+
+    jest
+      .spyOn(bidderRepositoryMock, 'findById')
+      .mockResolvedValueOnce(bidder);
+
+    jest
+      .spyOn(auctionRepositoryMock, 'findById')
+      .mockResolvedValueOnce(auction);
+
+    jest
+      .spyOn(bidderNotificationRepositoryMock, 'save')
+      .mockRejectedValueOnce(new Error('Failed to save notification'));
+
+    await useCase.execute({
+      winningBidId: bid.getId(),
+    });
+  });
 });
