@@ -14,14 +14,14 @@ export default class EmailNotificationHandler {
   }): Promise<void> {
     switch (message?.type) {
       case NotificationType.NOTIFY_WINNING_BIDDER:
-        await this.sendEmailToWinner(message.payload);
+        await this.sendEmailToAuctionWinner(message.payload);
         break;
       default:
         throw new InvalidNotificationTypeError({ message });
     }
   }
 
-  private sendEmailToWinner(payload: any): Promise<void> {
+  private sendEmailToAuctionWinner(payload: any): Promise<void> {
     const data = payload as BidPeriodFinishedEventPayload;
     return this.sendEmailToWinnerUseCase.execute({
       auctionId: data.auctionId,

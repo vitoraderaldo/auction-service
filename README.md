@@ -3,23 +3,23 @@ An auction platform built with NestJS. This application provides the backend for
 
 ## Installation
 ```bash
-$  npm install
+$ npm install
 ```
 
 ## Running the app
 ```bash
-$  docker-compose up -d
-$  npm run start:dev
+$ docker-compose up -d
+$ npm run start:dev
 ```
 
 ## Test
 ```bash
-# unit tests
-$  npm run test:unit
+  # unit tests
+$ npm run test:unit
 
-# e2e tests
-$  docker-compose up -d
-$  npm run test:integration
+  # e2e tests
+$ docker-compose up -d
+$ npm run test:integration
 ```
 
 ## Running SonarQube
@@ -28,7 +28,7 @@ $  npm run test:integration
 Run the following command in your terminal to start SonarQube in detached mode:
 
 ```bash
-$  docker-compose  up  -d  sonarqube  configure-sonar
+$ docker-compose up -d sonarqube configure-sonar
 ```
 
 
@@ -46,15 +46,15 @@ Access the auction-service on the project list project.
 
  - Generate a token for that project. 
  - Copy the generated token.
-  
+ 
 **5. Set the SonarQube token environment variable:**
 Store the copied token in an environment variable:
 ```bash
-$  export  SONAR_TOKEN=TOKEN_FROM_UI
+$ export SONAR_TOKEN=TOKEN_FROM_UI
 ```
 
 **6. Run code analysis:**
 With the token set, execute the appropriate command to analyze your code:
 ```bash
-$  npm  run  sonar:dev
+$ npm run sonar:dev
 ```
