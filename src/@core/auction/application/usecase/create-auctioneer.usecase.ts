@@ -1,5 +1,5 @@
 import { LoggerInterface } from '../../../common/application/service/logger';
-import AuctioneerAlreadyExistsError from '../../../common/error/auctioneer-already-exists';
+import AuctioneerAlreadyExistsError from '../../error/auctioneer-already-exists';
 import Auctioneer from '../../domain/entities/auctioneer.entity';
 import AuctioneerRepository from '../../domain/repositories/auctioneer.repository';
 

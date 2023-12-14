@@ -2,7 +2,7 @@ import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { Mongoose } from 'mongoose';
 import buildAuctioneer from '../../util/auctioneer.mock';
-import AuctioneerSchema, { AuctioneerModel } from '../../../src/@core/auction/infra/database/schemas/auctioneer.schema';
+import AuctioneerSchema, { AuctioneerModel } from '../../../src/@core/auction/infra/database/mongo/schemas/auctioneer.schema';
 import { getMongoConnection, startTestingApp } from '../util/testing-app';
 
 describe('Create Auctioneer (e2e)', () => {

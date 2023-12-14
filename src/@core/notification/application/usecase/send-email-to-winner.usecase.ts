@@ -1,17 +1,15 @@
 import { AuctionRepository } from '../../../auction/domain/repositories/auction.repository';
-import BidRepository from '../../../auction/domain/repositories/bid.repository';
 import BidderRepository from '../../../auction/domain/repositories/bidder.repository';
 import { LoggerInterface } from '../../../common/application/service/logger';
-import AuctionNotFoundError from '../../../common/error/auction-not-found';
-import BidNotFoundError from '../../../common/error/bid-not-found';
-import BidderNotFoundError from '../../../common/error/bidder-not-found';
+import AuctionNotFoundError from '../../../auction/error/auction-not-found';
+import BidderNotFoundError from '../../../auction/error/bidder-not-found';
 import BidderNotification from '../../domain/entities/bidder-notification.entity';
 import BidderNotificationRepository from '../../domain/repositories/bidder-notification.repository';
 import EmailSender, { WinningBidderEmailData } from '../service/email/email.types';
 import { NotificationChannel, NotificationType } from '../service/notification-type';
 
 interface InputDTO {
-  winningBidId: string;
+  auctionId: string;
 }
 
 export default class SendEmailToWinnerUseCase {
@@ -20,43 +18,42 @@ export default class SendEmailToWinnerUseCase {
     private readonly emailSender: EmailSender,
     private readonly bidderRepository: BidderRepository,
     private readonly bidderNotificationRepository: BidderNotificationRepository,
-    private readonly bidRepository: BidRepository,
     private readonly auctionRepository: AuctionRepository,
     private readonly fromEmailAdress: string,
   ) {}
 
   async execute(input: InputDTO): Promise<void> {
-    const { winningBidId } = input;
+    const { auctionId } = input;
 
-    if (!winningBidId) {
-      this.logger.info('Skipping email notification because the winningBidId is not provided', input);
+    if (!auctionId) {
+      throw new AuctionNotFoundError({ auctionId });
+    }
+
+    const auction = await this.auctionRepository
+      .findById(auctionId)
+      .then();
+
+    if (!auction) {
+      throw new AuctionNotFoundError({ auctionId });
+    }
+
+    const highestBid = auction.getHighestBid();
+
+    if (!highestBid) {
+      this.logger.info(`Skipping email notification because there is no winner for auctionId: (${auctionId})`);
       return;
     }
 
-    const bid = await this.bidRepository
-      .findById(winningBidId)
-      .then((value) => value?.toJSON());
-
-    if (!bid) {
-      throw new BidNotFoundError({ bidId: winningBidId });
-    }
+    const bidderId = highestBid.getBidderId();
 
     const bidder = await this.bidderRepository
-      .findById(bid.bidderId)
+      .findById(bidderId)
       .then((value) => value?.toJSON());
 
     if (!bidder) {
       throw new BidderNotFoundError({
-        bidderId: bid.bidderId,
+        bidderId,
       });
-    }
-
-    const auction = await this.auctionRepository
-      .findById(bid.auctionId)
-      .then((value) => value?.toJSON());
-
-    if (!auction) {
-      throw new AuctionNotFoundError({ auctionId: bid.auctionId });
     }
 
     const emailData: WinningBidderEmailData = {
@@ -66,27 +63,27 @@ export default class SendEmailToWinnerUseCase {
       metadata: {
         bidder,
         bid: {
-          value: bid.value,
-          date: bid.createdAt,
+          value: highestBid.getPrice().value,
+          date: highestBid.getCreatedAt(),
         },
-        auction,
+        auction: auction.toJSON(),
       },
     };
 
     const notification = BidderNotification.create({
-      bidderId: bid.bidderId,
+      bidderId,
       channel: NotificationChannel.EMAIL,
       type: NotificationType.NOTIFY_WINNING_BIDDER,
-      auctionId: bid.auctionId,
+      auctionId,
     });
 
     await this.emailSender.send(emailData);
     await this.bidderNotificationRepository
       .save(notification)
       .catch((error) => {
-        this.logger.error(`Failed to save notification for bidderId: (${bid.bidderId}) of auctionId: (${bid.auctionId})`, error);
+        this.logger.error(`Failed to save notification for bidderId: (${bidderId}) of auctionId: (${auctionId})`, error);
       });
 
-    this.logger.info(`Finished to send email to bidderId: (${bid.bidderId}) of auctionId: (${bid.auctionId})`);
+    this.logger.info(`Finished to send email to bidderId: (${bidderId}) of auctionId: (${auctionId})`);
   }
 }

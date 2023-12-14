@@ -1,4 +1,4 @@
-import { AWSConfig, EnvironmentName } from '../../../../../common/domain/environment-config.interface';
+import { AWSConfig, EnvironmentName } from '../../../../../common/application/service/environment-config.interface';
 
 export enum SqsQueueName {
   EMAIL_NOTIFICATION = 'email-notification',

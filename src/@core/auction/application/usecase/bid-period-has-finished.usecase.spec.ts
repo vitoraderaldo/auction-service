@@ -1,10 +1,10 @@
 import { createMock } from '@golevelup/ts-jest';
 import { AuctionRepository } from '../../domain/repositories/auction.repository';
-import { EventPublisher } from '../../../common/domain/domain-events/event-publisher';
 import BidPeriodHasFinishedUseCase from './bid-period-has-finished.usecase';
 import buildAuction from '../../../../../test/util/auction.mock';
 import { AuctionStatusEnum } from '../../domain/value-objects/auction-status.vo';
 import Auction from '../../domain/entities/auction.entity';
+import { EventPublisher } from '../../../common/domain/domain-events/domain-event';
 
 describe('BidPeriodHasFinishedUseCase', () => {
   let auctionRepository: AuctionRepository;

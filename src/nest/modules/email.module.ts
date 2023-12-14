@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { EnvironmentConfigInterface } from '../../@core/common/domain/environment-config.interface';
+import { EnvironmentConfigInterface } from '../../@core/common/application/service/environment-config.interface';
 import SendGridSdk from '../../@core/notification/infra/email/sendgrid/sendgrid-sdk';
 import ConfModule from './config.module';
 import NotifyWinningBidderSendGrid from '../../@core/notification/infra/email/sendgrid/cases/notify-winning-bidder';

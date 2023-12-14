@@ -3,7 +3,7 @@ import { faker } from '@faker-js/faker';
 import BidderRepository from '../../domain/repositories/bidder.repository';
 import buildBidder from '../../../../../test/util/bidder.mock';
 import CreateBidderUseCase from './create-bidder.usecase';
-import BidderAlreadyExistsError from '../../../common/error/bidder-already-exists';
+import BidderAlreadyExistsError from '../../error/bidder-already-exists';
 import { generateFirstName, generateLastName } from '../../../../../test/util/string-generation';
 
 describe('Create Bidder Use Case', () => {

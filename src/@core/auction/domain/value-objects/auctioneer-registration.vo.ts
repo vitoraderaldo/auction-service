@@ -1,5 +1,5 @@
 import ValueObject from '../../../common/domain/value-objects/value-object';
-import InvalidAuctioneerRegistrationError from '../../../common/error/invalid-registration';
+import InvalidAuctioneerRegistrationError from '../../error/invalid-registration';
 
 export default class AuctioneerRegistration extends ValueObject<string> {
   constructor(registration: string) {
@@ -16,13 +16,13 @@ export default class AuctioneerRegistration extends ValueObject<string> {
     }
 
     if (this.value.length === 3) {
-      if (!this.value.match(/^[0-9]{3}$/)) {
+      if (!this.value.match(/^\d{3}$/)) {
         throw new InvalidAuctioneerRegistrationError({
           value: this.value,
           reason: 'Registration with 3 characters must be a number',
         });
       }
-    } else if (!this.value.match(/^[0-9]{2}\/[0-9]{3}-[A-Z]$/)) {
+    } else if (!this.value.match(/^\d{2}\/\d{3}-[A-Z]$/)) {
       throw new InvalidAuctioneerRegistrationError({
         value: this.value,
         reason: 'Registration is not in a valid format',

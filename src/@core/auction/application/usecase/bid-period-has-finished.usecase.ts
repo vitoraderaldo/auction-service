@@ -1,5 +1,5 @@
 import { LoggerInterface } from '../../../common/application/service/logger';
-import { EventPublisher } from '../../../common/domain/domain-events/event-publisher';
+import { EventPublisher } from '../../../common/domain/domain-events/domain-event';
 import Auction from '../../domain/entities/auction.entity';
 import { AuctionRepository } from '../../domain/repositories/auction.repository';
 import { AuctionStatusEnum } from '../../domain/value-objects/auction-status.vo';

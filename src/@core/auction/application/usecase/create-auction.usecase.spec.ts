@@ -3,7 +3,7 @@ import { AuctionRepository } from '../../domain/repositories/auction.repository'
 import AuctioneerRepository from '../../domain/repositories/auctioneer.repository';
 import CreateAuctionUseCase from './create-auction.usecase';
 import buildAuctioneer from '../../../../../test/util/auctioneer.mock';
-import AuctioneerNotFoundError from '../../../common/error/auctioneer-not-found';
+import AuctioneerNotFoundError from '../../error/auctioneer-not-found';
 
 describe('CreateAuctionUseCase', () => {
   let auctioneerRepository: AuctioneerRepository;

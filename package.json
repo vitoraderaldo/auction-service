@@ -20,7 +20,8 @@
     "test:unit:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:integration": "jest --config ./test/integration/jest-e2e.json --runInBand --detectOpenHandles --forceExit",
     "test:integration:watch": "npm run test:integration -- --watch",
-    "test:integration:cov": "npm run test:integration -- --coverage"
+    "test:integration:cov": "npm run test:integration -- --coverage",
+    "sonar:dev": "sonar-scanner -Dsonar.host.url=http://localhost:9000 -Dsonar.login=${SONAR_TOKEN}"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
@@ -63,6 +64,7 @@
     "jest": "^29.5.0",
     "mongodb-memory-server": "^9.1.1",
     "prettier": "^3.1.1",
+    "sonarqube-scanner": "^3.3.0",
     "source-map-support": "^0.5.21",
     "supertest": "^6.3.3",
     "ts-jest": "^29.1.0",

@@ -14,7 +14,7 @@ export default class Uuid extends ValueObject<string> {
   }
 
   private validate() {
-    const uuidRegex = /^([a-f\d]{8}(-[a-f\d]{4}){3}-[a-f\d]{12})|([a-f\d]{32})$/i;
+    const uuidRegex = /^((([a-f\d]{8})((-[a-f\d]{4}){3})-([a-f\d]{12}))|(([a-f\d])){32})$/i;
     if (!uuidRegex.test(this.value)) {
       throw new InvalidUuidError({ uuid: this.value });
     }

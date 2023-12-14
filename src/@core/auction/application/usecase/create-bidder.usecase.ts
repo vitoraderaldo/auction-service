@@ -1,5 +1,5 @@
 import { LoggerInterface } from '../../../common/application/service/logger';
-import BidderAlreadyExistsError from '../../../common/error/bidder-already-exists';
+import BidderAlreadyExistsError from '../../error/bidder-already-exists';
 import Bidder from '../../domain/entities/bidder.entity';
 import BidderRepository from '../../domain/repositories/bidder.repository';
 

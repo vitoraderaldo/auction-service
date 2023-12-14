@@ -7,7 +7,7 @@ import buildAuction from '../../util/auction.mock';
 import insertAuction from '../util/insert-auction';
 import Auction from '../../../src/@core/auction/domain/entities/auction.entity';
 import { startTestingApp, getMongoConnection } from '../util/testing-app';
-import AuctionSchema, { AuctionModel } from '../../../src/@core/auction/infra/database/schemas/auction.schema';
+import AuctionSchema, { AuctionModel } from '../../../src/@core/auction/infra/database/mongo/schemas/auction.schema';
 import { BidPeriodHasFinishedOutput } from '../../../src/@core/auction/application/usecase/bid-period-has-finished.usecase';
 import Bidder from '../../../src/@core/auction/domain/entities/bidder.entity';
 import buildBidder from '../../util/bidder.mock';
@@ -81,7 +81,7 @@ describe('Bid Period Finishes', () => {
 
     const savedAuction = await auctionModel.findOne({
       id: auctionId,
-    });
+    }).exec();
 
     expect(savedAuction.id).toEqual(auctionId);
     expect(savedAuction.status).toEqual(AuctionStatusEnum.BID_PERIOD_FINISHED);
@@ -113,7 +113,7 @@ describe('Bid Period Finishes', () => {
 
     const savedAuction = await auctionModel.findOne({
       id: auctionId,
-    });
+    }).exec();
 
     const emails = await runWithRetries<SendgridEmail[]>(
       () => sendGridMockClient.getEmailsSentTo(bidder.getEmail()),

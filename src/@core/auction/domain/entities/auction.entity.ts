@@ -1,16 +1,16 @@
 import AggregateRoot from '../../../common/domain/aggregate-root';
-import BidPeriodFinishedEvent from '../../../common/domain/domain-events/bid-period-finished';
+import BidPeriodFinishedEvent from '../domain-events/bid-period-finished';
 import IsoStringDate from '../../../common/domain/value-objects/iso-string-data.vo';
 import Price from '../../../common/domain/value-objects/price.vo';
 import Uuid from '../../../common/domain/value-objects/uuid.vo';
-import AuctioneerNotFoundError from '../../../common/error/auctioneer-not-found';
+import AuctioneerNotFoundError from '../../error/auctioneer-not-found';
 import DateInThePastError from '../../../common/error/date-in-the-past';
 import EndDateBeforeStartDateError from '../../../common/error/date-in-the-past copy';
-import InvalidAuctionDescriptionError from '../../../common/error/invalid-auction-description';
-import InvalidAuctionTitleError from '../../../common/error/invalid-auction-title';
-import InvalidBidAmountError from '../../../common/error/invalid-bid-amount';
-import InvalidBidPeriodError from '../../../common/error/invalid-bid-period';
-import NotAllowedInAuctionStatusError from '../../../common/error/not-allowed-auction-status';
+import InvalidAuctionDescriptionError from '../../error/invalid-auction-description';
+import InvalidAuctionTitleError from '../../error/invalid-auction-title';
+import InvalidBidAmountError from '../../error/invalid-bid-amount';
+import InvalidBidPeriodError from '../../error/invalid-bid-period';
+import NotAllowedInAuctionStatusError from '../../error/not-allowed-auction-status';
 import AuctionPhoto from '../value-objects/auction-photo.vo';
 import AuctionStatus, {
   AuctionStatusEnum,
@@ -216,7 +216,7 @@ export default class Auction extends AggregateRoot {
     return this.startPrice.value;
   }
 
-  private getHighestBid(): Bid {
+  getHighestBid(): Bid {
     return this.bids.reduce((highest, current) => {
       if (highest.getPrice().isGreaterThan(current.getPrice())) {
         return highest;

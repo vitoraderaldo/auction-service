@@ -1,5 +1,5 @@
 import { LoggerInterface } from '../../../common/application/service/logger';
-import AuctionNotFoundError from '../../../common/error/auction-not-found';
+import AuctionNotFoundError from '../../error/auction-not-found';
 import { AuctionRepository } from '../../domain/repositories/auction.repository';
 
 interface PublishAuctionInput {

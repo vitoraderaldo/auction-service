@@ -38,3 +38,31 @@ services:
       - 4500:3000
     environment:
       - API_KEY=SG.api-key
+
+  sonarqube:
+    image: sonarqube:9.9.3-community
+    ports:
+      - "9000:9000"
+
+  configure-sonar:
+    image: curlimages/curl:8.5.0
+    depends_on:
+      - sonarqube
+    command: >
+      sh -c '
+        set -e
+        echo "Waiting for SonarQube to be ready..."
+        while ! curl -s -f -u admin:admin http://sonarqube:9000/api/settings/login_message; do
+          sleep 2
+        done
+        sleep 5
+        echo "SonarQube is ready"
+
+        echo "Changing password..."
+        curl -s -f -u admin:admin -X POST "http://sonarqube:9000/api/users/change_password?login=admin&previousPassword=admin&password=123456"
+        echo "Password changed"
+        
+        echo "Creating project..."
+        curl -s -f -u admin:123456 -X POST "http://sonarqube:9000/api/projects/create" -d "name=auction-service&project=auction-service&mainBranch=develop"
+        echo "Project created"
+      '

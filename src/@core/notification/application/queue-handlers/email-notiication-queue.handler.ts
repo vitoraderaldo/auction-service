@@ -1,11 +1,10 @@
-import { LoggerInterface } from '../../../common/application/service/logger';
+import { BidPeriodFinishedEventPayload } from '../../../auction/domain/domain-events/bid-period-finished';
 import InvalidNotificationTypeError from '../../error/invalid-notification-type';
 import { NotificationType } from '../service/notification-type';
 import SendEmailToWinnerUseCase from '../usecase/send-email-to-winner.usecase';
 
 export default class EmailNotificationHandler {
   constructor(
-    private readonly logger: LoggerInterface,
     private readonly sendEmailToWinnerUseCase: SendEmailToWinnerUseCase,
   ) {}
 
@@ -15,10 +14,17 @@ export default class EmailNotificationHandler {
   }): Promise<void> {
     switch (message?.type) {
       case NotificationType.NOTIFY_WINNING_BIDDER:
-        await this.sendEmailToWinnerUseCase.execute(message.payload);
+        await this.sendEmailToAuctionWinner(message.payload);
         break;
       default:
         throw new InvalidNotificationTypeError({ message });
     }
+  }
+
+  private sendEmailToAuctionWinner(payload: any): Promise<void> {
+    const data = payload as BidPeriodFinishedEventPayload;
+    return this.sendEmailToWinnerUseCase.execute({
+      auctionId: data.auctionId,
+    });
   }
 }

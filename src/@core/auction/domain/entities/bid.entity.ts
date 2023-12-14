@@ -76,4 +76,8 @@ export default class Bid extends Entity {
   getAuctionId(): string {
     return this.auctionId.value;
   }
+
+  getCreatedAt(): string {
+    return this.createdAt.value;
+  }
 }

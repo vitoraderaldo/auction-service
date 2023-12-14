@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import LoggerFactory from '../../@core/common/infra/logger-factory';
+import LoggerFactory from '../../@core/common/infra/logger/logger-factory';
 
 @Module({
   imports: [],

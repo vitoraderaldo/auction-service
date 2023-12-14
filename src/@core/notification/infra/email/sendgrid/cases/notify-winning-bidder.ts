@@ -1,4 +1,4 @@
-import { SendGridTemplates } from '../../../../../common/domain/environment-config.interface';
+import { SendGridTemplates } from '../../../../../common/application/service/environment-config.interface';
 import { WinningBidderEmailData } from '../../../../application/service/email/email.types';
 import { SendgridEmailSenderClient } from '../sendgrid.interface';
 

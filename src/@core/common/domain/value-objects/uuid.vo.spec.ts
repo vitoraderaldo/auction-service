@@ -10,7 +10,7 @@ describe('Uuid - Value Object', () => {
     const uuid = new Uuid(value);
     expect(uuid).toBeInstanceOf(Uuid);
     expect(uuid.value).toMatch(
-      /^([a-f\d]{8}(-[a-f\d]{4}){3}-[a-f\d]{12})|([a-f\d]{32})$/i,
+      /^((([a-f\d]{8})((-[a-f\d]{4}){3})-([a-f\d]{12}))|(([a-f\d])){32})$/i,
     );
   });
 

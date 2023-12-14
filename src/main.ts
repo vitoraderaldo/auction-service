@@ -1,9 +1,9 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import AppModule from './nest/modules/app.module';
-import AllExceptionsFilter from './@core/common/infra/exception-filter';
-import LoggerFactory from './@core/common/infra/logger-factory';
-import NestLoggerAdapter from './@core/common/infra/logger-nest-adapter';
+import AllExceptionsFilter from './@core/common/infra/api/nest/exception-filter';
+import LoggerFactory from './@core/common/infra/logger/logger-factory';
+import NestLoggerAdapter from './@core/common/infra/logger/logger-nest-adapter';
 
 async function bootstrap() {
   const logger = LoggerFactory.getInstance();
