@@ -1,5 +1,5 @@
-import DomainEventHandler from '../../../common/application/event-handler/event-handler';
-import BidPeriodFinishedEvent from '../../../common/domain/domain-events/bid-period-finished';
+import BidPeriodFinishedEvent from '../../../auction/domain/domain-events/bid-period-finished';
+import { DomainEventHandler } from '../../../common/domain/domain-events/domain-event';
 import NotificationStrategyFactory from '../service/notification-strategy.factory';
 import { NotificationChannel, NotificationType } from '../service/notification-type';
 

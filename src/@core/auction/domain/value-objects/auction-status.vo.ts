@@ -1,5 +1,5 @@
 import ValueObject from '../../../common/domain/value-objects/value-object';
-import InvalidAuctionStatusError from '../../../common/error/invalid-auction-status';
+import InvalidAuctionStatusError from '../../error/invalid-auction-status';
 
 export enum AuctionStatusEnum {
   CREATED = 'CREATED',

@@ -1,6 +1,6 @@
 import { Mongoose } from 'mongoose';
 import Bidder from '../../../src/@core/auction/domain/entities/bidder.entity';
-import BidderSchema from '../../../src/@core/auction/infra/database/schemas/bidder.schema';
+import BidderSchema from '../../../src/@core/auction/infra/database/mongo/schemas/bidder.schema';
 
 export default async function insertBidder(params: {
   bidder: Bidder;

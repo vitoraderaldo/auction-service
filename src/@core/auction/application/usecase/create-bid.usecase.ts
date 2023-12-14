@@ -1,6 +1,6 @@
 import { LoggerInterface } from '../../../common/application/service/logger';
-import AuctionNotFoundError from '../../../common/error/auction-not-found';
-import BidderNotFoundError from '../../../common/error/bidder-not-found';
+import AuctionNotFoundError from '../../error/auction-not-found';
+import BidderNotFoundError from '../../error/bidder-not-found';
 import { AuctionRepository } from '../../domain/repositories/auction.repository';
 import BidRepository from '../../domain/repositories/bid.repository';
 import BidderRepository from '../../domain/repositories/bidder.repository';

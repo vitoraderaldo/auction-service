@@ -2,7 +2,6 @@ import { createMock } from '@golevelup/ts-jest';
 import { faker } from '@faker-js/faker';
 import { LoggerInterface } from '../../../common/application/service/logger';
 import EmailSender from '../service/email/email.types';
-import BidRepository from '../../../auction/domain/repositories/bid.repository';
 import BidderRepository from '../../../auction/domain/repositories/bidder.repository';
 import BidderNotificationRepository from '../../domain/repositories/bidder-notification.repository';
 import { AuctionRepository } from '../../../auction/domain/repositories/auction.repository';
@@ -16,7 +15,6 @@ describe('SendEmailToWinnerUseCase', () => {
   let emailSenderMock: EmailSender;
   let bidderRepositoryMock: BidderRepository;
   let bidderNotificationRepositoryMock: BidderNotificationRepository;
-  let bidRepositoryMock: BidRepository;
   let auctionRepositoryMock: AuctionRepository;
   const fromEmailAdress = faker.internet.email();
 
@@ -30,7 +28,6 @@ describe('SendEmailToWinnerUseCase', () => {
     emailSenderMock = createMock<EmailSender>();
     bidderRepositoryMock = createMock<BidderRepository>();
     bidderNotificationRepositoryMock = createMock<BidderNotificationRepository>();
-    bidRepositoryMock = createMock<BidRepository>();
     auctionRepositoryMock = createMock<AuctionRepository>();
 
     useCase = new SendEmailToWinnerUseCase(
@@ -38,7 +35,6 @@ describe('SendEmailToWinnerUseCase', () => {
       emailSenderMock,
       bidderRepositoryMock,
       bidderNotificationRepositoryMock,
-      bidRepositoryMock,
       auctionRepositoryMock,
       fromEmailAdress,
     );
@@ -47,11 +43,7 @@ describe('SendEmailToWinnerUseCase', () => {
   it('should send email to the winner and save notification', async () => {
     const bid = buildBid();
     const bidder = buildBidder();
-    const auction = buildAuction();
-
-    jest
-      .spyOn(bidRepositoryMock, 'findById')
-      .mockResolvedValueOnce(bid);
+    const auction = buildAuction({ bids: [bid] });
 
     jest
       .spyOn(bidderRepositoryMock, 'findById')
@@ -61,23 +53,33 @@ describe('SendEmailToWinnerUseCase', () => {
       .spyOn(auctionRepositoryMock, 'findById')
       .mockResolvedValueOnce(auction);
 
-    const winningBidId = bid.getId();
+    const auctionId = auction.getId();
 
-    await useCase.execute({ winningBidId });
+    await useCase.execute({ auctionId });
 
-    expect(bidRepositoryMock.findById).toHaveBeenCalledWith(winningBidId);
     expect(bidderRepositoryMock.findById).toHaveBeenCalled();
     expect(auctionRepositoryMock.findById).toHaveBeenCalled();
     expect(emailSenderMock.send).toHaveBeenCalled();
     expect(bidderNotificationRepositoryMock.save).toHaveBeenCalled();
   });
 
-  it('should skip email notification when winningBidId is not provided', async () => {
-    await useCase.execute({ winningBidId: '' });
+  it('should skip email notification when the auction has no bid', async () => {
+    const bidder = buildBidder();
+    const auction = buildAuction({ bids: [] });
 
-    expect(bidRepositoryMock.findById).not.toHaveBeenCalled();
+    jest
+      .spyOn(bidderRepositoryMock, 'findById')
+      .mockResolvedValueOnce(bidder);
+
+    jest
+      .spyOn(auctionRepositoryMock, 'findById')
+      .mockResolvedValueOnce(auction);
+
+    const auctionId = auction.getId();
+
+    await useCase.execute({ auctionId });
+
     expect(bidderRepositoryMock.findById).not.toHaveBeenCalled();
-    expect(auctionRepositoryMock.findById).not.toHaveBeenCalled();
     expect(emailSenderMock.send).not.toHaveBeenCalled();
     expect(bidderNotificationRepositoryMock.save).not.toHaveBeenCalled();
   });
@@ -85,11 +87,7 @@ describe('SendEmailToWinnerUseCase', () => {
   it('should not propagate error when it fails to save the notifcation confirmation', async () => {
     const bid = buildBid();
     const bidder = buildBidder();
-    const auction = buildAuction();
-
-    jest
-      .spyOn(bidRepositoryMock, 'findById')
-      .mockResolvedValueOnce(bid);
+    const auction = buildAuction({ bids: [bid] });
 
     jest
       .spyOn(bidderRepositoryMock, 'findById')
@@ -103,8 +101,13 @@ describe('SendEmailToWinnerUseCase', () => {
       .spyOn(bidderNotificationRepositoryMock, 'save')
       .mockRejectedValueOnce(new Error('Failed to save notification'));
 
-    await useCase.execute({
-      winningBidId: bid.getId(),
-    });
+    const auctionId = auction.getId();
+
+    await useCase.execute({ auctionId });
+
+    expect(bidderRepositoryMock.findById).toHaveBeenCalled();
+    expect(auctionRepositoryMock.findById).toHaveBeenCalled();
+    expect(emailSenderMock.send).toHaveBeenCalled();
+    expect(bidderNotificationRepositoryMock.save).toHaveBeenCalled();
   });
 });

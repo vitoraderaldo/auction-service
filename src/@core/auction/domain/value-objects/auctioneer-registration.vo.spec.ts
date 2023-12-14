@@ -1,4 +1,4 @@
-import InvalidAuctioneerRegistrationError from '../../../common/error/invalid-registration';
+import InvalidAuctioneerRegistrationError from '../../error/invalid-registration';
 import AuctioneerRegistration from './auctioneer-registration.vo';
 
 describe('Auctioneer Registration - Object Value', () => {

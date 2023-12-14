@@ -9,15 +9,15 @@ import Auction, {
 import buildBid from '../../../../../test/util/bid.mock';
 import Price from '../../../common/domain/value-objects/price.vo';
 import Bid from './bid.entity';
-import AuctioneerNotFoundError from '../../../common/error/auctioneer-not-found';
+import AuctioneerNotFoundError from '../../error/auctioneer-not-found';
 import DateInThePastError from '../../../common/error/date-in-the-past';
-import NotAllowedInAuctionStatusError from '../../../common/error/not-allowed-auction-status';
-import InvalidAuctionDescriptionError from '../../../common/error/invalid-auction-description';
-import InvalidAuctionTitleError from '../../../common/error/invalid-auction-title';
+import NotAllowedInAuctionStatusError from '../../error/not-allowed-auction-status';
+import InvalidAuctionDescriptionError from '../../error/invalid-auction-description';
+import InvalidAuctionTitleError from '../../error/invalid-auction-title';
 import EndDateBeforeStartDateError from '../../../common/error/date-in-the-past copy';
-import InvalidBidAmountError from '../../../common/error/invalid-bid-amount';
-import InvalidBidPeriodError from '../../../common/error/invalid-bid-period';
-import BidPeriodFinishedEvent from '../../../common/domain/domain-events/bid-period-finished';
+import InvalidBidAmountError from '../../error/invalid-bid-amount';
+import InvalidBidPeriodError from '../../error/invalid-bid-period';
+import BidPeriodFinishedEvent from '../domain-events/bid-period-finished';
 
 describe('Auction', () => {
   let validAuctionProps: AuctionConstructorProps;

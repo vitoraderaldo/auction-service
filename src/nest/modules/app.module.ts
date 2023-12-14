@@ -1,29 +1,27 @@
 import { Module } from '@nestjs/common';
-import AuctionController from '../../@core/auction/infra/api/auction.controller';
+import AuctionController from '../../@core/auction/infra/api/nest/auction.controller';
 import ConfModule from './config.module';
 import MongoModule from './mongo.module';
-import AuctionMongoRepository from '../../@core/auction/infra/database/repositories/auction-mongo.repository';
-import AuctioneerMongoRepository from '../../@core/auction/infra/database/repositories/auctioneer-mongo.repository';
+import AuctionMongoRepository from '../../@core/auction/infra/database/mongo/repositories/auction-mongo.repository';
+import AuctioneerMongoRepository from '../../@core/auction/infra/database/mongo/repositories/auctioneer-mongo.repository';
 import CreateAuctionUseCase from '../../@core/auction/application/usecase/create-auction.usecase';
 import { AuctionRepository } from '../../@core/auction/domain/repositories/auction.repository';
 import AuctioneerRepository from '../../@core/auction/domain/repositories/auctioneer.repository';
 import HealthController from '../api/health.controller';
-import AuctioneerController from '../../@core/auction/infra/api/auctioneer.controller';
+import AuctioneerController from '../../@core/auction/infra/api/nest/auctioneer.controller';
 import CreateAuctioneerUseCase from '../../@core/auction/application/usecase/create-auctioneer.usecase';
 import CreateBidderUseCase from '../../@core/auction/application/usecase/create-bidder.usecase';
 import BidderRepository from '../../@core/auction/domain/repositories/bidder.repository';
-import BidderMongoRepository from '../../@core/auction/infra/database/repositories/bidder-mongo.repository';
-import BidMongoRepository from '../../@core/auction/infra/database/repositories/bid-mongo.repository';
+import BidderMongoRepository from '../../@core/auction/infra/database/mongo/repositories/bidder-mongo.repository';
+import BidMongoRepository from '../../@core/auction/infra/database/mongo/repositories/bid-mongo.repository';
 import CreateBidUseCase from '../../@core/auction/application/usecase/create-bid.usecase';
 import BidRepository from '../../@core/auction/domain/repositories/bid.repository';
-import BidderController from '../../@core/auction/infra/api/bidder.controller';
+import BidderController from '../../@core/auction/infra/api/nest/bidder.controller';
 import PublishAuctionUseCase from '../../@core/auction/application/usecase/publishes-auction.usecase';
 import LoggerModule from './logger.module';
 import { LoggerInterface } from '../../@core/common/application/service/logger';
 import BidPeriodHasFinishedUseCase from '../../@core/auction/application/usecase/bid-period-has-finished.usecase';
-import DomainEventManager from '../../@core/common/domain/domain-event-manager';
-import { EventPublisher } from '../../@core/common/domain/domain-events/event-publisher';
-import DomainEventManagerFactory from '../../@core/common/domain/domain-event-manager.factory';
+import DomainEventManagerFactory from '../../@core/common/domain/domain-events/domain-event-manager.factory';
 import EmailNotificationQueueStrategy from '../../@core/notification/application/service/email/email-notification-queue.strategy';
 import QueueMessagePublisher from '../../@core/common/application/service/queue-message-publisher';
 import EmailSqsPublisher from '../../@core/notification/infra/queue/sqs/client/email-sqs-publisher';
@@ -32,18 +30,19 @@ import SmsNotificationQueueStrategy from '../../@core/notification/application/s
 import NotificationStrategyFactory from '../../@core/notification/application/service/notification-strategy.factory';
 import NotifyWinningBidderHandler from '../../@core/notification/application/event-handlers/notify-winning-bidder';
 import SqsProducer from '../../@core/notification/infra/queue/sqs/client/sqs-producer';
-import { EnvironmentConfigInterface } from '../../@core/common/domain/environment-config.interface';
+import { EnvironmentConfigInterface } from '../../@core/common/application/service/environment-config.interface';
 import { SqsPublisher } from '../../@core/notification/infra/queue/sqs/client/sqs-publisher.interface';
 import { SqsHelper } from '../../@core/notification/infra/queue/sqs/client/sqs-helper';
 import EmailNotificationSqsQueueConsumer from '../../@core/notification/infra/queue/sqs/consumers/email-notification-sqs.consumer';
 import SqsConsumer from '../../@core/notification/infra/queue/sqs/client/sqs-consumer';
 import { SqsConsumerInterface } from '../../@core/notification/infra/queue/sqs/client/sqs-consumer.interface';
-import BidderNotificationMongoRepository from '../../@core/notification/infra/database/repositories/bidder-notification-mongo.repository';
+import BidderNotificationMongoRepository from '../../@core/notification/infra/database/mongo/repositories/bidder-notification-mongo.repository';
 import BidderNotificationRepository from '../../@core/notification/domain/repositories/bidder-notification.repository';
 import EmailNotificationHandler from '../../@core/notification/application/queue-handlers/email-notiication-queue.handler';
 import EmailModule from './email.module';
 import EmailSender from '../../@core/notification/application/service/email/email.types';
 import SendEmailToWinnerUseCase from '../../@core/notification/application/usecase/send-email-to-winner.usecase';
+import { DomainEventManagerInterface, EventPublisher } from '../../@core/common/domain/domain-events/domain-event';
 
 @Module({
   imports: [LoggerModule, ConfModule, MongoModule, EmailModule],
@@ -51,32 +50,32 @@ import SendEmailToWinnerUseCase from '../../@core/notification/application/useca
   providers: [
     {
       provide: 'AuctionRepository',
-      useFactory: async (mongoRepository: AuctionMongoRepository) => mongoRepository,
+      useFactory: (mongoRepository: AuctionMongoRepository) => mongoRepository,
       inject: [AuctionMongoRepository],
     },
     {
       provide: 'AuctioneerRepository',
-      useFactory: async (mongoRepository: AuctioneerMongoRepository) => mongoRepository,
+      useFactory: (mongoRepository: AuctioneerMongoRepository) => mongoRepository,
       inject: [AuctioneerMongoRepository],
     },
     {
       provide: 'BidderRepository',
-      useFactory: async (mongoRepository: BidderMongoRepository) => mongoRepository,
+      useFactory: (mongoRepository: BidderMongoRepository) => mongoRepository,
       inject: [BidderMongoRepository],
     },
     {
       provide: 'BidRepository',
-      useFactory: async (mongoRepository: BidMongoRepository) => mongoRepository,
+      useFactory: (mongoRepository: BidMongoRepository) => mongoRepository,
       inject: [BidMongoRepository],
     },
     {
       provide: 'BidderNotificationRepository',
-      useFactory: async (mongoRepository: BidderNotificationMongoRepository) => mongoRepository,
+      useFactory: (mongoRepository: BidderNotificationMongoRepository) => mongoRepository,
       inject: [BidderNotificationMongoRepository],
     },
     {
       provide: SqsHelper,
-      useFactory: async (
+      useFactory: (
         envConfig: EnvironmentConfigInterface,
       ) => new SqsHelper(
         envConfig.getAws(),
@@ -91,7 +90,7 @@ import SendEmailToWinnerUseCase from '../../@core/notification/application/useca
     },
     {
       provide: 'EMAIL_QUEUE',
-      useFactory: async (
+      useFactory: (
         logger: LoggerInterface,
         sqsPublisher: SqsPublisher,
       ) => new EmailSqsPublisher(
@@ -102,7 +101,7 @@ import SendEmailToWinnerUseCase from '../../@core/notification/application/useca
     },
     {
       provide: 'SMS_QUEUE',
-      useFactory: async (
+      useFactory: (
         logger: LoggerInterface,
         sqsPublisher: SqsPublisher,
       ) => new SmsSqsPublisher(logger, sqsPublisher),
@@ -110,21 +109,21 @@ import SendEmailToWinnerUseCase from '../../@core/notification/application/useca
     },
     {
       provide: EmailNotificationQueueStrategy,
-      useFactory: async (
+      useFactory: (
         emailQueue: QueueMessagePublisher,
       ) => new EmailNotificationQueueStrategy(emailQueue),
       inject: ['EMAIL_QUEUE'],
     },
     {
       provide: SmsNotificationQueueStrategy,
-      useFactory: async (
+      useFactory: (
         smsQueue: QueueMessagePublisher,
       ) => new SmsNotificationQueueStrategy(smsQueue),
       inject: ['SMS_QUEUE'],
     },
     {
       provide: 'SqsConsumerInterface',
-      useFactory: async (
+      useFactory: (
         sqsHelper: SqsHelper,
       ) => new SqsConsumer(sqsHelper),
       inject: [SqsHelper],
@@ -136,7 +135,6 @@ import SendEmailToWinnerUseCase from '../../@core/notification/application/useca
         emailSender: EmailSender,
         bidderRepository: BidderRepository,
         bidderNotificationRepository: BidderNotificationRepository,
-        bidRepository: BidRepository,
         auctionRepository: AuctionRepository,
         config: EnvironmentConfigInterface,
       ) => new SendEmailToWinnerUseCase(
@@ -144,22 +142,19 @@ import SendEmailToWinnerUseCase from '../../@core/notification/application/useca
         emailSender,
         bidderRepository,
         bidderNotificationRepository,
-        bidRepository,
         auctionRepository,
         config.getDefaultSenderEmail(),
       ),
-      inject: ['LoggerInterface', 'EmailSender', 'BidderRepository', 'BidderNotificationRepository', 'BidRepository', 'AuctionRepository', 'EnvironmentConfigInterface'],
+      inject: ['LoggerInterface', 'EmailSender', 'BidderRepository', 'BidderNotificationRepository', 'AuctionRepository', 'EnvironmentConfigInterface'],
     },
     {
       provide: EmailNotificationHandler,
       useFactory: (
-        logger: LoggerInterface,
         sendEmailToWinnerUseCase: SendEmailToWinnerUseCase,
       ) => new EmailNotificationHandler(
-        logger,
         sendEmailToWinnerUseCase,
       ),
-      inject: ['LoggerInterface', SendEmailToWinnerUseCase],
+      inject: [SendEmailToWinnerUseCase],
     },
     {
       provide: EmailNotificationSqsQueueConsumer,
@@ -176,7 +171,7 @@ import SendEmailToWinnerUseCase from '../../@core/notification/application/useca
     },
     {
       provide: NotificationStrategyFactory,
-      useFactory: async (
+      useFactory: (
         emailStrategy: EmailNotificationQueueStrategy,
         smsStrategy: SmsNotificationQueueStrategy,
       ) => new NotificationStrategyFactory(emailStrategy, smsStrategy),
@@ -184,7 +179,7 @@ import SendEmailToWinnerUseCase from '../../@core/notification/application/useca
     },
     {
       provide: NotifyWinningBidderHandler,
-      useFactory: async (
+      useFactory: (
         strategyFactory: NotificationStrategyFactory,
       ) => {
         const result = new NotifyWinningBidderHandler(strategyFactory);
@@ -194,21 +189,21 @@ import SendEmailToWinnerUseCase from '../../@core/notification/application/useca
     },
     {
       provide: DomainEventManagerFactory,
-      useFactory: async (
+      useFactory: (
         logger: LoggerInterface,
         notifyWinningBidder: NotifyWinningBidderHandler,
       ) => new DomainEventManagerFactory(logger, notifyWinningBidder),
       inject: ['LoggerInterface', NotifyWinningBidderHandler],
     },
     {
-      provide: DomainEventManager,
-      useFactory: async (factory: DomainEventManagerFactory) => factory.getInstance(),
+      provide: 'DomainEventManagerInterface',
+      useFactory: (factory: DomainEventManagerFactory) => factory.getInstance(),
       inject: [DomainEventManagerFactory],
     },
     {
       provide: 'EventPublisher',
-      useFactory: async (eventManager: DomainEventManager) => eventManager,
-      inject: [DomainEventManager],
+      useFactory: (eventManager: DomainEventManagerInterface) => eventManager,
+      inject: ['DomainEventManagerInterface'],
     },
     {
       provide: CreateAuctionUseCase,

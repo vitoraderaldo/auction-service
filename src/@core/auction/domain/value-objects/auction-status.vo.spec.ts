@@ -1,4 +1,4 @@
-import InvalidAuctionStatusError from '../../../common/error/invalid-auction-status';
+import InvalidAuctionStatusError from '../../error/invalid-auction-status';
 import AuctionStatus, { AuctionStatusEnum } from './auction-status.vo';
 
 describe('AuctionStatus', () => {

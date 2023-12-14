@@ -1,6 +1,6 @@
 import { Mongoose } from 'mongoose';
 import Auctioneer from '../../../src/@core/auction/domain/entities/auctioneer.entity';
-import AuctioneerSchema from '../../../src/@core/auction/infra/database/schemas/auctioneer.schema';
+import AuctioneerSchema from '../../../src/@core/auction/infra/database/mongo/schemas/auctioneer.schema';
 
 export default async function insertAuctioneer(params: {
   auctioneer: Auctioneer;

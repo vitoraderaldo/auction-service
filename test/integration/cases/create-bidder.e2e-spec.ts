@@ -2,7 +2,7 @@ import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { Mongoose } from 'mongoose';
 import buildBidder from '../../util/bidder.mock';
-import BidderSchema, { BidderModel } from '../../../src/@core/auction/infra/database/schemas/bidder.schema';
+import BidderSchema, { BidderModel } from '../../../src/@core/auction/infra/database/mongo/schemas/bidder.schema';
 import { getMongoConnection, startTestingApp } from '../util/testing-app';
 
 describe('Create Bidder (e2e)', () => {
