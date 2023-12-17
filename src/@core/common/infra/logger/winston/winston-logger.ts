@@ -28,7 +28,7 @@ export default class WinstonLogger implements LoggerInterface {
       return message;
     }
 
-    const metadataStringified = inspect(metadata);
+    const metadataStringified = inspect(metadata, false, null, false);
     return `${message} - ${metadataStringified}`;
   }
 }
