@@ -11,4 +11,5 @@ export default async () => {
   process.env.SENDGRID_API_KEY = 'SG.api-key';
   process.env.SENDGRID_BASE_URL = 'http://localhost:4500';
   process.env.SENDGRID_TEMPLATE_NOTIFY_WINNING_BIDDER = 'sendgrid-template-notify-winning-bidder';
+  process.env.SENDGRID_TEMPLATE_PAYMENT_REQUEST_FOR_AUCTION = 'sendgrid-template-payment-request-for-auction';
 };

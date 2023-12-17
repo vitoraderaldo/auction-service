@@ -39,6 +39,8 @@ describe('Bid Period Finishes', () => {
   });
 
   beforeEach(async () => {
+    await LocalStackSqs.purgeAppQueues(app);
+
     const oneMonthAgo = new Date();
     oneMonthAgo.setUTCMonth(oneMonthAgo.getUTCMonth() - 1);
 
@@ -63,8 +65,6 @@ describe('Bid Period Finishes', () => {
       status: AuctionStatusEnum.PUBLISHED,
     });
     await insertAuction({ auction: auctionStillInBidPeriod, connection });
-
-    await LocalStackSqs.purgeAppQueues(app);
   });
 
   afterAll(async () => {
@@ -97,7 +97,7 @@ describe('Bid Period Finishes', () => {
     }]);
   });
 
-  it('should send email to winner when bid period finishes', async () => {
+  it('should send 2 emails to winner when bid period finishes', async () => {
     const bid = buildBid({
       auctionId: auction.getId(),
       bidderId: bidder.getId(),
@@ -126,7 +126,13 @@ describe('Bid Period Finishes', () => {
 
     expect(body.total).toEqual(1);
     expect(body.success).toEqual(1);
-    expect(emails).toHaveLength(1);
-    expect(emails[0].template_id).toEqual('sendgrid-template-notify-winning-bidder');
+    expect(emails).toHaveLength(2);
+    expect([
+      emails[0].template_id,
+      emails[1].template_id,
+    ]).toEqual(expect.arrayContaining([
+      'sendgrid-template-notify-winning-bidder',
+      'sendgrid-template-payment-request-for-auction',
+    ]));
   });
 });

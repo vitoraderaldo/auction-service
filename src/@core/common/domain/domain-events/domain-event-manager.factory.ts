@@ -1,13 +1,15 @@
-import NotifyWinningBidderHandler from '../../../notification/application/event-handlers/notify-winning-bidder';
 import { LoggerInterface } from '../../application/service/logger';
 import DomainEventManager from './domain-event-manager';
-import { DomainEventManagerInterface, DomainEventHandler } from './domain-event';
+import { DomainEventHandler, DomainEventManagerInterface } from './domain-event';
 import DomainEventType from './domain-event.type';
 
 export default class DomainEventManagerFactory {
   constructor(
     private readonly logger: LoggerInterface,
-    private readonly notifyWinningBidderHandler: NotifyWinningBidderHandler,
+    private readonly handlers: {
+      event: DomainEventType;
+      handlers: DomainEventHandler[];
+    }[],
   ) {}
 
   getInstance(): DomainEventManagerInterface {
@@ -17,15 +19,10 @@ export default class DomainEventManagerFactory {
   }
 
   private registerHandlers(manager: DomainEventManagerInterface): void {
-    const eventsToHandler = this.getEventsToHandlers();
-    eventsToHandler.forEach((handler, event) => {
-      manager.subscribe(event, handler);
+    this.handlers.forEach(({ event, handlers }) => {
+      handlers.forEach((handler) => {
+        manager.subscribe(event, handler);
+      });
     });
-  }
-
-  private getEventsToHandlers(): Map<DomainEventType, DomainEventHandler> {
-    const eventHandlerMap = new Map<DomainEventType, DomainEventHandler>();
-    eventHandlerMap.set(DomainEventType.BID_PERIOD_FINISHED, this.notifyWinningBidderHandler);
-    return eventHandlerMap;
   }
 }

@@ -29,9 +29,7 @@ export default class SendEmailToWinnerUseCase {
       throw new AuctionNotFoundError({ auctionId });
     }
 
-    const auction = await this.auctionRepository
-      .findById(auctionId)
-      .then();
+    const auction = await this.auctionRepository.findById(auctionId);
 
     if (!auction) {
       throw new AuctionNotFoundError({ auctionId });
@@ -56,10 +54,12 @@ export default class SendEmailToWinnerUseCase {
       });
     }
 
+    const notificationType = NotificationType.NOTIFY_WINNING_BIDDER;
+
     const emailData: WinningBidderEmailData = {
       from: this.fromEmailAdress,
       to: bidder.email,
-      type: NotificationType.NOTIFY_WINNING_BIDDER,
+      type: notificationType,
       metadata: {
         bidder,
         bid: {
@@ -73,7 +73,7 @@ export default class SendEmailToWinnerUseCase {
     const notification = BidderNotification.create({
       bidderId,
       channel: NotificationChannel.EMAIL,
-      type: NotificationType.NOTIFY_WINNING_BIDDER,
+      type: notificationType,
       auctionId,
     });
 
@@ -81,9 +81,9 @@ export default class SendEmailToWinnerUseCase {
     await this.bidderNotificationRepository
       .save(notification)
       .catch((error) => {
-        this.logger.error(`Failed to save notification for bidderId: (${bidderId}) of auctionId: (${auctionId})`, error);
+        this.logger.error(`Failed to save notification (${notificationType}) for bidderId: (${bidderId}) of auctionId: (${auctionId})`, error);
       });
 
-    this.logger.info(`Finished to send email to bidderId: (${bidderId}) of auctionId: (${auctionId})`);
+    this.logger.info(`Finished to send email: (${notificationType}) to bidderId: (${bidderId}) of auctionId: (${auctionId})`);
   }
 }

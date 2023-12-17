@@ -3,18 +3,20 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import AppModule from '../../../src/nest/modules/app.module';
 import AllExceptionsFilter from '../../../src/@core/common/infra/api/nest/exception-filter';
-import LoggerFactory from '../../../src/@core/common/infra/logger/logger-factory';
+import { ErrorLogger } from '../../../src/@core/common/infra/api/nest/error-parser';
 
 export const startTestingApp = async (): Promise<INestApplication> => {
-  const logger = LoggerFactory.getInstance();
   const moduleFixture: TestingModule = await Test.createTestingModule({
     imports: [AppModule],
   }).compile();
 
   const app = moduleFixture.createNestApplication();
+
+  const errorLogger = app.get(ErrorLogger);
+
   app.enableShutdownHooks();
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
-  app.useGlobalFilters(new AllExceptionsFilter(logger));
+  app.useGlobalFilters(new AllExceptionsFilter(errorLogger));
 
   return app;
 };

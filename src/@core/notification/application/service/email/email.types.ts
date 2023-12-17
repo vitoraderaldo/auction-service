@@ -23,7 +23,23 @@ export interface WinningBidderEmailData extends EmailData<{
   }
 }> {}
 
-export type AllKindOfEmailData = WinningBidderEmailData | EmailData<string>;
+export interface RequestBidderPaymentOnAuctionEmailData extends EmailData<{
+  bidder: {
+    firstName: string;
+    lastName: string;
+  };
+  auction: {
+    title: string;
+    description: string;
+  },
+  order: {
+    bidValue: number;
+    total: number;
+    dueDate: string;
+  },
+}> {}
+
+export type AllKindOfEmailData = WinningBidderEmailData | RequestBidderPaymentOnAuctionEmailData;
 
 export default interface EmailSender {
   send(data: AllKindOfEmailData): Promise<void>;

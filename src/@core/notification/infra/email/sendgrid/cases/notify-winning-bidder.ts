@@ -9,12 +9,10 @@ export default class NotifyWinningBidderSendGrid {
   ) {}
 
   send(data: WinningBidderEmailData): Promise<void> {
-    const templateId = this.sendgridTemplates.notifyWinningBidder;
-
     return this.sendGridClient.sendWithTemplate({
       from: data.from,
       to: data.to,
-      templateId,
+      templateId: this.sendgridTemplates.notifyWinningBidder,
       dynamicTemplateData: data.metadata,
     });
   }
