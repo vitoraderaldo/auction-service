@@ -5,10 +5,10 @@ import { NotificationType } from '../notification-type';
 export default class EmailNotificationQueueStrategy implements NotificationQueueStrategyInterface {
   constructor(private emailQueue: QueueMessagePublisher) {}
 
-  async execute(type: NotificationType, payload: object): Promise<void> {
+  async execute(type: NotificationType, metadata: object): Promise<void> {
     await this.emailQueue.publish({
       type,
-      payload,
+      payload: metadata,
     });
   }
 }

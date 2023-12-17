@@ -1,5 +1,5 @@
 import { connect, Mongoose } from 'mongoose';
-import { randomUUID } from 'crypto';
+import { faker } from '@faker-js/faker';
 import BidderNotificationSchema, {
   BidderNotificationModel,
   BidderNotificationMongoInterface,
@@ -14,7 +14,7 @@ describe('BidderNotificationMongoRepository', () => {
 
   beforeEach(async () => {
     if (!connection) {
-      connection = await connect(process.env.MONGO_URI, { dbName: randomUUID() });
+      connection = await connect(process.env.MONGO_URI, { dbName: faker.string.uuid() });
     }
 
     model = BidderNotificationSchema.getModel(connection);

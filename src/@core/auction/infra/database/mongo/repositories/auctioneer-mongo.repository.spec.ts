@@ -1,5 +1,4 @@
 import { faker } from '@faker-js/faker';
-import { randomUUID } from 'crypto';
 import { connect, Mongoose } from 'mongoose';
 import AuctioneerSchema, {
   AuctioneerModel,
@@ -16,7 +15,7 @@ describe('AuctioneerMongoRepository', () => {
 
   beforeEach(async () => {
     if (!connection) {
-      connection = await connect(process.env.MONGO_URI, { dbName: randomUUID() });
+      connection = await connect(process.env.MONGO_URI, { dbName: faker.string.uuid() });
     }
 
     model = AuctioneerSchema.getModel(connection);

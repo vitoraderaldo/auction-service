@@ -3,6 +3,7 @@ import { AWSConfig, EnvironmentName } from '../../../../../common/application/se
 export enum SqsQueueName {
   EMAIL_NOTIFICATION = 'email-notification',
   SMS_NOTIFICATION = 'sms-notification',
+  ORDER = 'order',
 }
 
 export class SqsHelper {

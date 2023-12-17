@@ -1,4 +1,4 @@
-import { randomUUID } from 'crypto';
+import { faker } from '@faker-js/faker';
 import buildAuction from '../../../../../test/util/auction.mock';
 import Uuid from '../../../common/domain/value-objects/uuid.vo';
 import { AuctionStatusEnum } from '../value-objects/auction-status.vo';
@@ -242,7 +242,7 @@ describe('Auction', () => {
       });
 
       const input = {
-        bidderId: randomUUID(),
+        bidderId: faker.string.uuid(),
         value: 200,
       };
 
@@ -269,7 +269,7 @@ describe('Auction', () => {
       });
 
       const input = {
-        bidderId: randomUUID(),
+        bidderId: faker.string.uuid(),
         value: 200,
       };
 
@@ -301,7 +301,7 @@ describe('Auction', () => {
       });
 
       const input = {
-        bidderId: randomUUID(),
+        bidderId: faker.string.uuid(),
         value: 200,
       };
 
@@ -327,7 +327,7 @@ describe('Auction', () => {
       });
 
       const input = {
-        bidderId: randomUUID(),
+        bidderId: faker.string.uuid(),
         value: startPrice - 1,
       };
 
@@ -361,7 +361,7 @@ describe('Auction', () => {
       });
 
       const input = {
-        bidderId: randomUUID(),
+        bidderId: faker.string.uuid(),
         value: 300,
       };
 
@@ -395,7 +395,7 @@ describe('Auction', () => {
       });
 
       const input = {
-        bidderId: randomUUID(),
+        bidderId: faker.string.uuid(),
         value: 301,
       };
 

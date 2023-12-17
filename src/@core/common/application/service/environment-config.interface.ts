@@ -11,6 +11,7 @@ export interface AWSConfig {
 
 export interface SendGridTemplates {
   notifyWinningBidder: string;
+  paymentRequestForAuction: string;
 }
 
 export interface SendGridConfig {

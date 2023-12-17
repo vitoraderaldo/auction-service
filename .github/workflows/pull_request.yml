@@ -30,7 +30,18 @@ jobs:
       run: npm run lint
     
     - name: Run Unit Tests
-      run: npm run test:unit
+      run: npm run test:unit:cov
 
     - name: Run Integration Tests
-      run: npm run test:integration
+      run: npm run test:integration:cov
+
+    - name: Combine Coverage
+      run: npm run test:combine:cov
+
+    - name: Comment Coverage on PR
+      uses: romeovs/lcov-reporter-action@v0.3.1
+      with:
+        github-token: ${{ secrets.TOKEN }}
+        lcov-file: ./coverage/merged/lcov.info
+        delete-old-comments: true
+        title: Test Coverage

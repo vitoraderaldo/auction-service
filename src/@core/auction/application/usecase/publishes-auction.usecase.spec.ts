@@ -1,5 +1,5 @@
 import { createMock } from '@golevelup/ts-jest';
-import { randomUUID } from 'crypto';
+import { faker } from '@faker-js/faker';
 import PublishAuctionUseCase from './publishes-auction.usecase';
 import { AuctionRepository } from '../../domain/repositories/auction.repository';
 import buildAuction from '../../../../../test/util/auction.mock';
@@ -20,8 +20,8 @@ describe('Publish Auction Use Case', () => {
       .mockResolvedValueOnce(null);
 
     const input = {
-      auctionId: randomUUID(),
-      auctioneerId: randomUUID(),
+      auctionId: faker.string.uuid(),
+      auctioneerId: faker.string.uuid(),
     };
 
     try {
@@ -44,8 +44,8 @@ describe('Publish Auction Use Case', () => {
     const updateSpy = jest.spyOn(auctionRepository, 'update');
 
     const input = {
-      auctionId: randomUUID(),
-      auctioneerId: randomUUID(),
+      auctionId: faker.string.uuid(),
+      auctioneerId: faker.string.uuid(),
     };
 
     await useCase.execute(input);

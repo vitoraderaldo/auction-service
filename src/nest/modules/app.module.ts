@@ -43,6 +43,16 @@ import EmailModule from './email.module';
 import EmailSender from '../../@core/notification/application/service/email/email.types';
 import SendEmailToWinnerUseCase from '../../@core/notification/application/usecase/send-email-to-winner.usecase';
 import { DomainEventManagerInterface, EventPublisher } from '../../@core/common/domain/domain-events/domain-event';
+import TriggerOrderCreationHandler from '../../@core/order/application/event-handlers/trigger-order-creation';
+import DomainEventType from '../../@core/common/domain/domain-events/domain-event.type';
+import CreateFirstAuctionOrderUseCase from '../../@core/order/application/usecase/create-first-auction-order.usecase';
+import OrderSqsPublisher from '../../@core/order/infra/queue/sqs/client/order-sqs-publisher';
+import OrderSqsQueueConsumer from '../../@core/order/infra/queue/sqs/consumers/order-sqs.consumer';
+import OrderQueueHandler from '../../@core/order/application/queue-handlers/order-queue.handler';
+import OrderMongoRepository from '../../@core/order/infra/database/mongo/repositories/order-mongo.repository';
+import OrderRepository from '../../@core/order/domain/repositories/order.repository';
+import SendPaymentRequestEmailToWinnerUseCase from '../../@core/notification/application/usecase/send-payment-request-email-to-winner.usecase';
+import ErrorLogger from '../../@core/common/application/service/error/error-logger';
 
 @Module({
   imports: [LoggerModule, ConfModule, MongoModule, EmailModule],
@@ -72,6 +82,11 @@ import { DomainEventManagerInterface, EventPublisher } from '../../@core/common/
       provide: 'BidderNotificationRepository',
       useFactory: (mongoRepository: BidderNotificationMongoRepository) => mongoRepository,
       inject: [BidderNotificationMongoRepository],
+    },
+    {
+      provide: 'OrderRepository',
+      useFactory: (mongoRepository: OrderMongoRepository) => mongoRepository,
+      inject: [OrderMongoRepository],
     },
     {
       provide: SqsHelper,
@@ -106,6 +121,13 @@ import { DomainEventManagerInterface, EventPublisher } from '../../@core/common/
         sqsPublisher: SqsPublisher,
       ) => new SmsSqsPublisher(logger, sqsPublisher),
       inject: ['LoggerInterface', 'SqsPublisher'],
+    },
+    {
+      provide: 'ORDER_QUEUE',
+      useFactory: (
+        sqsPublisher: SqsPublisher,
+      ) => new OrderSqsPublisher(sqsPublisher),
+      inject: ['SqsPublisher'],
     },
     {
       provide: EmailNotificationQueueStrategy,
@@ -148,26 +170,94 @@ import { DomainEventManagerInterface, EventPublisher } from '../../@core/common/
       inject: ['LoggerInterface', 'EmailSender', 'BidderRepository', 'BidderNotificationRepository', 'AuctionRepository', 'EnvironmentConfigInterface'],
     },
     {
+      provide: SendPaymentRequestEmailToWinnerUseCase,
+      useFactory: (
+        logger: LoggerInterface,
+        emailSender: EmailSender,
+        bidderRepository: BidderRepository,
+        bidderNotificationRepository: BidderNotificationRepository,
+        auctionRepository: AuctionRepository,
+        orderRepository: OrderRepository,
+        config: EnvironmentConfigInterface,
+      ) => new SendPaymentRequestEmailToWinnerUseCase(
+        logger,
+        emailSender,
+        bidderRepository,
+        bidderNotificationRepository,
+        auctionRepository,
+        orderRepository,
+        config.getDefaultSenderEmail(),
+      ),
+      inject: ['LoggerInterface', 'EmailSender', 'BidderRepository', 'BidderNotificationRepository', 'AuctionRepository', 'OrderRepository', 'EnvironmentConfigInterface'],
+    },
+    {
       provide: EmailNotificationHandler,
       useFactory: (
         sendEmailToWinnerUseCase: SendEmailToWinnerUseCase,
+        sendPaymentRequestEmailToWinnerUseCase: SendPaymentRequestEmailToWinnerUseCase,
       ) => new EmailNotificationHandler(
         sendEmailToWinnerUseCase,
+        sendPaymentRequestEmailToWinnerUseCase,
       ),
-      inject: [SendEmailToWinnerUseCase],
+      inject: [SendEmailToWinnerUseCase, SendPaymentRequestEmailToWinnerUseCase],
     },
     {
       provide: EmailNotificationSqsQueueConsumer,
       useFactory: (
         sqsConsumer: SqsConsumerInterface,
         emailNotificationHandler: EmailNotificationHandler,
-        logger: LoggerInterface,
+        errorLogger: ErrorLogger,
       ) => new EmailNotificationSqsQueueConsumer(
         sqsConsumer,
         emailNotificationHandler,
-        logger,
+        errorLogger,
       ),
-      inject: ['SqsConsumerInterface', EmailNotificationHandler, 'LoggerInterface'],
+      inject: ['SqsConsumerInterface', EmailNotificationHandler, ErrorLogger],
+    },
+    {
+      provide: TriggerOrderCreationHandler,
+      useFactory: (
+        logger: LoggerInterface,
+        orderQueue: QueueMessagePublisher,
+      ) => new TriggerOrderCreationHandler(logger, orderQueue),
+      inject: ['LoggerInterface', 'ORDER_QUEUE'],
+    },
+    {
+      provide: CreateFirstAuctionOrderUseCase,
+      useFactory: (
+        logger: LoggerInterface,
+        auctionRepository: AuctionRepository,
+        orderRepository: OrderRepository,
+        notificationFactory: NotificationStrategyFactory,
+      ) => new CreateFirstAuctionOrderUseCase(
+        logger,
+        auctionRepository,
+        orderRepository,
+        notificationFactory,
+      ),
+      inject: ['LoggerInterface', 'AuctionRepository', 'OrderRepository', NotificationStrategyFactory],
+    },
+    {
+      provide: OrderQueueHandler,
+      useFactory: (
+        createFirstOrderUseCase: CreateFirstAuctionOrderUseCase,
+      ) => new OrderQueueHandler(
+        createFirstOrderUseCase,
+      ),
+      inject: [CreateFirstAuctionOrderUseCase],
+    },
+    {
+      provide: OrderSqsQueueConsumer,
+      useFactory: (
+        sqsConsumer: SqsConsumerInterface,
+        errorLogger: ErrorLogger,
+        orderQueueHandler: OrderQueueHandler,
+      ) => new OrderSqsQueueConsumer(
+        sqsConsumer,
+        errorLogger,
+        orderQueueHandler,
+      ),
+      inject: ['SqsConsumerInterface', ErrorLogger, OrderQueueHandler],
     },
     {
       provide: NotificationStrategyFactory,
@@ -192,8 +282,14 @@ import { DomainEventManagerInterface, EventPublisher } from '../../@core/common/
       useFactory: (
         logger: LoggerInterface,
         notifyWinningBidder: NotifyWinningBidderHandler,
-      ) => new DomainEventManagerFactory(logger, notifyWinningBidder),
-      inject: ['LoggerInterface', NotifyWinningBidderHandler],
+        createOrderHandler: TriggerOrderCreationHandler,
+      ) => new DomainEventManagerFactory(logger, [
+        {
+          event: DomainEventType.BID_PERIOD_FINISHED,
+          handlers: [notifyWinningBidder, createOrderHandler],
+        },
+      ]),
+      inject: ['LoggerInterface', NotifyWinningBidderHandler, TriggerOrderCreationHandler],
     },
     {
       provide: 'DomainEventManagerInterface',

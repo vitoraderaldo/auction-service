@@ -17,3 +17,6 @@ create_queue "email-notification-test"
 
 create_queue "sms-notification-local"
 create_queue "sms-notification-test"
+
+create_queue "order-local"
+create_queue "order-test"

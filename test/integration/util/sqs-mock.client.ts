@@ -15,10 +15,7 @@ export default class LocalStackSqs {
   }
 
   private async purgeQueues() {
-    const queues = [
-      SqsQueueName.EMAIL_NOTIFICATION,
-      SqsQueueName.SMS_NOTIFICATION,
-    ];
+    const queues = Object.values(SqsQueueName);
 
     const client = new SQSClient({
       endpoint: this.sqsHelper.getEndpoint(),

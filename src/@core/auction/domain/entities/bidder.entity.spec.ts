@@ -1,4 +1,3 @@
-import { randomUUID } from 'crypto';
 import { faker } from '@faker-js/faker';
 import Uuid from '../../../common/domain/value-objects/uuid.vo';
 import Bidder, { BidderConstructorProps } from './bidder.entity';
@@ -6,7 +5,7 @@ import { generateFirstName, generateLastName } from '../../../../../test/util/st
 
 describe('Bidder Entity', () => {
   it('should create a Bidder instance', () => {
-    const bidderId = randomUUID();
+    const bidderId = faker.string.uuid();
 
     // Mocking the parameters
     const params: BidderConstructorProps = {

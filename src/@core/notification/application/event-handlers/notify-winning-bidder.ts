@@ -9,10 +9,16 @@ export default class NotifyWinningBidderHandler implements DomainEventHandler {
   ) {}
 
   async handle(event: BidPeriodFinishedEvent): Promise<void> {
-    const emailStrategy = this.notificationFactory.getStrategy(NotificationChannel.EMAIL);
-    await emailStrategy.execute(NotificationType.NOTIFY_WINNING_BIDDER, event.payload);
+    const channels = [
+      NotificationChannel.EMAIL,
+      NotificationChannel.SMS,
+    ];
 
-    const smsStrategy = this.notificationFactory.getStrategy(NotificationChannel.SMS);
-    await smsStrategy.execute(NotificationType.NOTIFY_WINNING_BIDDER, event.payload);
+    const promises = channels.map((channel) => {
+      const strategy = this.notificationFactory.getStrategy(channel);
+      return strategy.execute(NotificationType.NOTIFY_WINNING_BIDDER, event.payload);
+    });
+
+    await Promise.all(promises);
   }
 }

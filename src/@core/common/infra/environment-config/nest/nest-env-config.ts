@@ -35,6 +35,7 @@ export default class NestConfigService implements EnvironmentConfigInterface {
       baseUrl: this.nestConfig.get('SENDGRID_BASE_URL'),
       templates: {
         notifyWinningBidder: this.nestConfig.get('SENDGRID_TEMPLATE_NOTIFY_WINNING_BIDDER'),
+        paymentRequestForAuction: this.nestConfig.get('SENDGRID_TEMPLATE_PAYMENT_REQUEST_FOR_AUCTION'),
       },
     };
   }

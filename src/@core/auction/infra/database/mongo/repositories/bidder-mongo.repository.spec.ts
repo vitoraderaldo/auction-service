@@ -1,5 +1,4 @@
 import { faker } from '@faker-js/faker';
-import { randomUUID } from 'crypto';
 import { connect, Mongoose } from 'mongoose';
 import BidderSchema, {
   BidderModel,
@@ -17,7 +16,7 @@ describe('BidderMongoRepository', () => {
 
   beforeEach(async () => {
     if (!connection) {
-      connection = await connect(process.env.MONGO_URI, { dbName: randomUUID() });
+      connection = await connect(process.env.MONGO_URI, { dbName: faker.string.uuid() });
     }
 
     model = BidderSchema.getModel(connection);
@@ -48,7 +47,7 @@ describe('BidderMongoRepository', () => {
   });
 
   it('should find an bidder by id as UUID', async () => {
-    const id = new Uuid(randomUUID());
+    const id = new Uuid(faker.string.uuid());
     const bidder = buildBidder({ id });
     await repository.create(bidder);
 
@@ -67,7 +66,7 @@ describe('BidderMongoRepository', () => {
   });
 
   it('should find an bidder by id as string', async () => {
-    const id = randomUUID().toString();
+    const id = faker.string.uuid().toString();
     const bidder = buildBidder({ id: new Uuid(id) });
     await repository.create(bidder);
 
@@ -87,7 +86,7 @@ describe('BidderMongoRepository', () => {
 
   it('should return null if no bidder is found by ID', async () => {
     await repository.create(buildBidder());
-    const foundBidder = await repository.findById(randomUUID());
+    const foundBidder = await repository.findById(faker.string.uuid());
 
     expect(foundBidder).toBeNull();
   });

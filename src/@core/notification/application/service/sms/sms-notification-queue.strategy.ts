@@ -5,10 +5,10 @@ import { NotificationType } from '../notification-type';
 export default class SmsNotificationQueueStrategy implements NotificationQueueStrategyInterface {
   constructor(private smsQueue: QueueMessagePublisher) {}
 
-  async execute(type: NotificationType, payload: object): Promise<void> {
+  async execute(type: NotificationType, metadata: object): Promise<void> {
     await this.smsQueue.publish({
       type,
-      payload,
+      payload: metadata,
     });
   }
 }

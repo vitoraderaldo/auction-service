@@ -12,7 +12,7 @@ export default class SqsConsumer implements SqsConsumerInterface {
   registerHandler(params: {
     queueName: SqsQueueName,
     handler: (message: string) => Promise<void>,
-    onError?: (error: Error) => Promise<void>,
+    onError?: (error: any) => Promise<void>,
   }): void {
     const { queueName, handler: messageHandler, onError } = params;
     const queueUrl = this.sqsHelper.getQueueUrl(queueName);
@@ -27,7 +27,7 @@ export default class SqsConsumer implements SqsConsumerInterface {
     });
 
     if (onError) {
-      app.on('processing_error', onError);
+      app.on('processing_error', (error: any) => onError(error?.cause || error));
     }
 
     app.start();

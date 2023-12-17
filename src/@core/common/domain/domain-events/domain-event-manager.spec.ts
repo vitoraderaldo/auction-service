@@ -1,4 +1,4 @@
-import { randomUUID } from 'crypto';
+import { faker } from '@faker-js/faker';
 import DomainEventManager from './domain-event-manager';
 import BidPeriodFinishedEvent from '../../../auction/domain/domain-events/bid-period-finished';
 import DomainEventType from './domain-event.type';
@@ -12,10 +12,10 @@ describe('Domain Event Manager', () => {
 
   it('should call a handler for a given event that is published', () => {
     const event = new BidPeriodFinishedEvent({
-      auctionId: randomUUID(),
+      auctionId: faker.string.uuid(),
       endDate: new Date().toISOString(),
-      winnerBidderId: randomUUID(),
-      winningBidId: randomUUID(),
+      winnerBidderId: faker.string.uuid(),
+      winningBidId: faker.string.uuid(),
     });
 
     const eventHandler1 = {

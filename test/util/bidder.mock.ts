@@ -1,4 +1,3 @@
-import { randomUUID } from 'crypto';
 import { faker } from '@faker-js/faker';
 import Bidder, {
   BidderConstructorProps,
@@ -10,7 +9,7 @@ export default function buildBidder(
   props?: Partial<BidderConstructorProps>,
 ): Bidder {
   const bidder: BidderConstructorProps = {
-    id: new Uuid(randomUUID()),
+    id: new Uuid(faker.string.uuid()),
     firstName: generateFirstName(),
     lastName: generateLastName(),
     email: faker.internet.email(),

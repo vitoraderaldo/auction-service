@@ -1,5 +1,5 @@
 import { NotificationType } from './notification-type';
 
 export default interface NotificationQueueStrategyInterface {
-  execute(type: NotificationType, payload: object): Promise<void>;
+  execute(type: NotificationType, metadata: object): Promise<void>;
 }
