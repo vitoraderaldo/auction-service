@@ -51,8 +51,8 @@ import OrderSqsQueueConsumer from '../../@core/order/infra/queue/sqs/consumers/o
 import OrderQueueHandler from '../../@core/order/application/queue-handlers/order-queue.handler';
 import OrderMongoRepository from '../../@core/order/infra/database/mongo/repositories/order-mongo.repository';
 import OrderRepository from '../../@core/order/domain/repositories/order.repository';
-import { ErrorLogger } from '../../@core/common/infra/api/nest/error-parser';
 import SendPaymentRequestEmailToWinnerUseCase from '../../@core/notification/application/usecase/send-payment-request-email-to-winner.usecase';
+import ErrorLogger from '../../@core/common/application/service/error/error-logger';
 
 @Module({
   imports: [LoggerModule, ConfModule, MongoModule, EmailModule],

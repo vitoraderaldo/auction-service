@@ -100,7 +100,38 @@ export default class Order extends AggregateRoot {
     return this.id.value;
   }
 
-  // todo test this when it's end of the month
+  getAuctionId(): string {
+    return this.auctionId.value;
+  }
+
+  getBidderId(): string {
+    return this.bidderId.value;
+  }
+
+  getAuctionFinalValue(): number {
+    return this.auctionFinalValue.value;
+  }
+
+  getPaymentResponsibility(): string {
+    return this.paymentResponsibility.value;
+  }
+
+  getPaymentStatus(): string {
+    return this.paymentStatus.value;
+  }
+
+  getDueDate(): string {
+    return this.dueDate.value;
+  }
+
+  getPaidAt(): string | null {
+    return this.paidAt?.value || null;
+  }
+
+  getPaidValue(): number | null {
+    return this.paidValue?.value || null;
+  }
+
   private static generateDueDate(): string {
     const dueDate = new Date();
     dueDate.setUTCDate(dueDate.getUTCDate() + this.DEFAULT_DUE_DATE_IN_DAYS);

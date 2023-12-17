@@ -1,6 +1,6 @@
 import { createMock } from '@golevelup/ts-jest';
 import CreateFirstAuctionOrderUseCase from '../usecase/create-first-auction-order.usecase';
-import InvalidOrderTypeError from '../../error/invalid-order-type';
+import InvalidOrderMessageTypeError from '../../error/invalid-order-type';
 import { OrderQueueTypeEnum, OrderCreationQueueMessage } from '../../types/order.type';
 import OrderQueueHandler from './order-queue.handler';
 
@@ -37,6 +37,6 @@ describe('OrderQueueHandler', () => {
     };
 
     await expect(orderQueueHandler.handle(mockMessage))
-      .rejects.toThrow(InvalidOrderTypeError);
+      .rejects.toThrow(InvalidOrderMessageTypeError);
   });
 });

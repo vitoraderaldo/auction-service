@@ -1,4 +1,4 @@
-import { randomUUID } from 'crypto';
+import { faker } from '@faker-js/faker';
 import Auctioneer from './auctioneer.entity';
 import buildAuctioneer from '../../../../../test/util/auctioneer.mock';
 import Uuid from '../../../common/domain/value-objects/uuid.vo';
@@ -6,7 +6,7 @@ import Uuid from '../../../common/domain/value-objects/uuid.vo';
 describe('Auctioneer', () => {
   describe('Creation', () => {
     it('should create a valid Auctioneer instance', () => {
-      const id = randomUUID();
+      const id = faker.string.uuid();
       const params = {
         id: new Uuid(id),
         name: { firstName: 'John', lastName: 'Doe' },

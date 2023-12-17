@@ -1,4 +1,4 @@
-import InvalidOrderTypeError from '../../error/invalid-order-type';
+import InvalidOrderMessageTypeError from '../../error/invalid-order-type';
 import { OrderCreationQueueMessage, OrderQueueTypeEnum } from '../../types/order.type';
 import CreateFirstAuctionOrderUseCase from '../usecase/create-first-auction-order.usecase';
 
@@ -16,14 +16,13 @@ export default class OrderQueueHandler {
         await this.createFirstOrder(message);
         break;
       default:
-        throw new InvalidOrderTypeError({ message });
+        throw new InvalidOrderMessageTypeError({ message });
     }
   }
 
-  private createFirstOrder(message: any): Promise<void> {
-    const data = message as OrderCreationQueueMessage;
+  private createFirstOrder(message: OrderCreationQueueMessage): Promise<void> {
     return this.createFirstOrderUseCase.execute({
-      auctionId: data.payload.auctionId,
+      auctionId: message.payload.auctionId,
     });
   }
 }

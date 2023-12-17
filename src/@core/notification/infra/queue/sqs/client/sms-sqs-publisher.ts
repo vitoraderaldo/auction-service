@@ -1,4 +1,4 @@
-import { randomUUID } from 'crypto';
+import { v4 } from 'uuid';
 import { LoggerInterface } from '../../../../../common/application/service/logger';
 import QueueMessagePublisher from '../../../../../common/application/service/queue-message-publisher';
 import { SqsQueueName } from './sqs-helper';
@@ -12,7 +12,7 @@ export default class SmsSqsPublisher implements QueueMessagePublisher {
 
   async publish(payload: object): Promise<void> {
     await this.sqsPublisher.publish(SqsQueueName.SMS_NOTIFICATION, {
-      id: randomUUID(),
+      id: v4(),
       body: JSON.stringify(payload),
     });
   }

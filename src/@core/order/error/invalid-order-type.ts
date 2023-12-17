@@ -1,10 +1,10 @@
 import DomainError from '../../common/error/domain.error';
 import ErrorCode from '../../common/error/error-code';
 
-export default class InvalidOrderTypeError extends DomainError {
+export default class InvalidOrderMessageTypeError extends DomainError {
   constructor(details: {
     message: any;
   }) {
-    super(ErrorCode.INVALID_ORDER_TYPE, details);
+    super(ErrorCode.INVALID_ORDER_MESSAGE_TYPE, details);
   }
 }

@@ -1,13 +1,13 @@
-import { randomUUID } from 'crypto';
+import { faker } from '@faker-js/faker';
 import Uuid from '../../../common/domain/value-objects/uuid.vo';
 import Price from '../../../common/domain/value-objects/price.vo';
 import Bid, { BidConstructorProps } from './bid.entity';
 
 describe('Bid Entity', () => {
   it('should create a Bid instance', () => {
-    const bidId = randomUUID();
-    const bidderId = randomUUID();
-    const auctionId = randomUUID();
+    const bidId = faker.string.uuid();
+    const bidderId = faker.string.uuid();
+    const auctionId = faker.string.uuid();
 
     const price = 100;
 
@@ -35,8 +35,8 @@ describe('Bid Entity', () => {
   });
 
   it('should create a Bid instance using the static create method', () => {
-    const bidderId = randomUUID();
-    const auctionId = randomUUID();
+    const bidderId = faker.string.uuid();
+    const auctionId = faker.string.uuid();
     const price = 100;
 
     const params = {

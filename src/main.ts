@@ -4,7 +4,7 @@ import AppModule from './nest/modules/app.module';
 import AllExceptionsFilter from './@core/common/infra/api/nest/exception-filter';
 import LoggerFactory from './@core/common/infra/logger/logger-factory';
 import NestLoggerAdapter from './@core/common/infra/logger/logger-nest-adapter';
-import { ErrorLogger } from './@core/common/infra/api/nest/error-parser';
+import ErrorLogger from './@core/common/application/service/error/error-logger';
 
 async function bootstrap() {
   const logger = LoggerFactory.getInstance();

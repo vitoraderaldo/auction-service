@@ -1,10 +1,10 @@
-import { randomUUID } from 'crypto';
+import { v4 } from 'uuid';
 import ValueObject from './value-object';
 import InvalidUuidError from '../../error/invalid-uuid';
 
 export default class Uuid extends ValueObject<string> {
   constructor(value?: string) {
-    const uuid = value || randomUUID();
+    const uuid = value || v4();
     super(uuid);
     this.validate();
   }

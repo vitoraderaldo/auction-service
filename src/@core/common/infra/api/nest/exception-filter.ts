@@ -6,7 +6,8 @@ import {
 } from '@nestjs/common';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Request, Response } from 'express';
-import { ErrorLogger, ErrorParserFactory } from './error-parser';
+import ErrorLogger from '../../../application/service/error/error-logger';
+import ErrorParserFactory from './error-parser-factory';
 
 @Catch()
 export default class AllExceptionsFilter implements ExceptionFilter {

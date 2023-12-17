@@ -1,7 +1,7 @@
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { Mongoose } from 'mongoose';
-import { randomUUID } from 'crypto';
+import { faker } from '@faker-js/faker';
 import { AuctionStatusEnum } from '../../../src/@core/auction/domain/value-objects/auction-status.vo';
 import buildAuction from '../../util/auction.mock';
 import insertAuction from '../util/insert-auction';
@@ -18,11 +18,18 @@ import insertBid from '../util/insert-bid';
 import SendgridMockClient, { SendgridEmail } from '../util/sendgrid-mock-client';
 import LocalStackSqs from '../util/sqs-mock.client';
 import runWithRetries from '../util/fetch-data-recursively';
+import BidderNotificationSchema, { BidderNotificationModel } from '../../../src/@core/notification/infra/database/mongo/schemas/bidder-notification.schema';
+import OrderSchema, { OrderModel } from '../../../src/@core/order/infra/database/mongo/schemas/order.schema';
+import { PaymentResponsibilityEnum } from '../../../src/@core/order/domain/value-objects/payment-responsibility.vo';
+import { PaymentStatusEnum } from '../../../src/@core/order/domain/value-objects/payment-status.vo';
+import { NotificationChannel, NotificationType } from '../../../src/@core/notification/application/service/notification-type';
 
 describe('Bid Period Finishes', () => {
   let app: INestApplication;
   let connection: Mongoose;
   let auctionModel: AuctionModel;
+  let bidderNotificationModel: BidderNotificationModel;
+  let orderModel: OrderModel;
 
   let auction: Auction;
   let auctionId: string;
@@ -35,6 +42,8 @@ describe('Bid Period Finishes', () => {
     app = await startTestingApp();
     connection = getMongoConnection(app);
     auctionModel = AuctionSchema.getModel(connection);
+    bidderNotificationModel = BidderNotificationSchema.getModel(connection);
+    orderModel = OrderSchema.getModel(connection);
     await app.init();
   });
 
@@ -50,7 +59,7 @@ describe('Bid Period Finishes', () => {
     auction = buildAuction({
       startDate: oneMonthAgo.toISOString(),
       endDate: fiveMinutesAgo.toISOString(),
-      auctioneerId: randomUUID(),
+      auctioneerId: faker.string.uuid(),
       status: AuctionStatusEnum.PUBLISHED,
     });
     await insertAuction({ auction, connection });
@@ -72,10 +81,10 @@ describe('Bid Period Finishes', () => {
     await app.close();
   });
 
-  it('should finish bid period when end date is reached', async () => {
+  it('should update auction status when bid period finishes', async () => {
     const response = await request(app.getHttpServer())
       .post('/v1/auction/change-status')
-      .set('Authorization', randomUUID())
+      .set('Authorization', faker.string.uuid())
       .send()
       .expect(200);
 
@@ -97,17 +106,18 @@ describe('Bid Period Finishes', () => {
     }]);
   });
 
-  it('should send 2 emails to winner when bid period finishes', async () => {
+  it('should create an order and send 2 emails to winning bidder when bid period finishes', async () => {
+    const bidValue = auction.getStartPrice();
     const bid = buildBid({
       auctionId: auction.getId(),
       bidderId: bidder.getId(),
-      value: new Price(auction.getStartPrice()),
+      value: new Price(bidValue),
     });
     await insertBid({ bid, connection });
 
     const response = await request(app.getHttpServer())
       .post('/v1/auction/change-status')
-      .set('Authorization', randomUUID())
+      .set('Authorization', faker.string.uuid())
       .send()
       .expect(200);
 
@@ -119,6 +129,15 @@ describe('Bid Period Finishes', () => {
       () => sendGridMockClient.getEmailsSentTo(bidder.getEmail()),
     );
 
+    const savedNotifications = await bidderNotificationModel.find({
+      bidderId: bidder.getId(),
+      auctionId: auction.getId(),
+    }).exec();
+
+    const savedOrder = await orderModel.findOne({
+      auctionId,
+    }).exec();
+
     expect(savedAuction.id).toEqual(auctionId);
     expect(savedAuction.status).toEqual(AuctionStatusEnum.BID_PERIOD_FINISHED);
 
@@ -126,6 +145,35 @@ describe('Bid Period Finishes', () => {
 
     expect(body.total).toEqual(1);
     expect(body.success).toEqual(1);
+
+    expect(savedOrder.id).toBeDefined();
+    expect(savedOrder.auctionId).toEqual(auctionId);
+    expect(savedOrder.bidderId).toEqual(bidder.getId());
+    expect(savedOrder.auctionFinalValue).toEqual(bidValue);
+    expect(savedOrder.paymentResponsibility).toEqual(PaymentResponsibilityEnum.SYSTEM);
+    expect(savedOrder.paymentStatus).toEqual(PaymentStatusEnum.PENDING);
+    expect(savedOrder.dueDate).toBeDefined();
+    expect(savedOrder.paidAt).toBeNull();
+    expect(savedOrder.paidValue).toBeNull();
+
+    expect(savedNotifications).toHaveLength(2);
+    expect(savedNotifications).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        bidderId: bidder.getId(),
+        channel: NotificationChannel.EMAIL,
+        type: NotificationType.NOTIFY_WINNING_BIDDER,
+        auctionId: auction.getId(),
+        sentAt: expect.any(String),
+      }),
+      expect.objectContaining({
+        bidderId: bidder.getId(),
+        channel: NotificationChannel.EMAIL,
+        type: NotificationType.NOTIFY_BIDDER_ABOUT_PAYMENT,
+        auctionId: auction.getId(),
+        sentAt: expect.any(String),
+      }),
+    ]));
+
     expect(emails).toHaveLength(2);
     expect([
       emails[0].template_id,

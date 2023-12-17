@@ -1,5 +1,5 @@
 import { createMock } from '@golevelup/ts-jest';
-import { randomUUID } from 'crypto';
+import { faker } from '@faker-js/faker';
 import { AuctionRepository } from '../../domain/repositories/auction.repository';
 import CreateBidUseCase from './create-bid.usecase';
 import BidderRepository from '../../domain/repositories/bidder.repository';
@@ -35,8 +35,8 @@ describe('Create Bid Use Case', () => {
       .mockResolvedValueOnce(null);
 
     const input = {
-      auctionId: randomUUID(),
-      bidderId: randomUUID(),
+      auctionId: faker.string.uuid(),
+      bidderId: faker.string.uuid(),
       value: 50.6,
     };
 
@@ -62,8 +62,8 @@ describe('Create Bid Use Case', () => {
       .mockResolvedValueOnce(null);
 
     const input = {
-      auctionId: randomUUID(),
-      bidderId: randomUUID(),
+      auctionId: faker.string.uuid(),
+      bidderId: faker.string.uuid(),
       value: 50.6,
     };
 

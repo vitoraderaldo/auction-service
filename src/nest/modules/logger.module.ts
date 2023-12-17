@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import LoggerFactory from '../../@core/common/infra/logger/logger-factory';
-import { ErrorLogger } from '../../@core/common/infra/api/nest/error-parser';
 import { LoggerInterface } from '../../@core/common/application/service/logger';
+import ErrorLogger from '../../@core/common/application/service/error/error-logger';
 
 @Module({
   imports: [],

@@ -1,4 +1,3 @@
-import { randomUUID } from 'crypto';
 import { faker } from '@faker-js/faker';
 import Uuid from '../../src/@core/common/domain/value-objects/uuid.vo';
 import Auction, { AuctionConstructorProps } from '../../src/@core/auction/domain/entities/auction.entity';
@@ -8,7 +7,7 @@ export default function buildAuction(
   props?: Partial<AuctionConstructorProps>,
 ): Auction {
   const auction: AuctionConstructorProps = {
-    id: new Uuid(randomUUID()),
+    id: new Uuid(faker.string.uuid()),
     title: faker.commerce.productName(),
     description: faker.commerce.productDescription(),
     photos: [
@@ -18,7 +17,7 @@ export default function buildAuction(
     endDate: faker.date.future().toISOString(),
     startPrice: Number(faker.commerce.price()),
     status: AuctionStatusEnum.CREATED,
-    auctioneerId: randomUUID(),
+    auctioneerId: faker.string.uuid(),
     bids: [],
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),

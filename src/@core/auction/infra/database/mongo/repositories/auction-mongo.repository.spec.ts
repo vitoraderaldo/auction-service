@@ -1,5 +1,5 @@
 import { connect, Mongoose } from 'mongoose';
-import { randomUUID } from 'crypto';
+import { faker } from '@faker-js/faker';
 import AuctionSchema, {
   AuctionModel,
   AuctionMongoInterface,
@@ -19,7 +19,7 @@ describe('AuctionMongoRepository', () => {
 
   beforeEach(async () => {
     if (!connection) {
-      connection = await connect(process.env.MONGO_URI, { dbName: randomUUID() });
+      connection = await connect(process.env.MONGO_URI, { dbName: faker.string.uuid() });
     }
 
     auctionModel = AuctionSchema.getModel(connection);
@@ -85,7 +85,7 @@ describe('AuctionMongoRepository', () => {
     it('should return null if auction is not found', async () => {
       await repository.create(buildAuction());
 
-      const auction = await repository.findById(randomUUID());
+      const auction = await repository.findById(faker.string.uuid());
       expect(auction).toBeNull();
     });
   });

@@ -27,7 +27,7 @@ export default class SqsConsumer implements SqsConsumerInterface {
     });
 
     if (onError) {
-      app.on('processing_error', (error: any) => onError(error.cause || error));
+      app.on('processing_error', (error: any) => onError(error?.cause || error));
     }
 
     app.start();

@@ -1,4 +1,3 @@
-import { randomUUID } from 'crypto';
 import { faker } from '@faker-js/faker';
 import Auctioneer, {
   AuctioneerConstructorProps,
@@ -14,7 +13,7 @@ export default function buildAuctioneer(
   props?: Partial<AuctioneerConstructorProps>,
 ): Auctioneer {
   const auctioneer: AuctioneerConstructorProps = {
-    id: new Uuid(randomUUID()),
+    id: new Uuid(faker.string.uuid()),
     name: {
       firstName: generateFirstName(),
       lastName: generateLastName(),

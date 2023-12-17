@@ -20,6 +20,11 @@ describe('Order', () => {
     updatedAt: '2023-01-01T11:00:00.000Z',
   };
 
+  beforeEach(() => {
+    jest.resetAllMocks();
+    jest.clearAllMocks();
+  });
+
   it('should create an instance of Order using the constructor', () => {
     const order = new Order(validConstructorParams);
     const data = order.toJSON();
@@ -27,9 +32,11 @@ describe('Order', () => {
     expect(order).toBeInstanceOf(Order);
     expect(data.id).toEqual(validConstructorParams.id.value);
     expect(data.auctionId).toEqual(validConstructorParams.auctionId);
+    expect(data.bidderId).toEqual(validConstructorParams.bidderId);
     expect(data.auctionFinalValue).toEqual(validConstructorParams.auctionFinalValue.value);
     expect(data.paymentResponsibility).toEqual(validConstructorParams.paymentResponsibility);
     expect(data.paymentStatus).toEqual(validConstructorParams.paymentStatus);
+    expect(data.dueDate).toEqual(validConstructorParams.dueDate);
     expect(data.paidAt).toEqual(validConstructorParams.paidAt);
     expect(data.paidValue).toEqual(validConstructorParams.paidValue);
     expect(data.createdAt).toEqual(validConstructorParams.createdAt);
@@ -43,18 +50,41 @@ describe('Order', () => {
       auctionFinalValue: new Price(Number(faker.commerce.price())),
       paymentResponsibility: PaymentResponsibilityEnum.SYSTEM,
     };
+
+    const expectedDueDate = new Date();
+    expectedDueDate.setUTCDate(expectedDueDate.getUTCDate() + 7);
+
     const order = Order.create(params);
     const data = order.toJSON();
 
     expect(order).toBeInstanceOf(Order);
     expect(data.id).toBeDefined();
     expect(data.auctionId).toEqual(params.auctionId);
+    expect(data.bidderId).toEqual(params.bidderId);
     expect(data.auctionFinalValue).toEqual(params.auctionFinalValue.value);
     expect(data.paymentResponsibility).toEqual(params.paymentResponsibility);
     expect(data.paymentStatus).toEqual(PaymentStatusEnum.PENDING);
+    expect(data.dueDate).toEqual(expectedDueDate.toISOString());
     expect(data.paidAt).toBeNull();
     expect(data.paidValue).toBeNull();
     expect(data.createdAt).toBeDefined();
     expect(data.updatedAt).toBeDefined();
+  });
+
+  it('should create order with due date on the next month when is the last day of the month', () => {
+    const now = '2024-01-31T00:00:00.000Z';
+    const expected = '2024-02-07T00:00:00.000Z';
+
+    jest.useFakeTimers().setSystemTime(new Date(now));
+
+    const order = Order.create({
+      auctionId: faker.string.uuid(),
+      bidderId: faker.string.uuid(),
+      auctionFinalValue: new Price(Number(faker.commerce.price())),
+      paymentResponsibility: PaymentResponsibilityEnum.SYSTEM,
+    });
+
+    const orderData = order.toJSON();
+    expect(orderData.dueDate).toEqual(expected);
   });
 });
