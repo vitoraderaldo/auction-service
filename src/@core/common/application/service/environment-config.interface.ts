@@ -20,6 +20,11 @@ export interface SendGridConfig {
   templates: SendGridTemplates
 }
 
+export interface StripeConfig {
+  url: string;
+  secretKey: string;
+}
+
 export type EnvironmentName = 'local' | 'develop' | 'production';
 
 export interface EnvironmentConfigInterface {
@@ -28,4 +33,5 @@ export interface EnvironmentConfigInterface {
   getAws(): AWSConfig;
   getSendGrid(): SendGridConfig;
   getDefaultSenderEmail(): string;
+  getStripeConfig(): StripeConfig;
 }
