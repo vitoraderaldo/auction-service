@@ -51,8 +51,10 @@ describe('Order', () => {
       paymentResponsibility: PaymentResponsibilityEnum.SYSTEM,
     };
 
-    const expectedDueDate = new Date();
-    expectedDueDate.setUTCDate(expectedDueDate.getUTCDate() + 7);
+    const now = '2023-01-01T00:00:00.000Z';
+    const expectedDueDate = '2023-01-08T00:00:00.000Z';
+
+    jest.useFakeTimers().setSystemTime(new Date(now));
 
     const order = Order.create(params);
     const data = order.toJSON();
@@ -64,7 +66,7 @@ describe('Order', () => {
     expect(data.auctionFinalValue).toEqual(params.auctionFinalValue.value);
     expect(data.paymentResponsibility).toEqual(params.paymentResponsibility);
     expect(data.paymentStatus).toEqual(PaymentStatusEnum.PENDING);
-    expect(data.dueDate).toEqual(expectedDueDate.toISOString());
+    expect(data.dueDate).toEqual(expectedDueDate);
     expect(data.paidAt).toBeNull();
     expect(data.paidValue).toBeNull();
     expect(data.createdAt).toBeDefined();

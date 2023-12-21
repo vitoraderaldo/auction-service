@@ -22,6 +22,7 @@
     "test:integration:watch": "npm run test:integration -- --watch",
     "test:integration:cov": "npm run test:integration -- --coverage",
     "test:combine:cov": "ts-node ./test/scripts/combine-coverage.ts",
+    "test:open:cov": "open ./coverage/merged/lcov-report/index.html",
     "sonar:dev": "sonar-scanner -Dsonar.host.url=http://localhost:9000 -Dsonar.login=${SONAR_TOKEN}"
   },
   "dependencies": {
@@ -79,11 +80,5 @@
     "ts-node": "^10.9.1",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.1.3"
-  },
-  "jest": {
-    "collectCoverageFrom": [
-      "**/*.(t|j)s"
-    ],
-    "testEnvironment": "node"
   }
 }

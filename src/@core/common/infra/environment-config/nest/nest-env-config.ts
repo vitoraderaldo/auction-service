@@ -5,6 +5,7 @@ import {
   EnvironmentName,
   MongoConfig,
   SendGridConfig,
+  StripeConfig,
 } from '../../../application/service/environment-config.interface';
 
 export default class NestConfigService implements EnvironmentConfigInterface {
@@ -42,5 +43,12 @@ export default class NestConfigService implements EnvironmentConfigInterface {
 
   getDefaultSenderEmail(): string {
     return this.nestConfig.get('DEFAULT_SENDER_EMAIL');
+  }
+
+  getStripeConfig(): StripeConfig {
+    return {
+      url: this.nestConfig.get('STRIPE_URL'),
+      secretKey: this.nestConfig.get('STRIPE_SECRET_KEY'),
+    };
   }
 }
