@@ -2,18 +2,24 @@ import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { Mongoose } from 'mongoose';
 import buildBidder from '../../util/bidder.mock';
-import BidderSchema, { BidderModel } from '../../../src/@core/auction/infra/database/mongo/schemas/bidder.schema';
-import { getMongoConnection, startTestingApp } from '../util/testing-app';
+import {
+  Models,
+  clearDatabase,
+  getModels,
+  getMongoConnection,
+} from '../util/mongo';
+import startTestingApp from '../util/testing-app';
 
 describe('Create Bidder (e2e)', () => {
   let app: INestApplication;
   let connection: Mongoose;
-  let bidderModel: BidderModel;
+  let models: Models;
 
   beforeAll(async () => {
     app = await startTestingApp();
     connection = getMongoConnection(app);
-    bidderModel = BidderSchema.getModel(connection);
+    models = getModels(connection);
+    await clearDatabase(connection);
     await app.init();
   });
 
@@ -36,7 +42,7 @@ describe('Create Bidder (e2e)', () => {
       .send(input)
       .expect(201);
 
-    const savedBidder = await bidderModel.findOne({ id: response.body.id });
+    const savedBidder = await models.bidderModel.findOne({ id: response.body.id });
     const bidder = response.body;
 
     expect(bidder.id).toBeTruthy();

@@ -2,19 +2,24 @@ import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { Mongoose } from 'mongoose';
 import buildAuctioneer from '../../util/auctioneer.mock';
-import AuctioneerSchema, { AuctioneerModel } from '../../../src/@core/auction/infra/database/mongo/schemas/auctioneer.schema';
-import { getMongoConnection, startTestingApp } from '../util/testing-app';
+import {
+  Models,
+  clearDatabase,
+  getModels,
+  getMongoConnection,
+} from '../util/mongo';
+import startTestingApp from '../util/testing-app';
 
 describe('Create Auctioneer (e2e)', () => {
   let app: INestApplication;
   let connection: Mongoose;
-  let auctioneerModel: AuctioneerModel;
+  let models: Models;
 
   beforeAll(async () => {
     app = await startTestingApp();
-
     connection = getMongoConnection(app);
-    auctioneerModel = AuctioneerSchema.getModel(connection);
+    models = getModels(connection);
+    await clearDatabase(connection);
     await app.init();
   });
 
@@ -38,7 +43,7 @@ describe('Create Auctioneer (e2e)', () => {
       .send(input)
       .expect(201);
 
-    const savedAuctioneer = await auctioneerModel.findOne({ id: response.body.id });
+    const savedAuctioneer = await models.auctioneerModel.findOne({ id: response.body.id });
     const auctioneer = response.body;
 
     expect(auctioneer.id).toBeTruthy();
