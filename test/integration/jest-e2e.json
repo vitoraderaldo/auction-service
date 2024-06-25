@@ -1,12 +1,16 @@
 {
   "moduleFileExtensions": ["js", "json", "ts"],
   "rootDir": "../../",
-  "coverageDirectory": "coverage/integration",
   "testEnvironment": "node",
+  "coverageDirectory": "coverage/integration",
   "testRegex": ".e2e-spec.ts$",
   "transform": {
     "^.+\\.(t|j)s$": "ts-jest"
   },
+  "collectCoverageFrom": [
+    "./src/**/*.(t)s",
+    "!./src/**/*.spec.ts" 
+  ],
   "globalSetup": "./test/integration/global-setup.ts",
   "globalTeardown": "./test/integration/global-teardown.ts"
 }

@@ -106,7 +106,7 @@ describe('Bid Period Finishes', () => {
     }]);
   });
 
-  it('should create an order and send 2 emails to winning bidder when bid period finishes', async () => {
+  it('should send 2 emails to winning bidder when bid period finishes', async () => {
     const bidValue = auction.getStartPrice();
     const bid = buildBid({
       auctionId: auction.getId(),
