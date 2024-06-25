@@ -1,7 +1,8 @@
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { Mongoose } from 'mongoose';
-import { getMongoConnection, startTestingApp } from '../util/testing-app';
+import startTestingApp from '../util/testing-app';
+import { getMongoConnection } from '../util/mongo';
 
 describe('Health Controller (e2e)', () => {
   let app: INestApplication;

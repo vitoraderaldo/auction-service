@@ -6,8 +6,6 @@ import { AuctionStatusEnum } from '../../../src/@core/auction/domain/value-objec
 import buildAuction from '../../util/auction.mock';
 import insertAuction from '../util/insert-auction';
 import Auction from '../../../src/@core/auction/domain/entities/auction.entity';
-import { startTestingApp, getMongoConnection } from '../util/testing-app';
-import AuctionSchema, { AuctionModel } from '../../../src/@core/auction/infra/database/mongo/schemas/auction.schema';
 import { BidPeriodHasFinishedOutput } from '../../../src/@core/auction/application/usecase/bid-period-has-finished.usecase';
 import Bidder from '../../../src/@core/auction/domain/entities/bidder.entity';
 import buildBidder from '../../util/bidder.mock';
@@ -18,18 +16,21 @@ import insertBid from '../util/insert-bid';
 import SendgridMockClient, { SendgridEmail } from '../util/sendgrid-mock-client';
 import LocalStackSqs from '../util/sqs-mock.client';
 import runWithRetries from '../util/fetch-data-recursively';
-import BidderNotificationSchema, { BidderNotificationModel } from '../../../src/@core/notification/infra/database/mongo/schemas/bidder-notification.schema';
-import OrderSchema, { OrderModel } from '../../../src/@core/order/infra/database/mongo/schemas/order.schema';
 import { PaymentResponsibilityEnum } from '../../../src/@core/order/domain/value-objects/payment-responsibility.vo';
 import { PaymentStatusEnum } from '../../../src/@core/order/domain/value-objects/payment-status.vo';
 import { NotificationChannel, NotificationType } from '../../../src/@core/notification/application/service/notification-type';
+import startTestingApp from '../util/testing-app';
+import {
+  Models,
+  clearDatabase,
+  getModels,
+  getMongoConnection,
+} from '../util/mongo';
 
 describe('Bid Period Finishes', () => {
   let app: INestApplication;
   let connection: Mongoose;
-  let auctionModel: AuctionModel;
-  let bidderNotificationModel: BidderNotificationModel;
-  let orderModel: OrderModel;
+  let models: Models;
 
   let auction: Auction;
   let auctionId: string;
@@ -41,9 +42,8 @@ describe('Bid Period Finishes', () => {
   beforeAll(async () => {
     app = await startTestingApp();
     connection = getMongoConnection(app);
-    auctionModel = AuctionSchema.getModel(connection);
-    bidderNotificationModel = BidderNotificationSchema.getModel(connection);
-    orderModel = OrderSchema.getModel(connection);
+    models = getModels(connection);
+    await clearDatabase(connection);
     await app.init();
   });
 
@@ -88,7 +88,7 @@ describe('Bid Period Finishes', () => {
       .send()
       .expect(200);
 
-    const savedAuction = await auctionModel.findOne({
+    const savedAuction = await models.auctionModel.findOne({
       id: auctionId,
     }).exec();
 
@@ -121,7 +121,7 @@ describe('Bid Period Finishes', () => {
       .send()
       .expect(200);
 
-    const savedAuction = await auctionModel.findOne({
+    const savedAuction = await models.auctionModel.findOne({
       id: auctionId,
     }).exec();
 
@@ -129,12 +129,12 @@ describe('Bid Period Finishes', () => {
       () => sendGridMockClient.getEmailsSentTo(bidder.getEmail()),
     );
 
-    const savedNotifications = await bidderNotificationModel.find({
+    const savedNotifications = await models.bidderNotificationModel.find({
       bidderId: bidder.getId(),
       auctionId: auction.getId(),
     }).exec();
 
-    const savedOrder = await orderModel.findOne({
+    const savedOrder = await models.orderModel.findOne({
       auctionId,
     }).exec();
 

@@ -5,23 +5,27 @@ import { Mongoose } from 'mongoose';
 import buildAuctioneer from '../../util/auctioneer.mock';
 import insertAuctioneer from '../util/insert-auctioneer';
 import { AuctionStatusEnum } from '../../../src/@core/auction/domain/value-objects/auction-status.vo';
-import AuctionSchema, {
-  AuctionModel,
-} from '../../../src/@core/auction/infra/database/mongo/schemas/auction.schema';
 import buildAuction from '../../util/auction.mock';
 import Uuid from '../../../src/@core/common/domain/value-objects/uuid.vo';
 import insertAuction from '../util/insert-auction';
-import { getMongoConnection, startTestingApp } from '../util/testing-app';
+import startTestingApp from '../util/testing-app';
+import {
+  Models,
+  clearDatabase,
+  getModels,
+  getMongoConnection,
+} from '../util/mongo';
 
 describe('Auction (e2e)', () => {
   let app: INestApplication;
   let connection: Mongoose;
-  let auctionModel: AuctionModel;
+  let models: Models;
 
   beforeAll(async () => {
     app = await startTestingApp();
     connection = getMongoConnection(app);
-    auctionModel = AuctionSchema.getModel(connection);
+    models = getModels(connection);
+    await clearDatabase(connection);
     await app.init();
   });
 
@@ -56,7 +60,7 @@ describe('Auction (e2e)', () => {
       .send(body)
       .expect(201);
 
-    const savedAuction = await auctionModel.findOne({ id: response.body.id }).exec();
+    const savedAuction = await models.auctionModel.findOne({ id: response.body.id }).exec();
     const auction = response.body;
 
     expect(auction.id).toBeTruthy();
@@ -102,7 +106,7 @@ describe('Auction (e2e)', () => {
       .set('Authorization', auctioneer.getId())
       .expect(200);
 
-    const savedAuction = await auctionModel.findOne({ id: auctionId }).exec();
+    const savedAuction = await models.auctionModel.findOne({ id: auctionId }).exec();
     expect(savedAuction.status).toEqual(AuctionStatusEnum.PUBLISHED);
   });
 });

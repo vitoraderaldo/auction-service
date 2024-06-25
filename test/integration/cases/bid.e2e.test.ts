@@ -8,17 +8,22 @@ import buildAuction from '../../util/auction.mock';
 import insertAuction from '../util/insert-auction';
 import buildBidder from '../../util/bidder.mock';
 import insertBidder from '../util/insert-bidder';
-import BidSchema, { BidModel } from '../../../src/@core/auction/infra/database/mongo/schemas/bid.schema';
 import Auctioneer from '../../../src/@core/auction/domain/entities/auctioneer.entity';
 import Auction from '../../../src/@core/auction/domain/entities/auction.entity';
 import Bidder from '../../../src/@core/auction/domain/entities/bidder.entity';
-import { startTestingApp, getMongoConnection } from '../util/testing-app';
 import ErrorCode from '../../../src/@core/common/error/error-code';
+import {
+  Models,
+  clearDatabase,
+  getModels,
+  getMongoConnection,
+} from '../util/mongo';
+import startTestingApp from '../util/testing-app';
 
 describe('Bid (e2e)', () => {
   let app: INestApplication;
   let connection: Mongoose;
-  let bidModel: BidModel;
+  let models: Models;
 
   let auctioneer: Auctioneer;
   let auction: Auction;
@@ -29,7 +34,8 @@ describe('Bid (e2e)', () => {
   beforeAll(async () => {
     app = await startTestingApp();
     connection = getMongoConnection(app);
-    bidModel = BidSchema.getModel(connection);
+    models = getModels(connection);
+    await clearDatabase(connection);
     await app.init();
   });
 
@@ -52,6 +58,7 @@ describe('Bid (e2e)', () => {
   });
 
   afterAll(async () => {
+    await clearDatabase(connection);
     await connection.disconnect();
     await app.close();
   });
@@ -68,7 +75,7 @@ describe('Bid (e2e)', () => {
       .send(input)
       .expect(201);
 
-    const auctionBids = await bidModel.find({ auctionId }).exec();
+    const auctionBids = await models.bidModel.find({ auctionId }).exec();
     const savedBid = auctionBids?.at(0);
 
     expect(auctionBids).toHaveLength(1);
@@ -114,7 +121,7 @@ describe('Bid (e2e)', () => {
 
     const errorCode = response?.body?.errorCode;
     const errorDetails = response?.body?.errorDetails;
-    const auctionBids = await bidModel.find({ auctionId }).exec();
+    const auctionBids = await models.bidModel.find({ auctionId }).exec();
     const savedBid = auctionBids?.at(0);
 
     expect(errorCode).toEqual(ErrorCode.INVALID_BID_AMOUNT);
